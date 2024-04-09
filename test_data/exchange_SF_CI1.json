@@ -1,0 +1,405 @@
+{
+  "AllTimeHigh": 16.0,
+  "AllTimeLow": 6.0,
+  "Ask": 10.600000381469728,
+  "AskCount": 149,
+  "Bid": 10.0,
+  "BidCount": 193920,
+  "BuyingOrders": [
+    {
+      "CompanyCode": "COPY",
+      "CompanyId": "0330d322dfefc2940eb8feb36b7cda9e",
+      "CompanyName": "Copy's Chemicals",
+      "ItemCost": 9.800000190734863,
+      "ItemCount": 10000,
+      "OrderId": "190c5713c917695a2bec5a8fc58489f4"
+    },
+    {
+      "CompanyCode": "CIMM",
+      "CompanyId": "dc2a81d0fca4c43499a55fd6a999dd49",
+      "CompanyName": "Castillo-Ito Mercantile Market Maker",
+      "ItemCost": 6.0,
+      "ItemCount": null,
+      "OrderId": "19d886137518626189c7cdd8e787e374"
+    },
+    {
+      "CompanyCode": "SCR",
+      "CompanyId": "9ae90a5d46cfa96d09cfb31c83ba95f4",
+      "CompanyName": "Smelting & Carbonisation Ring",
+      "ItemCost": 9.600000381469728,
+      "ItemCount": 20000,
+      "OrderId": "20282e2ee2dc0555c0842d842e4df3f4"
+    },
+    {
+      "CompanyCode": "UN",
+      "CompanyId": "487f6150d7832b559f146336707cfc4a",
+      "CompanyName": "Unlimited Ltd.",
+      "ItemCost": 6.5,
+      "ItemCount": 100000,
+      "OrderId": "3325188f8482ecc6e366682d3a465a9b"
+    },
+    {
+      "CompanyCode": "BMEX",
+      "CompanyId": "68d282e10b2650dee8c75ff76cb16d38",
+      "CompanyName": "Lumber Liquidators",
+      "ItemCost": 10.0,
+      "ItemCount": 193920,
+      "OrderId": "8a3e965b91eb9caec3b344d612bb6865"
+    },
+    {
+      "CompanyCode": "HIVE",
+      "CompanyId": "959b071f2cda3870c6b6a3998508d231",
+      "CompanyName": "Hive Corporation",
+      "ItemCost": 9.850000381469728,
+      "ItemCount": 1000,
+      "OrderId": "a5eec688ebae8c926aa25c1f2c4a8024"
+    },
+    {
+      "CompanyCode": "BOC",
+      "CompanyId": "138733b8bb3e2a40dafe0d2438508168",
+      "CompanyName": "bomber company",
+      "ItemCost": 9.5,
+      "ItemCount": 1050,
+      "OrderId": "ab4ac19ea7d2cb8120080969d3a3ba25"
+    },
+    {
+      "CompanyCode": "PROG",
+      "CompanyId": "273e42b865fc321453cb21845aac66da",
+      "CompanyName": "Prodigus",
+      "ItemCost": 9.699999809265137,
+      "ItemCount": 5000,
+      "OrderId": "cdd3529eaa5a4bf8bc3f0a74a06e33e2"
+    }
+  ],
+  "CXDataModelId": "e57e1e97e15e742bddaa5113fc764aa4",
+  "Currency": "CIS",
+  "Demand": 331070,
+  "ExchangeCode": "CI1",
+  "ExchangeName": "Benten Station Commodity Exchange",
+  "High": 10.699999809265137,
+  "Low": 10.0,
+  "MMBuy": 6.0,
+  "MMSell": 16.0,
+  "MaterialId": "7756a0779efe67f0f293f41eda4944d4",
+  "MaterialName": "stlFuel",
+  "MaterialTicker": "SF",
+  "NarrowPriceBandHigh": 16.0,
+  "NarrowPriceBandLow": 6.0,
+  "Previous": null,
+  "Price": 10.600000381469728,
+  "PriceAverage": 10.399999618530272,
+  "PriceTimeEpochMs": 1712199300424,
+  "SellingOrders": [
+    {
+      "CompanyCode": "FCK",
+      "CompanyId": "aed9bf1516ac3535d9ac86093b6ed7d3",
+      "CompanyName": "Feck Industries",
+      "ItemCost": 15.899999618530272,
+      "ItemCount": 16666,
+      "OrderId": "00c18915b4a39b6a3a3bb92994cefc86"
+    },
+    {
+      "CompanyCode": "EM32",
+      "CompanyId": "f58f8bb1b5fc39e55584e9704590261f",
+      "CompanyName": "Eminence Heavy Industries",
+      "ItemCost": 10.800000190734863,
+      "ItemCount": 8333,
+      "OrderId": "041e2ac12d17b7886026a35e1865d578"
+    },
+    {
+      "CompanyCode": "TX",
+      "CompanyId": "5819c9601afae06eed5403c58142405f",
+      "CompanyName": "Texas Fuel Systems",
+      "ItemCost": 11.0,
+      "ItemCount": 32086,
+      "OrderId": "07377a81bac5a7e9b9010013ef8ae7c6"
+    },
+    {
+      "CompanyCode": "OMRX",
+      "CompanyId": "c50107c0f2a2b684a997db687a775672",
+      "CompanyName": "Omrics Propulsives",
+      "ItemCost": 13.100000381469728,
+      "ItemCount": 5477,
+      "OrderId": "0fbdf23ba9fb99e46ab8ff66a8a89967"
+    },
+    {
+      "CompanyCode": "FCK",
+      "CompanyId": "aed9bf1516ac3535d9ac86093b6ed7d3",
+      "CompanyName": "Feck Industries",
+      "ItemCost": 15.899999618530272,
+      "ItemCount": 16500,
+      "OrderId": "11ecd3f5539a540d79effccb840e19ae"
+    },
+    {
+      "CompanyCode": "TX",
+      "CompanyId": "5819c9601afae06eed5403c58142405f",
+      "CompanyName": "Texas Fuel Systems",
+      "ItemCost": 11.0,
+      "ItemCount": 42587,
+      "OrderId": "19ecc997df7fe384e8e064fcb88c7cdc"
+    },
+    {
+      "CompanyCode": "CRX",
+      "CompanyId": "4c06773357dd3199ab9ca7bfd70a044f",
+      "CompanyName": "Cryptex",
+      "ItemCost": 10.699999809265137,
+      "ItemCount": 5412,
+      "OrderId": "1fd9fc4625bf4c830218dcab16d72fec"
+    },
+    {
+      "CompanyCode": "MIA",
+      "CompanyId": "1c7c76121b2b8cfe116a324a58e6c618",
+      "CompanyName": "Miami Mercantile",
+      "ItemCost": 10.600000381469728,
+      "ItemCount": 149,
+      "OrderId": "209c5f00419b471036de450a68bc5fa2"
+    },
+    {
+      "CompanyCode": "ECFC",
+      "CompanyId": "2e03926b1154928cfd08d61ebdfdbdb4",
+      "CompanyName": "Extra Cheap Fuel Corp",
+      "ItemCost": 12.0,
+      "ItemCount": 21750,
+      "OrderId": "3f633a02e8e4b1b55a30d3e89eff311d"
+    },
+    {
+      "CompanyCode": "NEON",
+      "CompanyId": "e6fc600d49726fcd108b1d3ff23d4349",
+      "CompanyName": "NeonEnergy",
+      "ItemCost": 10.899999618530272,
+      "ItemCount": 552,
+      "OrderId": "4acc9b0701dc8118aad115164d6f015c"
+    },
+    {
+      "CompanyCode": "FSE",
+      "CompanyId": "5091175d8935699f97f0485ad894d407",
+      "CompanyName": "Finglan SE",
+      "ItemCost": 50.0,
+      "ItemCount": 10000,
+      "OrderId": "4b50466c09bc18d20b6899e1bd7b9770"
+    },
+    {
+      "CompanyCode": "LILU",
+      "CompanyId": "b93d5077b13d2d78bc4ece417548aade",
+      "CompanyName": "Lilu Industry",
+      "ItemCost": 16.0,
+      "ItemCount": 200000,
+      "OrderId": "5915d8a5fc0e61873109265544cdc018"
+    },
+    {
+      "CompanyCode": "OMRX",
+      "CompanyId": "c50107c0f2a2b684a997db687a775672",
+      "CompanyName": "Omrics Propulsives",
+      "ItemCost": 11.600000381469728,
+      "ItemCount": 8140,
+      "OrderId": "64475330231120f90c01c7ba50565c70"
+    },
+    {
+      "CompanyCode": "FCK",
+      "CompanyId": "aed9bf1516ac3535d9ac86093b6ed7d3",
+      "CompanyName": "Feck Industries",
+      "ItemCost": 15.899999618530272,
+      "ItemCount": 16666,
+      "OrderId": "671b025d4e4e144cfdfedeb697511df0"
+    },
+    {
+      "CompanyCode": "SHE",
+      "CompanyId": "f8e8812f7000633c7e399bf86d34f3f1",
+      "CompanyName": "Sheldon corp",
+      "ItemCost": 12.0,
+      "ItemCount": 30000,
+      "OrderId": "6e6cbce208519ac825b19c0d2aa7a194"
+    },
+    {
+      "CompanyCode": "SHE",
+      "CompanyId": "f8e8812f7000633c7e399bf86d34f3f1",
+      "CompanyName": "Sheldon corp",
+      "ItemCost": 11.0,
+      "ItemCount": 30000,
+      "OrderId": "7385221823cbb8754e020c71ee9d0fad"
+    },
+    {
+      "CompanyCode": "MC",
+      "CompanyId": "3d5306855bb03ada7a5122084afbfbb7",
+      "CompanyName": "Bobemor",
+      "ItemCost": 13.0,
+      "ItemCount": 19895,
+      "OrderId": "7c346508836089d1d18d3f605768ea34"
+    },
+    {
+      "CompanyCode": "NEON",
+      "CompanyId": "e6fc600d49726fcd108b1d3ff23d4349",
+      "CompanyName": "NeonEnergy",
+      "ItemCost": 11.0,
+      "ItemCount": 12000,
+      "OrderId": "88a41b67984270e5a671c08c95ba2be1"
+    },
+    {
+      "CompanyCode": "EM32",
+      "CompanyId": "f58f8bb1b5fc39e55584e9704590261f",
+      "CompanyName": "Eminence Heavy Industries",
+      "ItemCost": 10.800000190734863,
+      "ItemCount": 7677,
+      "OrderId": "8e8f3fa0b1184acd465b3619d9f7e07d"
+    },
+    {
+      "CompanyCode": "NEON",
+      "CompanyId": "e6fc600d49726fcd108b1d3ff23d4349",
+      "CompanyName": "NeonEnergy",
+      "ItemCost": 14.0,
+      "ItemCount": 10962,
+      "OrderId": "a70109d82a486021a69cfbce49d3b36a"
+    },
+    {
+      "CompanyCode": "SHE",
+      "CompanyId": "f8e8812f7000633c7e399bf86d34f3f1",
+      "CompanyName": "Sheldon corp",
+      "ItemCost": 11.0,
+      "ItemCount": 10000,
+      "OrderId": "adf775719ec0fd87e1f472faec49cc2a"
+    },
+    {
+      "CompanyCode": "ECFC",
+      "CompanyId": "2e03926b1154928cfd08d61ebdfdbdb4",
+      "CompanyName": "Extra Cheap Fuel Corp",
+      "ItemCost": 11.5,
+      "ItemCount": 25000,
+      "OrderId": "b998ba6f4912f2e4efadd007bd8499ec"
+    },
+    {
+      "CompanyCode": "FLX",
+      "CompanyId": "96c0053523c5ea38e4d3711c8c12dba1",
+      "CompanyName": "FuelX",
+      "ItemCost": 11.199999809265137,
+      "ItemCount": 500,
+      "OrderId": "c729074a974fa14640558842cc39a466"
+    },
+    {
+      "CompanyCode": "WISE",
+      "CompanyId": "401961f8ff7a37626d3fa85da5d0e1c7",
+      "CompanyName": "Wisely2",
+      "ItemCost": 11.399999618530272,
+      "ItemCount": 24422,
+      "OrderId": "ceb04cfc9112e24fbc9b542075240a59"
+    },
+    {
+      "CompanyCode": "FCK",
+      "CompanyId": "aed9bf1516ac3535d9ac86093b6ed7d3",
+      "CompanyName": "Feck Industries",
+      "ItemCost": 15.899999618530272,
+      "ItemCount": 16618,
+      "OrderId": "cfa2c54698815c2005799f7940762f35"
+    },
+    {
+      "CompanyCode": "IGCB",
+      "CompanyId": "07ca9bd51fea5bf6d8a8c7e04ec68789",
+      "CompanyName": "Intergalactic Commerce Bank",
+      "ItemCost": 10.899999618530272,
+      "ItemCount": 35772,
+      "OrderId": "d12aaea10d3b0102a8c31c23fadb9bda"
+    },
+    {
+      "CompanyCode": "FUP",
+      "CompanyId": "869975cf91c94be3e68fd619f8527cf4",
+      "CompanyName": "FUEL-UP",
+      "ItemCost": 11.0,
+      "ItemCount": 7542,
+      "OrderId": "d1b97598e94a01d7bdb1307d55cf1e9e"
+    },
+    {
+      "CompanyCode": "RVNE",
+      "CompanyId": "9f6094e1a50302393903f12221821f4a",
+      "CompanyName": "Raven Enterprises",
+      "ItemCost": 10.800000190734863,
+      "ItemCount": 2666,
+      "OrderId": "d27e2eca49f907bac3451b2487208be6"
+    },
+    {
+      "CompanyCode": "JUPF",
+      "CompanyId": "9ea20ecc4800d48ee053d1138e9e87b1",
+      "CompanyName": "Jupitor Frontier",
+      "ItemCost": 10.899999618530272,
+      "ItemCount": 936,
+      "OrderId": "da5f393b0cfa224086afae85f6733032"
+    },
+    {
+      "CompanyCode": "TCN",
+      "CompanyId": "6e9fa9219786ece1e7036ef3506d9dcd",
+      "CompanyName": "TCN Industries",
+      "ItemCost": 10.800000190734863,
+      "ItemCount": 5478,
+      "OrderId": "dd8f058ce4e06bfc1fe26d8f924e46db"
+    },
+    {
+      "CompanyCode": "NEON",
+      "CompanyId": "e6fc600d49726fcd108b1d3ff23d4349",
+      "CompanyName": "NeonEnergy",
+      "ItemCost": 11.0,
+      "ItemCount": 8100,
+      "OrderId": "df4ba7946bf465239251a7852eee61f0"
+    },
+    {
+      "CompanyCode": "LILU",
+      "CompanyId": "b93d5077b13d2d78bc4ece417548aade",
+      "CompanyName": "Lilu Industry",
+      "ItemCost": 14.0,
+      "ItemCount": 100000,
+      "OrderId": "e8213c15ed77eaa4ae205cfc2102729d"
+    },
+    {
+      "CompanyCode": "OMRX",
+      "CompanyId": "c50107c0f2a2b684a997db687a775672",
+      "CompanyName": "Omrics Propulsives",
+      "ItemCost": 10.899999618530272,
+      "ItemCount": 25000,
+      "OrderId": "e8daaa2a619ee597d733a63adf90d23d"
+    },
+    {
+      "CompanyCode": "FET5",
+      "CompanyId": "87ef42f629d7aa2ca517bbcb5d0d3151",
+      "CompanyName": "Fetal",
+      "ItemCost": 16.0,
+      "ItemCount": 500,
+      "OrderId": "e92b581e2b2bfc50de2eb8bb702e7ab3"
+    },
+    {
+      "CompanyCode": "ELPE",
+      "CompanyId": "800b116b052bd8c40f88c55b8fc95f7f",
+      "CompanyName": "Diesel LLD",
+      "ItemCost": 10.899999618530272,
+      "ItemCount": 2000,
+      "OrderId": "f8ec251bc87158a5187d3cac3ec114ac"
+    },
+    {
+      "CompanyCode": "NEON",
+      "CompanyId": "e6fc600d49726fcd108b1d3ff23d4349",
+      "CompanyName": "NeonEnergy",
+      "ItemCost": 11.0,
+      "ItemCount": 8840,
+      "OrderId": "f97e71401700f9409c86a6d265901f6f"
+    },
+    {
+      "CompanyCode": "CIMM",
+      "CompanyId": "dc2a81d0fca4c43499a55fd6a999dd49",
+      "CompanyName": "Castillo-Ito Mercantile Market Maker",
+      "ItemCost": 16.0,
+      "ItemCount": null,
+      "OrderId": "ffe02e75baaae371e70431c1db97ef56"
+    },
+    {
+      "CompanyCode": "LILU",
+      "CompanyId": "b93d5077b13d2d78bc4ece417548aade",
+      "CompanyName": "Lilu Industry",
+      "ItemCost": 14.0,
+      "ItemCount": 100000,
+      "OrderId": "fff84bcc129dffc5c7ae59a8ab9af4fc"
+    }
+  ],
+  "Supply": 868326,
+  "Timestamp": "2024-04-04T02:57:40.686723",
+  "Traded": 11361,
+  "UserNameSubmitted": "CASTINAR",
+  "VolumeAmount": 117661.1015625,
+  "WidePriceBandHigh": 16.0,
+  "WidePriceBandLow": 6.0
+}

@@ -1,0 +1,76 @@
+{
+  "AllTimeHigh": 4500.0,
+  "AllTimeLow": 22.0,
+  "Ask": null,
+  "AskCount": null,
+  "Bid": 2210.0,
+  "BidCount": 20,
+  "BuyingOrders": [
+    {
+      "CompanyCode": "OMC",
+      "CompanyId": "f293daacc1c3ae1c83e2eb9acf1f6ec8",
+      "CompanyName": "Omega Corp",
+      "ItemCost": 1200.0,
+      "ItemCount": 92,
+      "OrderId": "a58c3f5e5ba33ccb0602f3e97ee448b0"
+    },
+    {
+      "CompanyCode": "KBI",
+      "CompanyId": "84ec5c367ef8e53ce3d2dafafbe226de",
+      "CompanyName": "KB Industries",
+      "ItemCost": 2200.0,
+      "ItemCount": 91,
+      "OrderId": "bb312bdf5b3f5ff2efbac5e648a75d08"
+    },
+    {
+      "CompanyCode": "FTF",
+      "CompanyId": "aa1cf281486b2c5079949dc68c5c17d1",
+      "CompanyName": "faster than freight",
+      "ItemCost": 2210.0,
+      "ItemCount": 20,
+      "OrderId": "c02ce2e2c5b9d60153a7dd6acc1c9b4a"
+    },
+    {
+      "CompanyCode": "IDEA",
+      "CompanyId": "b81de31ea48cfbaa30d660f720e38aa5",
+      "CompanyName": "Idea Company",
+      "ItemCost": 2.200000047683716,
+      "ItemCount": 10000,
+      "OrderId": "c2a3d9de1dd89c44360a8f67d8cf2716"
+    },
+    {
+      "CompanyCode": "EM32",
+      "CompanyId": "f58f8bb1b5fc39e55584e9704590261f",
+      "CompanyName": "Eminence Heavy Industries",
+      "ItemCost": 1800.0,
+      "ItemCount": 20,
+      "OrderId": "fb3d8b648a7f69fabf352f03849039cf"
+    }
+  ],
+  "CXDataModelId": "e4afed26127d776617478e7c14067c48",
+  "Currency": "CIS",
+  "Demand": 10223,
+  "ExchangeCode": "CI1",
+  "ExchangeName": "Benten Station Commodity Exchange",
+  "High": 2200.0,
+  "Low": 2200.0,
+  "MMBuy": null,
+  "MMSell": null,
+  "MaterialId": "7aeed35adeb209ebdb4985f451ed3e46",
+  "MaterialName": "cottonProcessed",
+  "MaterialTicker": "COT",
+  "NarrowPriceBandHigh": 5500.0,
+  "NarrowPriceBandLow": 220.0,
+  "Previous": null,
+  "Price": 2200.0,
+  "PriceAverage": 2200.0,
+  "PriceTimeEpochMs": 1711938882514,
+  "SellingOrders": [],
+  "Supply": 0,
+  "Timestamp": "2024-04-04T02:35:50.728104",
+  "Traded": 3,
+  "UserNameSubmitted": "ACEBARON",
+  "VolumeAmount": 6600.0,
+  "WidePriceBandHigh": 5500.0,
+  "WidePriceBandLow": 220.0
+}

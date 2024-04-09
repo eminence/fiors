@@ -1,0 +1,229 @@
+{
+  "AllTimeHigh": 750.0,
+  "AllTimeLow": 14.25,
+  "Ask": 267.0,
+  "AskCount": 298,
+  "Bid": 252.0,
+  "BidCount": 10,
+  "BuyingOrders": [
+    {
+      "CompanyCode": "ACM",
+      "CompanyId": "92af23927a6d9c2f128339d040baff86",
+      "CompanyName": "Argos Construction Materials",
+      "ItemCost": 242.0,
+      "ItemCount": 10,
+      "OrderId": "07f6662930697af18e3a7f4226747b9d"
+    },
+    {
+      "CompanyCode": "SLC",
+      "CompanyId": "5c3286d88833a2f89d00b66cd2bdf947",
+      "CompanyName": "Space Lama Corporation",
+      "ItemCost": 251.0,
+      "ItemCount": 100,
+      "OrderId": "365c8b80a6db730f3817cf29868c5493"
+    },
+    {
+      "CompanyCode": "INGA",
+      "CompanyId": "d4d28d54de6e033441387ae90fabf9d3",
+      "CompanyName": "Interstellar Gaia",
+      "ItemCost": 240.0,
+      "ItemCount": 10000,
+      "OrderId": "3919b86fea3610c35971b22ceaeecc25"
+    },
+    {
+      "CompanyCode": "CYDR",
+      "CompanyId": "fb0a44756f30908a3c11094bf8b398ef",
+      "CompanyName": "Cyber Dragons Inc",
+      "ItemCost": 250.0,
+      "ItemCount": 10,
+      "OrderId": "45a2af80b652dc0d2f057a84334c710e"
+    },
+    {
+      "CompanyCode": "JMC",
+      "CompanyId": "f1278f0e546552ceb9c6144ae1a16b60",
+      "CompanyName": "Jupiter Mining",
+      "ItemCost": 252.0,
+      "ItemCount": 10,
+      "OrderId": "7c3256d86cfedd57f973e5996e3c001e"
+    },
+    {
+      "CompanyCode": "SCR",
+      "CompanyId": "9ae90a5d46cfa96d09cfb31c83ba95f4",
+      "CompanyName": "Smelting & Carbonisation Ring",
+      "ItemCost": 221.0,
+      "ItemCount": 200,
+      "OrderId": "80c6de03e394e2d42f89de603fb31c35"
+    },
+    {
+      "CompanyCode": "CBN",
+      "CompanyId": "4decaeeec2a87f85bd2c0862b53712b4",
+      "CompanyName": "carbonote",
+      "ItemCost": 231.0,
+      "ItemCount": 18,
+      "OrderId": "92fcd0ab670506ff1d54ef043dd3ce9e"
+    },
+    {
+      "CompanyCode": "SKI",
+      "CompanyId": "327069f36e9643ac6d807dcdb076c6e0",
+      "CompanyName": "Silly Kones Inc",
+      "ItemCost": 222.0,
+      "ItemCount": 500,
+      "OrderId": "a1c30b75787ef9ae991d4ca9abf22744"
+    },
+    {
+      "CompanyCode": "BSG",
+      "CompanyId": "0eca23e24cb3824e87cd913e5585df77",
+      "CompanyName": "BlastGasser",
+      "ItemCost": 190.0,
+      "ItemCount": 180,
+      "OrderId": "be0dc4a9453049ed92821f526e42138c"
+    },
+    {
+      "CompanyCode": "SCR",
+      "CompanyId": "9ae90a5d46cfa96d09cfb31c83ba95f4",
+      "CompanyName": "Smelting & Carbonisation Ring",
+      "ItemCost": 203.0,
+      "ItemCount": 986,
+      "OrderId": "c0cb0b9bd81c099e1d6ff8d20a16b76c"
+    },
+    {
+      "CompanyCode": "MTKA",
+      "CompanyId": "f589727cb4af13cd5e4bc235f9900625",
+      "CompanyName": "ManjiTec_Ka Corp",
+      "ItemCost": 235.0,
+      "ItemCount": 282,
+      "OrderId": "f2abcb01546f5e970591a9ef65d43f16"
+    }
+  ],
+  "CXDataModelId": "a8d67ac4fd177d43b5c2d2219c67bebc",
+  "Currency": "CIS",
+  "Demand": 12296,
+  "ExchangeCode": "CI1",
+  "ExchangeName": "Benten Station Commodity Exchange",
+  "High": 267.0,
+  "Low": 267.0,
+  "MMBuy": null,
+  "MMSell": null,
+  "MaterialId": "820d081096fd3e8fbd98b4344f6250ad",
+  "MaterialName": "pioneerLuxuryClothing",
+  "MaterialTicker": "PWO",
+  "NarrowPriceBandHigh": 678.5499877929688,
+  "NarrowPriceBandLow": 27.149999618530273,
+  "Previous": null,
+  "Price": 267.0,
+  "PriceAverage": 271.4200134277344,
+  "PriceTimeEpochMs": 1712113035674,
+  "SellingOrders": [
+    {
+      "CompanyCode": "IDEA",
+      "CompanyId": "b81de31ea48cfbaa30d660f720e38aa5",
+      "CompanyName": "Idea Company",
+      "ItemCost": 438.0,
+      "ItemCount": 17,
+      "OrderId": "3ac94e89d9d07f0e53cf9fed96478ddc"
+    },
+    {
+      "CompanyCode": "INGA",
+      "CompanyId": "d4d28d54de6e033441387ae90fabf9d3",
+      "CompanyName": "Interstellar Gaia",
+      "ItemCost": 275.0,
+      "ItemCount": 4095,
+      "OrderId": "49073be02b6a62ba015095a742d57e6e"
+    },
+    {
+      "CompanyCode": "AMIC",
+      "CompanyId": "dc4623619df98061d1f03ca879f4a64d",
+      "CompanyName": "Amonico",
+      "ItemCost": 267.0,
+      "ItemCount": 298,
+      "OrderId": "a358b0c484b9753607232083187e52bb"
+    },
+    {
+      "CompanyCode": "BIGE",
+      "CompanyId": "ed7a5f3e89370bf53859d6a2cb7db6cb",
+      "CompanyName": "BioGrowth Excelsior",
+      "ItemCost": 270.0,
+      "ItemCount": 1222,
+      "OrderId": "a39080f87462f0f62941f64750bcf557"
+    },
+    {
+      "CompanyCode": "OMC",
+      "CompanyId": "f293daacc1c3ae1c83e2eb9acf1f6ec8",
+      "CompanyName": "Omega Corp",
+      "ItemCost": 290.0,
+      "ItemCount": 691,
+      "OrderId": "ad44bfef814cedb6e8f39794c369ca11"
+    },
+    {
+      "CompanyCode": "F500",
+      "CompanyId": "2864585e414d64ea207281abfd76dad8",
+      "CompanyName": "Fortune 500",
+      "ItemCost": 439.0,
+      "ItemCount": 11,
+      "OrderId": "b29b185fe1d9b146374e3c8a41d5b76e"
+    },
+    {
+      "CompanyCode": "STC",
+      "CompanyId": "5214ad28cdd7b68695ca68bb1f1927f9",
+      "CompanyName": "Marcus Aurelius Ltd",
+      "ItemCost": 274.0,
+      "ItemCount": 300,
+      "OrderId": "b6be776b933177d1ef549bcc243d82a6"
+    },
+    {
+      "CompanyCode": "UNIB",
+      "CompanyId": "3ca42360990ad24aab40eb810cec65a0",
+      "CompanyName": "Under Night In Baguette",
+      "ItemCost": 325.0,
+      "ItemCount": 1000,
+      "OrderId": "bb0c66d9e1f8bdacb3046e7b94d84711"
+    },
+    {
+      "CompanyCode": "FIAT",
+      "CompanyId": "76089d4b21583af68f09c30558d2b3bb",
+      "CompanyName": "First In All Tech",
+      "ItemCost": 280.0,
+      "ItemCount": 43,
+      "OrderId": "bda7fcf174331e2cf85dec3ce5a19e19"
+    },
+    {
+      "CompanyCode": "INGA",
+      "CompanyId": "d4d28d54de6e033441387ae90fabf9d3",
+      "CompanyName": "Interstellar Gaia",
+      "ItemCost": 280.0,
+      "ItemCount": 5000,
+      "OrderId": "c378c8e61bab192905ab9442e6211534"
+    },
+    {
+      "CompanyCode": "OMC",
+      "CompanyId": "f293daacc1c3ae1c83e2eb9acf1f6ec8",
+      "CompanyName": "Omega Corp",
+      "ItemCost": 300.0,
+      "ItemCount": 1244,
+      "OrderId": "c5776efcc85609060f841067fa9848d3"
+    },
+    {
+      "CompanyCode": "DAN",
+      "CompanyId": "3679d54719311298ef600db1a9fb9dca",
+      "CompanyName": "Danisko",
+      "ItemCost": 279.0,
+      "ItemCount": 56,
+      "OrderId": "d80301a45c6d589be243456a85771262"
+    },
+    {
+      "CompanyCode": "DAN",
+      "CompanyId": "3679d54719311298ef600db1a9fb9dca",
+      "CompanyName": "Danisko",
+      "ItemCost": 274.0,
+      "ItemCount": 19,
+      "OrderId": "fa159022eaf8140fe9f94eb0cd37947d"
+    }
+  ],
+  "Supply": 13996,
+  "Timestamp": "2024-04-03T03:07:40.829575",
+  "Traded": 44,
+  "UserNameSubmitted": "Q333",
+  "VolumeAmount": 11748.0,
+  "WidePriceBandHigh": 678.5499877929688,
+  "WidePriceBandLow": 27.149999618530273
+}
