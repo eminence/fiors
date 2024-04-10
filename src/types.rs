@@ -475,6 +475,12 @@ pub struct ProductionOrderDetails {
     pub standard_recipe_name: String,
 }
 
+impl ProductionOrderDetails {
+    pub fn get_building_ticker(&self) -> &str{
+        &self.standard_recipe_name.split(':').next().unwrap()
+    }
+}
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct ProductionOrderMaterial {
@@ -485,6 +491,7 @@ pub struct ProductionOrderMaterial {
 
 #[derive(Debug)]
 pub struct DailyProduction {
+    pub building_ticker: String,
     pub inputs: HashMap<String, f32>,
     pub outputs: HashMap<String, f32>,
 }
@@ -508,6 +515,8 @@ impl ProductionLine {
             .map(|order| order.duration.as_secs_f32())
             .sum::<f32>()
             / 86400.0;
+
+        let building_ticker = self.orders.first().unwrap().get_building_ticker();
 
         // dbg!(&queued_orders);
         let mut total_inputs = HashMap::new();
@@ -552,6 +561,7 @@ impl ProductionLine {
         DailyProduction {
             inputs: total_inputs,
             outputs: total_outputs,
+            building_ticker: building_ticker.to_string(),
         }
     }
 }

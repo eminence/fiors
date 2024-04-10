@@ -74,7 +74,7 @@ struct App {
     current_tab: usize,
     planets: Vec<Planet>,
     current_widget: usize,
-    table_states: HashMap<usize, TableState>
+    table_states: HashMap<usize, TableState>,
 }
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
@@ -183,9 +183,7 @@ impl App {
         }))
     }
 
-    async fn render_production_widget(
-        &mut self,
-    ) -> anyhow::Result<Renderer> {
+    async fn render_production_widget(&mut self) -> anyhow::Result<Renderer> {
         let client = get_client();
         let planet = &self.planets[self.current_tab];
 
@@ -206,17 +204,21 @@ impl App {
             .get_planet_production(&self.username, &planet.id)
             .await?;
 
-        // level load across all production lines (negative values indicate daily need)
-        let mut total_daily_production = HashMap::new();
+        // a map from (material, building) to daily production
+        let mut total_daily_production: HashMap<(String, String), f32> = HashMap::new();
+        // map from material to daily consumption
+        let mut total_daily_consumption = HashMap::new();
         for prod in production_lines {
             // if prod.building_type != "prefabPlant1" { continue }
             // dbg!(&prod);
             let daily = prod.daily_production();
             for (mat, amt) in daily.outputs {
-                *total_daily_production.entry(mat).or_insert(0.0) += amt;
+                *total_daily_production
+                    .entry((mat, daily.building_ticker.clone()))
+                    .or_insert(0.0) += amt;
             }
             for (mat, amt) in daily.inputs {
-                *total_daily_production.entry(mat).or_insert(0.0) -= amt;
+                *total_daily_consumption.entry(mat).or_insert(0.0) += amt;
             }
         }
 
@@ -231,7 +233,7 @@ impl App {
                 // (*entry).0 = need.essential;
                 // (*entry).1 += need.units_per_interval * num_days_inventory;
                 if need.units_per_interval > 0.0 {
-                    *total_daily_production.entry(need.ticker).or_insert(0.0) -=
+                    *total_daily_consumption.entry(need.ticker).or_insert(0.0) +=
                         need.units_per_interval;
                 }
             }
@@ -239,7 +241,7 @@ impl App {
 
         let total_daily_production: Vec<_> = {
             let mut v: Vec<_> = total_daily_production.into_iter().collect();
-            v.sort_by(|a, b| {
+            v.sort_by(|(a, _), (b, _)| {
                 let a_cat = get_material_db().get(a.0.as_str()).unwrap().category;
                 let b_cat = get_material_db().get(b.0.as_str()).unwrap().category;
 
@@ -248,26 +250,64 @@ impl App {
             v
         };
 
-        for (material, amount) in &total_daily_production {
-            if *amount > 0.0 {
+
+        for ((material, building), amount) in &total_daily_production {
+            let net_amount = amount
+                - total_daily_consumption
+                    .get(material)
+                    .copied()
+                    .unwrap_or_default();
+            if net_amount > 0.0 {
                 // let colored_material = MaterialWithColor::new(&material);
                 // println!(
                 //     "  Producing {} per day",
                 //     colored_material.with_amount(amount.round() as i32),
                 // );
+
+                // what is our COGM?
+                let cogm = client
+                    .calc_cost_of_goods_manufactured(
+                        &self.username,
+                        &planet.id,
+                        &building,
+                        &material,
+                    )
+                    .await?;
+
                 production_rows.push(Row::new(vec![
                     Span::raw("Producing"),
                     Span::raw(format!("{amount:.1}")),
                     Span::raw(format!("{}", material)).style(get_style_for_material(&material)),
                     Span::raw("per day"),
+                    Span::raw(format!("@{:.1} CIS", cogm)),
                 ]));
-            } else {
+            }
+        }
+        let total_daily_consumption: Vec<_> = {
+            let mut v: Vec<_> = total_daily_consumption.into_iter().collect();
+            v.sort_by(|(a, _), (b, _)| {
+                let a_cat = get_material_db().get(a.as_str()).unwrap().category;
+                let b_cat = get_material_db().get(b.as_str()).unwrap().category;
+
+                a_cat.cmp(&b_cat).then(a.cmp(&b))
+            });
+            v
+        };
+
+        for (material, amount) in total_daily_consumption {
+            let net_amount = amount
+                - total_daily_production
+                    .iter()
+                    .filter(|((m, _), _)| *m == material)
+                    .map(|(_, a)| *a)
+                    .sum::<f32>();
+            if net_amount > 0.0 {
                 let inv_amount = inv.items.get(&*material).map(|i| i.quantity).unwrap_or(0);
-                let days = inv_amount as f32 / -amount;
+                let days = inv_amount as f32 / net_amount;
 
                 consumption_rows.push(Row::new(vec![
                     Span::raw("Consuming"),
-                    Span::raw(format!("{:.1}", -amount)),
+                    Span::raw(format!("{:.1}", net_amount)),
                     Span::raw(format!("{}", material)).style(get_style_for_material(&material)),
                     Span::raw("per day"),
                     Span::raw("lasting"),
@@ -277,7 +317,7 @@ impl App {
                 // assuming we want 21 days worth of materials, how much should we buy?
                 let amount_in_inventory =
                     inv.items.get(&*material).map(|i| i.quantity).unwrap_or(0);
-                let target_amount = -amount * 21.0;
+                let target_amount = net_amount * 21.0;
                 let amount_to_buy = target_amount - amount_in_inventory as f32;
                 if amount_to_buy > 0.0 {
                     // are any other bases producing a surplus of this material?
@@ -298,6 +338,7 @@ impl App {
                 Constraint::Length(4), // amount
                 Constraint::Length(3), // ticker
                 Constraint::Length(7), // "Per day"
+                Constraint::Fill(1),   // "COGM"
             ],
         )
         .block(
@@ -373,14 +414,16 @@ impl App {
                 .split(area);
 
             frame.render_widget(production_table, chunks[0]);
-            frame.render_stateful_widget(consumption_table, chunks[1], app.table_states.entry(2).or_default());
+            frame.render_stateful_widget(
+                consumption_table,
+                chunks[1],
+                app.table_states.entry(2).or_default(),
+            );
             frame.render_widget(needs_table, chunks[2]);
         }))
     }
 
-    async fn get_local_market_widget(
-        &self,
-    ) -> anyhow::Result<Renderer> {
+    async fn get_local_market_widget(&self) -> anyhow::Result<Renderer> {
         let planet = &self.planets[self.current_tab];
 
         let lm = self.client.get_planet_localmarket(&planet.id).await?;
