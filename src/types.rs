@@ -3,7 +3,7 @@ use std::{collections::HashMap, ops::AddAssign, time::Duration};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Deserializer};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Storage {
     pub name: Option<String>,
     /// Addressable ID
@@ -27,7 +27,7 @@ pub enum StorageType {
     FtlFuelStore,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Item {
     pub ticker: String,
     pub quantity: u32,
@@ -116,7 +116,7 @@ impl Storage {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Ticker {
     /// The full ticker name like "SF.CI1"
     pub name: String,
@@ -280,6 +280,7 @@ impl Ticker {
     }
 }
 
+#[derive(Debug, Clone)]
 pub struct Planet {
     pub name: String,
     /// The name of the form AB-123x
@@ -314,7 +315,7 @@ impl Planet {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PlanetWorkforce {
     pub planet_id: String,
     pub planet_natural_id: String,
@@ -327,7 +328,7 @@ pub struct PlanetWorkforce {
     // pub scientists: WorkforceDetails,
 }
 
-#[derive(Debug, Deserialize, Default)]
+#[derive(Debug, Clone, Deserialize, Default)]
 #[serde(rename_all = "PascalCase")]
 pub struct WorkforceDetails {
     pub capacity: u32,
@@ -340,7 +341,7 @@ pub struct WorkforceDetails {
     pub name: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct WorkforceNeed {
     pub essential: bool,
@@ -396,7 +397,7 @@ impl PlanetWorkforce {
     }
 }
 
-#[derive(Debug, Deserialize, Default)]
+#[derive(Debug, Clone, Deserialize, Default)]
 pub struct LocalMarket {
     #[serde(rename = "BuyingAds")]
     pub buying_ads: Vec<LocalMarketContract>,
@@ -404,7 +405,7 @@ pub struct LocalMarket {
     pub selling_ads: Vec<LocalMarketContract>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct LocalMarketContract {
     pub delivery_time: u32,
@@ -442,7 +443,7 @@ impl MaterialInfo {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct ProductionLine {
     pub site_id: String,
@@ -457,7 +458,7 @@ pub struct ProductionLine {
     pub orders: Vec<ProductionOrderDetails>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct ProductionOrderDetails {
     pub inputs: Vec<ProductionOrderMaterial>,
@@ -476,12 +477,12 @@ pub struct ProductionOrderDetails {
 }
 
 impl ProductionOrderDetails {
-    pub fn get_building_ticker(&self) -> &str{
+    pub fn get_building_ticker(&self) -> &str {
         &self.standard_recipe_name.split(':').next().unwrap()
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct ProductionOrderMaterial {
     pub material_name: String,

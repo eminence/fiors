@@ -9,6 +9,7 @@ use std::{
 use anyhow::{bail, Context};
 use building_db::StaticBuildingInfo;
 use chrono::Utc;
+use dashmap::DashMap;
 use serde::{de::DeserializeOwned, Serialize};
 use serde_json::Value;
 
@@ -23,6 +24,21 @@ use crate::types::{Item, WorkforceDetails};
 pub mod materials;
 pub mod types;
 
+struct CachedData<T> {
+    data: T,
+    expiry: chrono::DateTime<Utc>,
+}
+
+impl<T: Clone> CachedData<T> {
+    fn new(data: T, expiry: std::time::Duration) -> Self {
+        Self {
+            data,
+            expiry: Utc::now() + expiry,
+        }
+    }
+}
+
+#[derive()]
 pub struct FIOClient {
     url_root: &'static str,
     auth_token: String,
@@ -30,6 +46,15 @@ pub struct FIOClient {
     client: reqwest::Client,
     pub local_cache_dir: Option<PathBuf>,
     retry_delay: AtomicU64,
+
+    planet_cache: DashMap<String, CachedData<types::Planet>>,
+    storage_user_cache: DashMap<String, CachedData<Vec<types::Storage>>>,
+    storage_cache: DashMap<(String, String), CachedData<Option<types::Storage>>>,
+    storage_planet_cache: DashMap<String, CachedData<Vec<types::Planet>>>,
+    workforce_cache: DashMap<(String, String), CachedData<types::PlanetWorkforce>>,
+    localmarket_cache: DashMap<String, CachedData<types::LocalMarket>>,
+    exchange_cache: DashMap<String, CachedData<types::Ticker>>,
+    planet_production_cache: DashMap<(String, String), CachedData<Vec<types::ProductionLine>>>,
 }
 
 impl FIOClient {
@@ -76,6 +101,14 @@ impl FIOClient {
             client,
             local_cache_dir: None,
             retry_delay: AtomicU64::new(500),
+            planet_cache: DashMap::new(),
+            storage_user_cache: DashMap::new(),
+            storage_cache: DashMap::new(),
+            storage_planet_cache: DashMap::new(),
+            workforce_cache: DashMap::new(),
+            localmarket_cache: DashMap::new(),
+            exchange_cache: DashMap::new(),
+            planet_production_cache: DashMap::new(),
         })
     }
 
@@ -89,6 +122,14 @@ impl FIOClient {
             client,
             local_cache_dir: None,
             retry_delay: AtomicU64::new(500),
+            planet_cache: DashMap::new(),
+            storage_user_cache: DashMap::new(),
+            storage_cache: DashMap::new(),
+            storage_planet_cache: DashMap::new(),
+            workforce_cache: DashMap::new(),
+            localmarket_cache: DashMap::new(),
+            exchange_cache: DashMap::new(),
+            planet_production_cache: DashMap::new(),
         }
     }
 
@@ -141,10 +182,10 @@ impl FIOClient {
                 .map(|d| d.as_secs() < 900)
                 .unwrap_or(false);
 
-            if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
-                use std::io::Write;
-                writeln!(file, "Requesting: {} md={md}", url)?;
-            }
+            // if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
+            //     use std::io::Write;
+            //     writeln!(file, "Requesting: {} md={md}", url)?;
+            // }
 
             if md {
                 if let Ok(loaded_from_cache) = serde_json::from_reader(cache) {
@@ -153,10 +194,10 @@ impl FIOClient {
                 }
             }
         }
-        if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
-            use std::io::Write;
-            writeln!(file, "Requesting: {url}")?;
-        }
+        // if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
+        //     use std::io::Write;
+        //     writeln!(file, "Requesting: {url}")?;
+        // }
 
         while self.should_retry() {
             let resp = self
@@ -235,11 +276,22 @@ impl FIOClient {
         bail!("Failed after too many retries")
     }
 
-    pub async fn get_planet(&self, planet: &str) -> anyhow::Result<types::Planet> {
-        let resp: Option<serde_json::Value> = self.request(&format!("/planet/{planet}")).await?;
+    pub async fn get_planet(&self, planet_id: &str) -> anyhow::Result<types::Planet> {
+        if let Some(cached) = self.planet_cache.get(planet_id) {
+            if cached.expiry > Utc::now() {
+                return Ok(cached.data.clone());
+            }
+        }
+        let resp: Option<serde_json::Value> = self.request(&format!("/planet/{planet_id}")).await?;
 
+        // planet info is cached for 24 hours
         if let Some(planet) = resp {
-            Ok(types::Planet::from_json(planet)?)
+            let data = types::Planet::from_json(planet)?;
+            self.planet_cache.insert(
+                planet_id.to_string(),
+                CachedData::new(data.clone(), Duration::from_secs(86400)),
+            );
+            Ok(data)
         } else {
             bail!("Planet does not exist")
         }
@@ -261,6 +313,11 @@ impl FIOClient {
         &self,
         user: &str,
     ) -> anyhow::Result<Vec<types::Storage>> {
+        if let Some(cached) = self.storage_user_cache.get(user) {
+            if cached.expiry > Utc::now() {
+                return Ok(cached.data.clone());
+            }
+        }
         let resp: Option<serde_json::Value> = self.request(&format!("/storage/{user}")).await?;
 
         let mut v = Vec::new();
@@ -272,6 +329,11 @@ impl FIOClient {
             }
         }
 
+        // storage info is cached for 15 minutes
+        self.storage_user_cache.insert(
+            user.to_string(),
+            CachedData::new(v.clone(), Duration::from_secs(900)),
+        );
         Ok(v)
     }
 
@@ -281,14 +343,31 @@ impl FIOClient {
         user: &str,
         store: &str,
     ) -> anyhow::Result<Option<types::Storage>> {
+        if let Some(cached) = self
+            .storage_cache
+            .get(&(user.to_string(), store.to_string()))
+        {
+            if cached.expiry > Utc::now() {
+                return Ok(cached.data.clone());
+            }
+        }
+
         let resp: Option<serde_json::Value> =
             self.request(&format!("/storage/{user}/{store}")).await?;
 
-        if let Some(sto) = resp {
-            Ok(Some(types::Storage::from_json(sto)?))
+        let data = if let Some(sto) = resp {
+            Some(types::Storage::from_json(sto)?)
         } else {
-            Ok(None)
-        }
+            None
+        };
+
+        // storage info is cached for 15 minutes
+        self.storage_cache.insert(
+            (user.to_string(), store.to_string()),
+            CachedData::new(data.clone(), Duration::from_secs(900)),
+        );
+
+        return Ok(data);
     }
 
     /// Returns a list of planet IDs (AB-123x) where the given user has storage
@@ -296,6 +375,12 @@ impl FIOClient {
         &self,
         user: &str,
     ) -> anyhow::Result<Vec<types::Planet>> {
+        if let Some(cached) = self.storage_planet_cache.get(user) {
+            if cached.expiry > Utc::now() {
+                return Ok(cached.data.clone());
+            }
+        }
+
         let resp: Option<Vec<String>> = self.request(&format!("/storage/planets/{user}")).await?;
 
         let mut v = Vec::new();
@@ -306,6 +391,12 @@ impl FIOClient {
             }
         }
 
+        // storage info is cached for 24 hours
+        self.storage_planet_cache.insert(
+            user.to_string(),
+            CachedData::new(v.clone(), Duration::from_secs(86400)),
+        );
+
         Ok(v)
     }
 
@@ -314,31 +405,71 @@ impl FIOClient {
         user: &str,
         planet: &str,
     ) -> anyhow::Result<types::PlanetWorkforce> {
+        if let Some(cached) = self
+            .workforce_cache
+            .get(&(user.to_string(), planet.to_string()))
+        {
+            if cached.expiry > Utc::now() {
+                return Ok(cached.data.clone());
+            }
+        }
+
         let resp: Option<serde_json::Value> =
             self.request(&format!("/workforce/{user}/{planet}")).await?;
 
-        Ok(types::PlanetWorkforce::from_json(
-            resp.context("No workforce on planet")?,
-        )?)
+        let data = types::PlanetWorkforce::from_json(resp.context("No workforce on planet")?)?;
+
+        // workforce info is cached for 2 hours
+        self.workforce_cache.insert(
+            (user.to_string(), planet.to_string()),
+            CachedData::new(data.clone(), Duration::from_secs(7200)),
+        );
+
+        Ok(data)
     }
 
     pub async fn get_planet_localmarket(&self, planet: &str) -> anyhow::Result<types::LocalMarket> {
+        if let Some(cached) = self.localmarket_cache.get(planet) {
+            if cached.expiry > Utc::now() {
+                return Ok(cached.data.clone());
+            }
+        }
+
         let resp: Option<serde_json::Value> = self
             .request(&format!("/localmarket/planet/{planet}"))
             .await?;
 
-        if let Some(data) = resp {
-            Ok(types::LocalMarket::from_json(data)?)
+        let data = if let Some(data) = resp {
+            types::LocalMarket::from_json(data)?
         } else {
-            Ok(Default::default())
-        }
+            Default::default()
+        };
+
+        // localmarket info is cached for 15 minutes
+        self.localmarket_cache.insert(
+            planet.to_string(),
+            CachedData::new(data.clone(), Duration::from_secs(900)),
+        );
+        Ok(data)
     }
 
     pub async fn get_exchange_info(&self, ticker: &str) -> anyhow::Result<types::Ticker> {
+        if let Some(cached) = self.exchange_cache.get(ticker) {
+            if cached.expiry > Utc::now() {
+                return Ok(cached.data.clone());
+            }
+        }
+
         let resp: Option<serde_json::Value> = self.request(&format!("/exchange/{ticker}")).await?;
 
         if let Some(data) = resp {
-            Ok(types::Ticker::from_json(data)?)
+            // ticker data is cached for 15 minutes
+            let data = types::Ticker::from_json(data)?;
+            self.exchange_cache.insert(
+                ticker.to_string(),
+                CachedData::new(data.clone(), Duration::from_secs(900)),
+            );
+            Ok(data)
         } else {
             bail!("No exchange info found for this ticker")
         }
@@ -385,6 +516,15 @@ impl FIOClient {
         username: &str,
         planet: &str,
     ) -> anyhow::Result<Vec<types::ProductionLine>> {
+        if let Some(cached) = self
+            .planet_production_cache
+            .get(&(username.to_string(), planet.to_string()))
+        {
+            if cached.expiry > Utc::now() {
+                return Ok(cached.data.clone());
+            }
+        }
+
         let resp: Option<Vec<serde_json::Value>> = self
             .request(&format!("/production/{username}/{planet}"))
             .await?;
@@ -396,6 +536,12 @@ impl FIOClient {
                 v.push(order);
             }
         }
+
+        // production info is cached for 60 minutes
+        self.planet_production_cache.insert(
+            (username.to_string(), planet.to_string()),
+            CachedData::new(v.clone(), Duration::from_secs(3600)),
+        );
 
         Ok(v)
     }
