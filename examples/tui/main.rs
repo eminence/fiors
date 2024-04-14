@@ -257,6 +257,11 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
     let mut needs_redraw = NeedRefresh::APIRefresh;
     let mut last_refresh = Instant::now();
     let mut shared_state = SharedWidgetState::default();
+
+    for p in &app.planets {
+        shared_state.planet_id_map.insert(p.id.clone(), p.name.clone());
+    }
+
     loop {
         let mut switching_planets = false;
         if let Some(event) = get_events()? {
@@ -303,7 +308,6 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                 // before awaiting these calls to .update(), which might take a while, render a frame with a loading message
 
                 if switching_planets {
-                    shared_state = SharedWidgetState::default();
                     app.lm_widget
                         .switch_planets(&app.planets[app.current_tab].id);
                     app.production_widgets

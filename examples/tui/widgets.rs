@@ -99,6 +99,12 @@ fn handle_scroll(event: &Event, selected: Option<usize>, table_row_len: usize) -
 /// State that is shared between all widgets
 #[derive(Debug, Default)]
 pub struct SharedWidgetState {
-    /// A map between a material and how much we need for a 3 week supply
-    pub needs: HashMap<String, f32>,
+    /// A map from planet_id to planet_name
+    pub planet_id_map: HashMap<String, String>,
+
+    /// For each planet_id, A map between a material and how much we need per day
+    pub needs: HashMap<String, HashMap<String, f32>>,
+
+    /// For each planet_id, a map between a material and how much we have in excess
+    pub excess: HashMap<String, HashMap<String, f32>>,
 }

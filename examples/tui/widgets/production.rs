@@ -235,7 +235,21 @@ impl ProductionWidget {
 
         shared_state
             .needs
+            .entry(self.planet_id.clone())
+            .or_default()
             .extend(total_daily_consumption.clone().into_iter());
+
+        let excess_map = shared_state
+            .excess
+            .entry(self.planet_id.clone())
+            .or_default();
+        for (ticker, item) in &inv.items {
+            let long_term_needed =
+                total_daily_consumption.get(ticker.as_str()).unwrap_or(&0.0) * 21.0;
+            if item.quantity > long_term_needed.ceil() as u32 {
+                excess_map.insert(ticker.clone(), item.quantity as f32 - long_term_needed);
+            }
+        }
 
         let total_daily_consumption: Vec<_> = {
             let mut v: Vec<_> = total_daily_consumption.into_iter().collect();
@@ -275,11 +289,42 @@ impl ProductionWidget {
                 let amount_to_buy = target_amount - amount_in_inventory as f32;
                 if amount_to_buy > 0.0 {
                     // are any other bases producing a surplus of this material?
-                    // TODO
+
+                    let mut e = Span::raw("");
+
+                    let mut planets_with_excess: Vec<_> = shared_state
+                        .excess
+                        .iter()
+                        .filter_map(|(planet_id, excess)| {
+                            excess.get(&material).map(|x| {
+                                (
+                                    shared_state
+                                        .planet_id_map
+                                        .get(planet_id)
+                                        .map(|s| s.as_str())
+                                        .unwrap_or("?"),
+                                    *x,
+                                )
+                            })
+                        })
+                        .collect();
+                    planets_with_excess.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+
+                    if !planets_with_excess.is_empty() {
+                        e = Span::raw(format!(
+                            "Take from {}",
+                            planets_with_excess
+                                .iter()
+                                .map(|(p, x)| format!("{}: {}", p, format_amount(*x)))
+                                .collect::<Vec<_>>()
+                                .join(", ")
+                        ));
+                    }
 
                     needs_rows.push(Row::new(vec![
                         Span::raw(format_amount(amount_to_buy)),
                         Span::raw(material.to_string()).style(get_style_for_material(&material)),
+                        e,
                     ]));
                 }
             }
@@ -379,6 +424,7 @@ impl ProductionWidget {
             [
                 Constraint::Length(6), // amount
                 Constraint::Length(3), // ticker
+                Constraint::Fill(1),
             ],
         )
         .highlight_style(Style::default().fg(if current_widget == WidgetEnum::Needs {

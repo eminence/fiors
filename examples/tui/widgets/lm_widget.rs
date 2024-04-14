@@ -166,7 +166,7 @@ impl LocalMarketWidget {
                 if instant.total_value > ad.total_price {
                     symbol = "!";
                     notes.push(Line::from(vec![
-                        Span::raw("Can by "),
+                        Span::raw("Can buy "),
                         Span::raw(ad.material_ticker.to_string()).style(ticker_style),
                         Span::raw(format!(
                             " for {} and instantly sell for {}",
@@ -242,13 +242,14 @@ impl LocalMarketWidget {
             .await?
             .context("No inventory found")?;
 
-        for (needed_material, needed_amount) in &shared_state.needs {
+        let needs = shared_state.needs.entry(self.planet_id.clone()).or_default();
+        for (needed_material, daily_needed_amount) in needs {
             let inv_amount = inv
                 .items
                 .get(needed_material.as_str())
                 .map(|i| i.quantity)
                 .unwrap_or(0);
-            let excess_amount = inv_amount as f32 - (*needed_amount * 21.0);
+            let excess_amount = inv_amount as f32 - (*daily_needed_amount * 21.0);
 
             if excess_amount < 1.0 {
                 continue;
