@@ -1,4 +1,4 @@
-use std::{collections::HashMap, io::Read};
+use std::collections::HashMap;
 
 use anyhow::Context;
 use fiors::{
@@ -174,7 +174,7 @@ async fn main() -> anyhow::Result<()> {
 
         for (material, amount) in &total_daily_production {
             if *amount > 0.0 {
-                let colored_material = MaterialWithColor::new(&material);
+                let colored_material = MaterialWithColor::new(material);
                 println!(
                     "  Producing {} per day",
                     colored_material.with_amount(amount.round() as i32),
@@ -183,10 +183,10 @@ async fn main() -> anyhow::Result<()> {
         }
         for (material, amount) in &total_daily_production {
             if *amount < 0.0 {
-                let inv_amount = inv.items.get(&*material).map(|i| i.quantity).unwrap_or(0);
+                let inv_amount = inv.items.get(material).map(|i| i.quantity).unwrap_or(0);
                 let days = inv_amount as f32 / -amount;
 
-                let colored_material = MaterialWithColor::new(&material);
+                let colored_material = MaterialWithColor::new(material);
                 println!(
                     "  Consuming {} per day (lasting {:.1} days)",
                     colored_material.with_amount((-amount.round()) as i32),
@@ -206,8 +206,8 @@ async fn main() -> anyhow::Result<()> {
         for (_workforce_type, details) in workforce.details {
             for need in details.needs {
                 let entry = total_needs.entry(need.ticker.clone()).or_default();
-                (*entry).0 = need.essential;
-                (*entry).1 += need.units_per_interval * num_days_inventory;
+                entry.0 = need.essential;
+                entry.1 += need.units_per_interval * num_days_inventory;
             }
         }
 

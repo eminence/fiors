@@ -24,7 +24,7 @@ async fn main() -> anyhow::Result<()> {
 
         let category = format_ident!(
             "{}",
-            format!("{:?}", MaterialCategory::from_name(&category_name).unwrap())
+            format!("{:?}", MaterialCategory::from_name(category_name).unwrap())
         );
         pre.extend(quote! {
             map.insert(#ticker, StaticMaterialInfo {

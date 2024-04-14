@@ -1,5 +1,5 @@
 use anyhow::Context;
-use crossterm::event::{Event, KeyCode, KeyEvent, MouseEvent, MouseEventKind};
+use crossterm::event::{Event, KeyCode, KeyEvent};
 use fiors::{
     get_material_db,
     materials::MaterialCategory,
@@ -155,7 +155,7 @@ impl LocalMarketWidget {
                 symbol = "+";
                 notes.push(Line::from(vec![
                     Span::raw("Good deal on "),
-                    Span::raw(format!("{}", ad.material_ticker)).style(ticker_style),
+                    Span::raw(ad.material_ticker.to_string()).style(ticker_style),
                     Span::raw(" if we need any"),
                 ]));
             }
@@ -167,7 +167,7 @@ impl LocalMarketWidget {
                     symbol = "!";
                     notes.push(Line::from(vec![
                         Span::raw("Can by "),
-                        Span::raw(format!("{}", ad.material_ticker)).style(ticker_style),
+                        Span::raw(ad.material_ticker.to_string()).style(ticker_style),
                         Span::raw(format!(
                             " for {} and instantly sell for {}",
                             ad.total_price, instant.total_value
@@ -183,10 +183,10 @@ impl LocalMarketWidget {
 
             rows.push(Row::new(vec![
                 Span::raw(symbol),
-                Span::raw(format!("{}", ad.creator_company_name)),
+                Span::raw(ad.creator_company_name.to_string()),
                 Span::raw("selling"),
                 Span::raw(format_amount(ad.material_amount as f32)),
-                Span::raw(format!("{}", ad.material_ticker))
+                Span::raw(ad.material_ticker.to_string())
                     .style(get_style_for_material(&ad.material_ticker)),
                 Span::raw(format!("{} {}", format_price(ad.total_price), ad.currency)),
                 Span::raw(format!("{}/u", format_price(price_per_unit))),
@@ -194,7 +194,7 @@ impl LocalMarketWidget {
             ]));
 
             if self.table_state.selected() == Some(table_idx) {
-                self.add_details(&ad, &cx);
+                self.add_details(ad, &cx);
             }
             table_idx += 1;
         }
@@ -219,17 +219,17 @@ impl LocalMarketWidget {
 
             rows.push(Row::new(vec![
                 Span::raw(symbol),
-                Span::raw(format!("{}", ad.creator_company_name)),
+                Span::raw(ad.creator_company_name.to_string()),
                 Span::raw("buying"),
                 Span::raw(format_amount(ad.material_amount as f32)),
-                Span::raw(format!("{}", ad.material_ticker)).style(ticker_style),
+                Span::raw(ad.material_ticker.to_string()).style(ticker_style),
                 Span::raw(format!("{} {}", format_price(ad.total_price), ad.currency)),
                 Span::raw(format!("{}/u", format_price(price_per_unit))),
                 Span::raw(cx_instant),
             ]));
 
             if self.table_state.selected() == Some(table_idx) {
-                self.add_details(&ad, &cx);
+                self.add_details(ad, &cx);
             }
             table_idx += 1;
         }
@@ -258,13 +258,13 @@ impl LocalMarketWidget {
                 .get(needed_material.as_str())
                 .unwrap()
                 .category;
-            if !our_selling_orders.contains(&needed_material)
+            if !our_selling_orders.contains(needed_material)
                 && !["DW", "RAT", "COF"].contains(&needed_material.as_str())
                 && (need_category == MaterialCategory::ConsumablesBasic
                     || need_category == MaterialCategory::ConsumablesLuxury)
                 && excess_amount > 10.0
             {
-                let ticker_style = get_style_for_material(&needed_material);
+                let ticker_style = get_style_for_material(needed_material);
                 let cx = self
                     .client
                     .get_exchange_info(&format!("{needed_material}.CI1"))
@@ -278,13 +278,12 @@ impl LocalMarketWidget {
                 notes.push(
                     Line::from(vec![
                         Span::raw("We have excesses "),
-                        Span::raw(format!("{}", needed_material)).style(ticker_style),
+                        Span::raw(needed_material.to_string()).style(ticker_style),
                         Span::raw(format!(
                             ", sell 10 units on LM at proposed price of {}?",
                             proposed_price
                         )),
                     ])
-                    .into(),
                 );
             }
         }

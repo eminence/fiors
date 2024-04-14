@@ -1,12 +1,12 @@
 use std::collections::HashMap;
 
 use anyhow::Context;
-use crossterm::event::{Event, KeyCode, KeyEvent};
+use crossterm::event::Event;
 use fiors::{get_material_db, FIOClient};
 use ratatui::{
     layout::{Constraint, Direction, Layout, Margin, Rect},
     style::{self, Color, Modifier, Style},
-    text::{Line, Span},
+    text::Span,
     widgets::{self, Block, Borders, Row, Scrollbar, Table},
     Frame,
 };
@@ -153,8 +153,8 @@ impl ProductionWidget {
                 .calc_cost_of_goods_manufactured(
                     &self.username,
                     &self.planet_id,
-                    &building,
-                    &material,
+                    building,
+                    material,
                 )
                 .await?;
 
@@ -170,7 +170,7 @@ impl ProductionWidget {
             production_rows.push(Row::new(vec![
                 Span::raw("Recurring"),
                 Span::raw(format_amount(*amount)),
-                Span::raw(format!("{}", material)).style(get_style_for_material(&material)),
+                Span::raw(material.to_string()).style(get_style_for_material(material)),
                 Span::raw(if net_amount < 0.0 {
                     format!("-{}", format_amount(-net_amount))
                 } else {
@@ -218,7 +218,7 @@ impl ProductionWidget {
                     production_rows.push(Row::new(vec![
                         Span::raw("Producing"),
                         Span::raw(format_amount(output.material_amount as f32)),
-                        Span::raw(format!("{}", output.material_ticker))
+                        Span::raw(output.material_ticker.to_string())
                             .style(get_style_for_material(&output.material_ticker)),
                         Span::raw(" ---"),
                         Span::raw(format!("${}", format_price(cogm))),
@@ -243,7 +243,7 @@ impl ProductionWidget {
                 let a_cat = get_material_db().get(a.as_str()).unwrap().category;
                 let b_cat = get_material_db().get(b.as_str()).unwrap().category;
 
-                a_cat.cmp(&b_cat).then(a.cmp(&b))
+                a_cat.cmp(&b_cat).then(a.cmp(b))
             });
             v
         };
@@ -262,7 +262,7 @@ impl ProductionWidget {
                 consumption_rows.push(Row::new(vec![
                     Span::raw("Consuming"),
                     Span::raw(format_amount(net_amount)),
-                    Span::raw(format!("{}", material)).style(get_style_for_material(&material)),
+                    Span::raw(material.to_string()).style(get_style_for_material(&material)),
                     Span::raw("per day"),
                     Span::raw("lasting"),
                     Span::raw(format!("{:.1} days", days)).style(get_style_for_days(days)),
@@ -279,7 +279,7 @@ impl ProductionWidget {
 
                     needs_rows.push(Row::new(vec![
                         Span::raw(format_amount(amount_to_buy)),
-                        Span::raw(format!("{}", material)).style(get_style_for_material(&material)),
+                        Span::raw(material.to_string()).style(get_style_for_material(&material)),
                     ]));
                 }
             }

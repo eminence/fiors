@@ -740,7 +740,7 @@ mod tests {
         let client = get_test_client();
 
         let data: serde_json::Value = client
-            .request(&format!("/storage/eminence32"))
+            .request("/storage/eminence32")
             .await
             .unwrap()
             .unwrap();
@@ -750,7 +750,7 @@ mod tests {
         )?;
 
         let data: serde_json::Value = client
-            .request(&format!("/exchange/SF.CI1"))
+            .request("/exchange/SF.CI1")
             .await
             .unwrap()
             .unwrap();
@@ -760,7 +760,7 @@ mod tests {
         )?;
 
         let data: serde_json::Value = client
-            .request(&format!("/exchange/COT.CI1"))
+            .request("/exchange/COT.CI1")
             .await
             .unwrap()
             .unwrap();
@@ -770,7 +770,7 @@ mod tests {
         )?;
 
         let data: serde_json::Value = client
-            .request(&format!("/material/allmaterials"))
+            .request("/material/allmaterials")
             .await
             .unwrap()
             .unwrap();
@@ -809,11 +809,10 @@ mod tests {
     async fn test_planet_for_user() {
         let client = get_test_client();
         // let pli = client.get_planets_for_user("eminence32").await.unwrap();
-        let pli = client
+        client
             .get_planet_for_user("eminence32", "1e39248e468e9a6bb12938ba97b58bcf")
             .await
             .unwrap();
-        dbg!(pli);
     }
 
     #[tokio::test]
@@ -835,7 +834,6 @@ mod tests {
                 .unwrap();
             dbg!(storage);
 
-            break;
         }
     }
 
@@ -931,7 +929,7 @@ mod tests {
                 let mut total_daily_costs = daily_repair_cost;
 
                 // production scale -- multiple by this to compute how much stuff is produced per day
-                let day_scale = (86400.0 / order.duration.as_secs() as f32);
+                let day_scale = 86400.0 / order.duration.as_secs() as f32;
                 for input in &order.inputs {
                     let daily_buy_amt = input.material_amount as f32 * day_scale;
                     let cx_info = client
@@ -956,7 +954,7 @@ mod tests {
                 dbg!(details);
                 for need in &details.needs {
                     // only include this needed consumable if we have it in our inventory
-                    if true || inv.items.contains_key(&need.ticker) {
+                    if inv.items.contains_key(&need.ticker) {
                         // how much per day do we need?
                         let daily = need.units_per_one_hundred * (building.pioneers as f32 / 100.0);
                         let cx_info = client

@@ -59,7 +59,7 @@ fn get_events() -> io::Result<Option<Event>> {
     if event::poll(Duration::from_millis(500))? {
         return Ok(Some(event::read()?));
     }
-    return Ok(None);
+    Ok(None)
 
     // if event::poll(std::time::Duration::from_millis(500))? {
     //     if let Event::Key(key) = event::read()? {

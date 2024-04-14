@@ -88,7 +88,7 @@ fn handle_scroll(event: &Event, selected: Option<usize>, table_row_len: usize) -
     } else if scroll_amount == i32::MIN {
         0
     } else if scroll_amount < 0 {
-        i.saturating_sub(scroll_amount.abs() as usize)
+        i.saturating_sub(scroll_amount.unsigned_abs() as usize)
     } else {
         i
     };
