@@ -7,7 +7,6 @@ use std::{
 };
 
 use anyhow::{bail, Context};
-use building_db::StaticBuildingInfo;
 use chrono::Utc;
 use dashmap::DashMap;
 use serde::{de::DeserializeOwned, Serialize};
@@ -164,7 +163,7 @@ impl FIOClient {
         url: &str,
     ) -> anyhow::Result<Option<T>> {
         let get_cache = |path: &Path| {
-            path.join(url.trim_matches('/').replace("/", "_").replace('.', "_"))
+            path.join(url.trim_matches('/').replace(['/', '.'], "_"))
                 .with_extension("json")
         };
 
@@ -377,7 +376,7 @@ impl FIOClient {
             CachedData::new(data.clone(), Duration::from_secs(900)),
         );
 
-        return Ok(data);
+        Ok(data)
     }
 
     /// Returns a list of planet IDs (AB-123x) where the given user has storage
@@ -562,7 +561,7 @@ impl FIOClient {
         for (ticker, amount) in building.building_cost.iter() {
             let cx_info = self.get_exchange_info(&format!("{}.CI1", ticker)).await?;
             let total = cx_info
-                .instant_buy(*amount as u32)
+                .instant_buy(*amount)
                 .map(|o| o.total_value)
                 .unwrap_or(cx_info.price);
             total_cost += total;
@@ -626,7 +625,7 @@ impl FIOClient {
             total_daily_costs += daily_repair_cost;
             // production scale -- multiple by this to compute how much stuff is produced per day
 
-            let day_scale = (86400.0 / order.duration.as_secs() as f32);
+            let day_scale = 86400.0 / order.duration.as_secs() as f32;
             for input in &order.inputs {
                 let daily_buy_amt = input.material_amount as f32 * day_scale;
                 let cx_info = self

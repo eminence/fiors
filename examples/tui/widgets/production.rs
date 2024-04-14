@@ -321,7 +321,7 @@ impl ProductionWidget {
             ],
         )
         .header(
-            Row::new(vec!["", "Amt", "Mat", "Net", "COGM","CX Range"])
+            Row::new(vec!["", "Amt", "Mat", "Net", "COGM", "CX Range"])
                 .style(Style::default().add_modifier(Modifier::BOLD)),
         )
         .highlight_style(

@@ -480,7 +480,7 @@ pub struct ProductionOrderDetails {
 
 impl ProductionOrderDetails {
     pub fn get_building_ticker(&self) -> &str {
-        &self.standard_recipe_name.split(':').next().unwrap()
+        self.standard_recipe_name.split(':').next().unwrap()
     }
 }
 
@@ -506,7 +506,9 @@ impl ProductionLine {
 
     pub fn building_ticker(&self) -> &str {
         let db = get_building_db();
-        db.get(self.building_type.as_str()).expect("Unknown building type").ticker
+        db.get(self.building_type.as_str())
+            .expect("Unknown building type")
+            .ticker
     }
 
     /// For each building, calculate the daily production of inputs and outputs, across all queued orders
@@ -515,7 +517,7 @@ impl ProductionLine {
             return DailyProduction {
                 inputs: Default::default(),
                 outputs: Default::default(),
-            }
+            };
         }
 
         let queued_orders: Vec<_> = self
@@ -629,8 +631,8 @@ where
 {
     let s: i64 = i64::deserialize(d)?;
 
-    Ok(DateTime::from_timestamp_millis(s)
-        .ok_or_else(|| serde::de::Error::custom("Failed to convert epochms to date"))?)
+    DateTime::from_timestamp_millis(s)
+        .ok_or_else(|| serde::de::Error::custom("Failed to convert epochms to date"))
 }
 
 fn ms_to_duration<'de, D>(d: D) -> Result<Duration, D::Error>

@@ -14,7 +14,7 @@ pub struct StaticMaterialInfo {
 }
 static DB: once_cell::sync::OnceCell<HashMap<&'static str, StaticMaterialInfo>> = OnceCell::new();
 pub fn get_material_db() -> &'static HashMap<&'static str, StaticMaterialInfo> {
-    DB.get_or_init(|| construct_material_db())
+    DB.get_or_init(construct_material_db)
 }
 pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
     let mut map = HashMap::new();

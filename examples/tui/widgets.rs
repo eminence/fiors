@@ -96,7 +96,6 @@ fn handle_scroll(event: &Event, selected: Option<usize>, table_row_len: usize) -
     Some(new_i)
 }
 
-
 /// State that is shared between all widgets
 #[derive(Debug, Default)]
 pub struct SharedWidgetState {

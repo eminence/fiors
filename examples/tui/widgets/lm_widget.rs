@@ -338,20 +338,19 @@ impl LocalMarketWidget {
 
         // construct paragraph to hold other info
         let paragraph = Paragraph::new(self.notes.clone())
-        .wrap(Wrap { trim: true })
-        .block(
-            Block::default()
-                .title("LM notes")
-                .border_style(style::Style::default().fg(
-                    if current_widget == WidgetEnum::LMNotes {
-                        Color::Cyan
-                    } else {
-                        Color::White
-                    },
-                ))
-                .borders(Borders::ALL)
-                ,
-        );
+            .wrap(Wrap { trim: true })
+            .block(
+                Block::default()
+                    .title("LM notes")
+                    .border_style(style::Style::default().fg(
+                        if current_widget == WidgetEnum::LMNotes {
+                            Color::Cyan
+                        } else {
+                            Color::White
+                        },
+                    ))
+                    .borders(Borders::ALL),
+            );
 
         let chunks = if self.details.is_some() {
             Layout::default()
