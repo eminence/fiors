@@ -194,12 +194,14 @@ impl FIOClient {
                 }
             }
         }
-        // if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
-        //     use std::io::Write;
-        //     writeln!(file, "Requesting: {url}")?;
-        // }
+        if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
+            use std::io::Write;
+            let now = Utc::now();
+            writeln!(file, "{now:?} Requesting: {url}")?;
+        }
 
         while self.should_retry() {
+            let now = Utc::now();
             let resp = self
                 .client
                 .get(format!("{}/{url}", self.url_root))
@@ -216,6 +218,14 @@ impl FIOClient {
                 continue;
             }
             self.decrease_retry();
+
+            if status.as_u16() == 522 {
+                // log this to client.log
+                if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
+                    use std::io::Write;
+                    writeln!(file, "{now:?} url={url} status={status:?}")?;
+                }
+            }
 
             if status.as_u16() == 204 {
                 return Ok(None);
@@ -445,10 +455,10 @@ impl FIOClient {
             Default::default()
         };
 
-        // localmarket info is cached for 15 minutes
+        // localmarket info is cached for 10 minutes
         self.localmarket_cache.insert(
             planet.to_string(),
-            CachedData::new(data.clone(), Duration::from_secs(900)),
+            CachedData::new(data.clone(), Duration::from_secs(600)),
         );
         Ok(data)
     }
@@ -881,15 +891,15 @@ mod tests {
     async fn test_cogm() {
         let client = get_test_client();
         let prods = client
-            .get_planet_production("EMINENCE32", "Katoa")
+            .get_planet_production("EMINENCE32", "Gibson")
             .await
             .unwrap();
 
         for prod in prods {
-            if prod.planet_name != "Katoa" {
+            if prod.planet_name != "Gibson" {
                 continue;
             }
-            if prod.building_type != "refinery" {
+            if prod.building_type != "prefabPlant1" {
                 continue;
             }
 
@@ -913,7 +923,7 @@ mod tests {
                 .unwrap();
 
             for order in &prod.orders {
-                if !order.outputs.iter().any(|out| out.material_ticker == "SF")
+                if !order.outputs.iter().any(|out| out.material_ticker == "BBH")
                     || order.started.is_some()
                 {
                     continue;
@@ -947,7 +957,7 @@ mod tests {
                 dbg!(details);
                 for need in &details.needs {
                     // only include this needed consumable if we have it in our inventory
-                    if inv.items.contains_key(&need.ticker) {
+                    if true || inv.items.contains_key(&need.ticker) {
                         // how much per day do we need?
                         let daily = need.units_per_one_hundred * (building.pioneers as f32 / 100.0);
                         let cx_info = client

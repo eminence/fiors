@@ -3,6 +3,8 @@ use std::{collections::HashMap, ops::AddAssign, time::Duration};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Deserializer};
 
+use crate::get_building_db;
+
 #[derive(Debug, Clone)]
 pub struct Storage {
     pub name: Option<String>,
@@ -123,13 +125,13 @@ pub struct Ticker {
     pub currency: String,
     /// The average buy/sell price
     pub price: f32,
-    /// The current ask (buy) price
+    /// The current ask (sell) price
     ///
     /// This is the current low price for oepn sell orders.
     ///
     /// If this is `None`, then there are no sellers.
     pub ask: Option<f32>,
-    /// The current bid (sell request) price
+    /// The current bid (buy request) price
     ///
     /// This is the currnet high price for open buy orders
     ///
@@ -492,7 +494,7 @@ pub struct ProductionOrderMaterial {
 
 #[derive(Debug)]
 pub struct DailyProduction {
-    pub building_ticker: String,
+    // pub building_ticker: String,
     pub inputs: HashMap<String, f32>,
     pub outputs: HashMap<String, f32>,
 }
@@ -502,7 +504,20 @@ impl ProductionLine {
         Ok(serde_json::from_value(v)?)
     }
 
+    pub fn building_ticker(&self) -> &str {
+        let db = get_building_db();
+        db.get(self.building_type.as_str()).expect("Unknown building type").ticker
+    }
+
+    /// For each building, calculate the daily production of inputs and outputs, across all queued orders
     pub fn daily_production(&self) -> DailyProduction {
+        if self.orders.is_empty() {
+            return DailyProduction {
+                inputs: Default::default(),
+                outputs: Default::default(),
+            }
+        }
+
         let queued_orders: Vec<_> = self
             .orders
             .iter()
@@ -517,7 +532,7 @@ impl ProductionLine {
             .sum::<f32>()
             / 86400.0;
 
-        let building_ticker = self.orders.first().unwrap().get_building_ticker();
+        // let building_ticker = self.orders.first().unwrap().get_building_ticker();
 
         // dbg!(&queued_orders);
         let mut total_inputs = HashMap::new();
@@ -562,7 +577,7 @@ impl ProductionLine {
         DailyProduction {
             inputs: total_inputs,
             outputs: total_outputs,
-            building_ticker: building_ticker.to_string(),
+            // building_ticker: building_ticker.to_string(),
         }
     }
 }

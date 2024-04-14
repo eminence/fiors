@@ -1,4 +1,6 @@
 mod lm_widget;
+use std::collections::HashMap;
+
 use crossterm::event::{Event, KeyCode, KeyEvent, MouseEvent, MouseEventKind};
 pub use lm_widget::LocalMarketWidget;
 
@@ -92,4 +94,12 @@ fn handle_scroll(event: &Event, selected: Option<usize>, table_row_len: usize) -
     };
 
     Some(new_i)
+}
+
+
+/// State that is shared between all widgets
+#[derive(Debug, Default)]
+pub struct SharedWidgetState {
+    /// A map between a material and how much we need for a 3 week supply
+    pub needs: HashMap<String, f32>,
 }

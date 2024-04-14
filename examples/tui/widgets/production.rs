@@ -5,15 +5,15 @@ use crossterm::event::{Event, KeyCode, KeyEvent};
 use fiors::{get_material_db, FIOClient};
 use ratatui::{
     layout::{Constraint, Direction, Layout, Margin, Rect},
-    style::{self, Color, Style},
+    style::{self, Color, Modifier, Style},
     text::{Line, Span},
     widgets::{self, Block, Borders, Row, Scrollbar, Table},
     Frame,
 };
 
-use crate::{get_style_for_days, get_style_for_material};
+use crate::{format_amount, format_price, get_style_for_days, get_style_for_material, NeedRefresh};
 
-use super::{handle_scroll, WidgetEnum};
+use super::{handle_scroll, SharedWidgetState, WidgetEnum};
 
 pub struct ProductionWidget {
     client: &'static FIOClient,
@@ -41,7 +41,7 @@ impl ProductionWidget {
         }
     }
 
-    pub async fn switch_planets(&mut self, planet_id: &str) {
+    pub fn switch_planets(&mut self, planet_id: &str) {
         self.planet_id = planet_id.to_string();
         for t in &mut self.table_state {
             t.select(None);
@@ -49,14 +49,17 @@ impl ProductionWidget {
         for t in &mut self.scrollbar_state {
             t.first();
         }
+        self.production_rows.clear();
+        self.consumption_rows.clear();
+        self.needs_rows.clear();
     }
     /// Return true if we scrolled and need to redraw the widget
-    pub fn handle_input(&mut self, event: &Event, current_widget: WidgetEnum) -> bool {
+    pub fn handle_input(&mut self, event: &Event, current_widget: WidgetEnum) -> NeedRefresh {
         let (state_idx, table_vec) = match current_widget {
             WidgetEnum::Production => (0, &self.production_rows),
             WidgetEnum::Consumption => (1, &self.consumption_rows),
             WidgetEnum::Needs => (2, &self.needs_rows),
-            _ => return false,
+            _ => return NeedRefresh::No,
         };
 
         let i = self.table_state[state_idx].selected();
@@ -66,16 +69,17 @@ impl ProductionWidget {
             self.scrollbar_state[state_idx] = self.scrollbar_state[state_idx].position(idx);
         }
 
-        i != new_i
+        if i != new_i {
+            NeedRefresh::Redraw
+        } else {
+            NeedRefresh::No
+        }
     }
 
-    pub async fn update(&mut self) -> anyhow::Result<()> {
+    pub async fn update(&mut self, shared_state: &mut SharedWidgetState) -> anyhow::Result<()> {
         let mut production_rows = Vec::new();
         let mut consumption_rows = Vec::new();
         let mut needs_rows = Vec::new();
-
-        //A map of our needs, from ticker name to (is_essential, amount_needed)   (where amount_needed is per 3 weeks)
-        let mut total_needs: HashMap<String, (bool, f32)> = HashMap::new();
 
         // get our base inventory for this planet
         let inv = self
@@ -93,13 +97,13 @@ impl ProductionWidget {
         let mut total_daily_production: HashMap<(String, String), f32> = HashMap::new();
         // map from material to daily consumption
         let mut total_daily_consumption = HashMap::new();
-        for prod in production_lines {
+        for prod in &production_lines {
             // if prod.building_type != "prefabPlant1" { continue }
             // dbg!(&prod);
             let daily = prod.daily_production();
             for (mat, amt) in daily.outputs {
                 *total_daily_production
-                    .entry((mat, daily.building_ticker.clone()))
+                    .entry((mat, prod.building_ticker().to_string()))
                     .or_insert(0.0) += amt;
             }
             for (mat, amt) in daily.inputs {
@@ -142,33 +146,97 @@ impl ProductionWidget {
                     .get(material)
                     .copied()
                     .unwrap_or_default();
-            if net_amount > 0.0 {
-                // let colored_material = MaterialWithColor::new(&material);
-                // println!(
-                //     "  Producing {} per day",
-                //     colored_material.with_amount(amount.round() as i32),
-                // );
 
-                // what is our COGM?
-                let cogm = self
-                    .client
-                    .calc_cost_of_goods_manufactured(
-                        &self.username,
-                        &self.planet_id,
-                        &building,
-                        &material,
-                    )
-                    .await?;
+            // what is our COGM?
+            let cogm = self
+                .client
+                .calc_cost_of_goods_manufactured(
+                    &self.username,
+                    &self.planet_id,
+                    &building,
+                    &material,
+                )
+                .await?;
 
-                production_rows.push(Row::new(vec![
-                    Span::raw("Producing"),
-                    Span::raw(format!("{amount:.1}")),
-                    Span::raw(format!("{}", material)).style(get_style_for_material(&material)),
-                    Span::raw("per day"),
-                    Span::raw(format!("@{:.1} CIS", cogm)),
-                ]));
+            // what's the CX price range
+            let cx = self
+                .client
+                .get_exchange_info(&format!("{material}.CI1"))
+                .await?;
+
+            let cx_min = cx.bid.unwrap_or(cx.price).min(cx.price).min(cx.low);
+            let cx_max = cx.ask.unwrap_or(cx.price).max(cx.price).max(cx.high);
+
+            production_rows.push(Row::new(vec![
+                Span::raw("Recurring"),
+                Span::raw(format_amount(*amount)),
+                Span::raw(format!("{}", material)).style(get_style_for_material(&material)),
+                Span::raw(if net_amount < 0.0 {
+                    format!("-{}", format_amount(-net_amount))
+                } else {
+                    format!(" {}", format_amount(net_amount))
+                }),
+                Span::raw(format!("${}", format_price(cogm))),
+                Span::raw(format!(
+                    "${} - ${}",
+                    format_price(cx_min),
+                    format_price(cx_max)
+                )),
+            ]));
+        }
+
+        // now consider production lines that are handling non-recurring orders
+        let mut things_already_reported = Vec::new();
+        for prod in &production_lines {
+            for order in &prod.orders {
+                if order.recurring {
+                    continue;
+                }
+                for output in &order.outputs {
+                    if things_already_reported.contains(&output.material_ticker) {
+                        continue;
+                    }
+                    let cogm = self
+                        .client
+                        .calc_cost_of_goods_manufactured(
+                            &self.username,
+                            &self.planet_id,
+                            prod.building_ticker(),
+                            &output.material_ticker,
+                        )
+                        .await?;
+
+                    // what's the CX price range
+                    let cx = self
+                        .client
+                        .get_exchange_info(&format!("{}.CI1", output.material_ticker))
+                        .await?;
+
+                    let cx_min = cx.bid.unwrap_or(cx.price).min(cx.price).min(cx.low);
+                    let cx_max = cx.ask.unwrap_or(cx.price).max(cx.price).max(cx.high);
+
+                    production_rows.push(Row::new(vec![
+                        Span::raw("Producing"),
+                        Span::raw(format_amount(output.material_amount as f32)),
+                        Span::raw(format!("{}", output.material_ticker))
+                            .style(get_style_for_material(&output.material_ticker)),
+                        Span::raw(" ---"),
+                        Span::raw(format!("${}", format_price(cogm))),
+                        Span::raw(format!(
+                            "${} - ${}",
+                            format_price(cx_min),
+                            format_price(cx_max)
+                        )),
+                    ]));
+                    things_already_reported.push(output.material_ticker.clone());
+                }
             }
         }
+
+        shared_state
+            .needs
+            .extend(total_daily_consumption.clone().into_iter());
+
         let total_daily_consumption: Vec<_> = {
             let mut v: Vec<_> = total_daily_consumption.into_iter().collect();
             v.sort_by(|(a, _), (b, _)| {
@@ -193,7 +261,7 @@ impl ProductionWidget {
 
                 consumption_rows.push(Row::new(vec![
                     Span::raw("Consuming"),
-                    Span::raw(format!("{:.1}", net_amount)),
+                    Span::raw(format_amount(net_amount)),
                     Span::raw(format!("{}", material)).style(get_style_for_material(&material)),
                     Span::raw("per day"),
                     Span::raw("lasting"),
@@ -210,7 +278,7 @@ impl ProductionWidget {
                     // TODO
 
                     needs_rows.push(Row::new(vec![
-                        Span::raw(format!("{:.1}", amount_to_buy)),
+                        Span::raw(format_amount(amount_to_buy)),
                         Span::raw(format!("{}", material)).style(get_style_for_material(&material)),
                     ]));
                 }
@@ -247,23 +315,32 @@ impl ProductionWidget {
                 Constraint::Length(9), // "Producing"
                 Constraint::Length(4), // amount
                 Constraint::Length(3), // ticker
-                Constraint::Length(7), // "Per day"
+                Constraint::Length(5), // " Net"
                 Constraint::Fill(1),   // "COGM"
+                Constraint::Fill(1),   // CX
             ],
         )
-        .highlight_style(Style::default().fg(if current_widget == WidgetEnum::Production {
-            Color::Indexed(14)
-        } else {
-            Color::White
-        }))
+        .header(
+            Row::new(vec!["", "Amt", "Mat", "Net", "COGM","CX Range"])
+                .style(Style::default().add_modifier(Modifier::BOLD)),
+        )
+        .highlight_style(
+            Style::default().fg(if current_widget == WidgetEnum::Production {
+                Color::Indexed(14)
+            } else {
+                Color::White
+            }),
+        )
         .block(
             Block::default()
-                .title("Net Production")
-                .border_style(style::Style::default().fg(if current_widget == WidgetEnum::Production {
-                    Color::Cyan
-                } else {
-                    Color::White
-                }))
+                .title("Production")
+                .border_style(style::Style::default().fg(
+                    if current_widget == WidgetEnum::Production {
+                        Color::Cyan
+                    } else {
+                        Color::White
+                    },
+                ))
                 .borders(Borders::ALL),
         );
 
@@ -281,11 +358,13 @@ impl ProductionWidget {
         .block(
             Block::default()
                 .title("Net Consumption")
-                .border_style(style::Style::default().fg(if current_widget == WidgetEnum::Consumption {
-                    Color::Cyan
-                } else {
-                    Color::White
-                }))
+                .border_style(style::Style::default().fg(
+                    if current_widget == WidgetEnum::Consumption {
+                        Color::Cyan
+                    } else {
+                        Color::White
+                    },
+                ))
                 .borders(Borders::ALL),
         );
 
@@ -310,11 +389,13 @@ impl ProductionWidget {
         .block(
             Block::default()
                 .title("Needs to acquire")
-                .border_style(style::Style::default().fg(if current_widget == WidgetEnum::Needs {
-                    Color::Cyan
-                } else {
-                    Color::White
-                }))
+                .border_style(
+                    style::Style::default().fg(if current_widget == WidgetEnum::Needs {
+                        Color::Cyan
+                    } else {
+                        Color::White
+                    }),
+                )
                 .borders(Borders::ALL),
         );
 
