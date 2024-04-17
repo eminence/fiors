@@ -80,7 +80,7 @@ async fn main() -> anyhow::Result<()> {
                 ad.total_price,
                 price_per_unit,
                 ad.currency,
-                100.0 * price_per_unit / cx.price
+                100.0 * price_per_unit / cx.price.unwrap()
             );
 
             // if we buy this local market ad, can we instantly sell it on the CX for a profit?
@@ -128,7 +128,7 @@ async fn main() -> anyhow::Result<()> {
                 ad.total_price,
                 price_per_unit,
                 ad.currency,
-                100.0 * price_per_unit / cx.price
+                100.0 * price_per_unit / cx.price.unwrap()
             );
 
             // can we buy this from the CX instantly and sell it to this local market ad for a profit?
@@ -237,7 +237,7 @@ async fn main() -> anyhow::Result<()> {
                         } else {
                             0.0
                         };
-                        let proposed_price = 10.0 * cx.high * 1.15 + lm_fee;
+                        let proposed_price = 10.0 * cx.high.unwrap() * 1.15 + lm_fee;
                         let colored_inv = MaterialWithColor::new(&inv.ticker);
                         println!("  +++ We have {} in inventory, only need {}, post a sell order on the LM (proposed 10 units at {proposed_price})",
                         colored_inv.with_amount(inv.quantity as i32),  amount);

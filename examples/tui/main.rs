@@ -259,7 +259,9 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
     let mut shared_state = SharedWidgetState::default();
 
     for p in &app.planets {
-        shared_state.planet_id_map.insert(p.id.clone(), p.name.clone());
+        shared_state
+            .planet_id_map
+            .insert(p.id.clone(), p.name.clone());
     }
 
     loop {

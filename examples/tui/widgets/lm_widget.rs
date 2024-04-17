@@ -151,7 +151,7 @@ impl LocalMarketWidget {
                 .await?;
 
             let price_per_unit = ad.total_price / ad.material_amount as f32;
-            if price_per_unit < cx.ask.unwrap_or(cx.price) {
+            if price_per_unit < cx.ask.unwrap_or(cx.price.unwrap()) {
                 symbol = "+";
                 notes.push(Line::from(vec![
                     Span::raw("Good deal on "),
@@ -206,7 +206,7 @@ impl LocalMarketWidget {
                 .client
                 .get_exchange_info(&format!("{}.CI1", ad.material_ticker))
                 .await?;
-            if price_per_unit > cx.bid.unwrap_or(cx.price) {
+            if price_per_unit > cx.bid.unwrap_or(cx.price.unwrap()) {
                 notes.push(Line::raw(format!("Good deal on {}", ad.material_ticker)));
                 symbol = "+";
             }
@@ -242,7 +242,10 @@ impl LocalMarketWidget {
             .await?
             .context("No inventory found")?;
 
-        let needs = shared_state.needs.entry(self.planet_id.clone()).or_default();
+        let needs = shared_state
+            .needs
+            .entry(self.planet_id.clone())
+            .or_default();
         for (needed_material, daily_needed_amount) in needs {
             let inv_amount = inv
                 .items
@@ -275,17 +278,16 @@ impl LocalMarketWidget {
                 } else {
                     0.0
                 };
-                let proposed_price = ((10.0 * cx.high * 1.15 + lm_fee) / 10.0).floor() * 10.0;
-                notes.push(
-                    Line::from(vec![
-                        Span::raw("We have excesses "),
-                        Span::raw(needed_material.to_string()).style(ticker_style),
-                        Span::raw(format!(
-                            ", sell 10 units on LM at proposed price of {}?",
-                            proposed_price
-                        )),
-                    ])
-                );
+                let proposed_price =
+                    ((10.0 * cx.high.unwrap() * 1.15 + lm_fee) / 10.0).floor() * 10.0;
+                notes.push(Line::from(vec![
+                    Span::raw("We have excesses "),
+                    Span::raw(needed_material.to_string()).style(ticker_style),
+                    Span::raw(format!(
+                        ", sell 10 units on LM at proposed price of {}?",
+                        proposed_price
+                    )),
+                ]));
             }
         }
 

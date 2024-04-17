@@ -124,7 +124,7 @@ pub struct Ticker {
     pub name: String,
     pub currency: String,
     /// The average buy/sell price
-    pub price: f32,
+    pub price: Option<f32>,
     /// The current ask (sell) price
     ///
     /// This is the current low price for oepn sell orders.
@@ -139,12 +139,23 @@ pub struct Ticker {
     pub bid: Option<f32>,
 
     /// The highest price seen in the past 24 hours
-    pub high: f32,
+    pub high: Option<f32>,
     /// The lowest price seen in the past 24 hours
-    pub low: f32,
+    pub low: Option<f32>,
 
     pub buying_orders: Vec<MarketOrder>,
     pub selling_orders: Vec<MarketOrder>,
+}
+
+impl Ticker {
+    /// For when you really just need some price for this thing and aren't picky about what kind of price
+    pub fn get_any_price(&self) -> Option<f32> {
+        self.price
+            .or(self.ask)
+            .or(self.bid)
+            .or(self.high)
+            .or(self.low)
+    }
 }
 
 /// Info about an instant buy or sell order
@@ -230,8 +241,11 @@ impl Ticker {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct MarketOrder {
+    /// Company Code
+    ///
+    /// Might be null if a company has been liquidated
     #[serde(rename = "CompanyCode")]
-    pub company_code: String,
+    pub company_code: Option<String>,
     #[serde(rename = "CompanyName")]
     pub company_name: String,
 
@@ -258,9 +272,9 @@ impl Ticker {
             ask: Option<f32>,
             bid: Option<f32>,
 
-            high: f32,
-            low: f32,
-            price: f32,
+            high: Option<f32>,
+            low: Option<f32>,
+            price: Option<f32>,
 
             buying_orders: Vec<MarketOrder>,
             selling_orders: Vec<MarketOrder>,

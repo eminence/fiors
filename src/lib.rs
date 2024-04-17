@@ -162,37 +162,6 @@ impl FIOClient {
         &self,
         url: &str,
     ) -> anyhow::Result<Option<T>> {
-        let get_cache = |path: &Path| {
-            path.join(url.trim_matches('/').replace(['/', '.'], "_"))
-                .with_extension("json")
-        };
-
-        if let Some(cache) = self
-            .local_cache_dir
-            .as_deref()
-            .map(get_cache)
-            .and_then(|path| File::open(path).ok())
-        {
-            let md = cache
-                .metadata()
-                .ok()
-                .and_then(|md| md.modified().ok())
-                .and_then(|md| md.elapsed().ok())
-                .map(|d| d.as_secs() < 900)
-                .unwrap_or(false);
-
-            // if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
-            //     use std::io::Write;
-            //     writeln!(file, "Requesting: {} md={md}", url)?;
-            // }
-
-            if md {
-                if let Ok(loaded_from_cache) = serde_json::from_reader(cache) {
-                    // println!("Returning from cache");
-                    return Ok(Some(loaded_from_cache));
-                }
-            }
-        }
         if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
             use std::io::Write;
             let now = Utc::now();
@@ -210,14 +179,6 @@ impl FIOClient {
                 .await?;
 
             let status = resp.status();
-            if status.as_u16() == 429 {
-                // dbg!(resp.headers());
-                self.retry_sleep().await;
-                self.increase_retry();
-                continue;
-            }
-            self.decrease_retry();
-
             if status.as_u16() == 522 {
                 // log this to client.log
                 if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
@@ -226,26 +187,17 @@ impl FIOClient {
                 }
             }
 
+            if status.as_u16() == 429 || status.as_u16() == 522 {
+                self.retry_sleep().await;
+                self.increase_retry();
+                continue;
+            }
+            self.decrease_retry();
+
             if status.as_u16() == 204 {
                 return Ok(None);
             } else if status.is_success() {
                 let data: T = resp.json().await?;
-
-                if let Some(cache) = self
-                    .local_cache_dir
-                    .as_deref()
-                    .map(get_cache)
-                    .map(|path| {
-                        if let Some(p) = path.parent() {
-                            let _ = std::fs::create_dir_all(p);
-                        }
-                        path
-                    })
-                    .and_then(|path| File::create(path).ok())
-                {
-                    serde_json::to_writer_pretty(cache, &data)?;
-                }
-
                 return Ok(Some(data));
             } else {
                 bail!("Request not successful: {:?}", status);
@@ -469,16 +421,26 @@ impl FIOClient {
             }
         }
 
-        let resp: Option<serde_json::Value> = self.request(&format!("/exchange/{ticker}")).await?;
+        // it's more efficient to get the full exchange info (and cache it), than it is to request info on each ticker we need
+        let resp: Option<Vec<serde_json::Value>> = self.request("/exchange/full").await?;
 
         if let Some(data) = resp {
             // ticker data is cached for 15 minutes
-            let data = types::Ticker::from_json(data)?;
-            self.exchange_cache.insert(
-                ticker.to_string(),
-                CachedData::new(data.clone(), Duration::from_secs(900)),
-            );
-            Ok(data)
+            for ticker_data in data {
+                let x = serde_json::to_string_pretty(&ticker_data).unwrap();
+                let individual_ticker = types::Ticker::from_json(ticker_data).with_context(|| x)?;
+                self.exchange_cache.insert(
+                    individual_ticker.name.clone(),
+                    CachedData::new(individual_ticker, Duration::from_secs(900)),
+                );
+            }
+
+            // now get our data out of the cache
+            Ok(self
+                .exchange_cache
+                .get(ticker)
+                .map(|t| t.data.clone())
+                .context("No exchange info found for this ticker")?)
         } else {
             bail!("No exchange info found for this ticker")
         }
@@ -563,7 +525,8 @@ impl FIOClient {
             let total = cx_info
                 .instant_buy(*amount)
                 .map(|o| o.total_value)
-                .unwrap_or(cx_info.price);
+                .or_else(|| cx_info.get_any_price())
+                .unwrap();
             total_cost += total;
         }
 
@@ -632,8 +595,12 @@ impl FIOClient {
                     .get_exchange_info(&format!("{}.CI1", input.material_ticker))
                     .await
                     .unwrap();
-                let total = cx_info.instant_buy(daily_buy_amt.ceil() as u32).unwrap();
-                total_daily_costs += total.total_value;
+
+                if let Some(total) = cx_info.instant_buy(daily_buy_amt.ceil() as u32) {
+                    total_daily_costs += total.total_value;
+                } else if let Some(x) = cx_info.price {
+                    total_daily_costs += x * daily_buy_amt.ceil();
+                }
                 // println!(
                 //     "{}:  qty={} total={}",
                 //     input.material_ticker, daily_buy_amt, total.total_value
@@ -663,7 +630,7 @@ impl FIOClient {
                             .get_exchange_info(&format!("{}.CI1", need.ticker))
                             .await
                             .unwrap();
-                        total += cx_info.ask.unwrap_or(cx_info.price) * daily;
+                        total += cx_info.ask.or_else(|| cx_info.get_any_price()).unwrap() * daily;
                     }
                 }
                 total
@@ -749,21 +716,13 @@ mod tests {
             &data,
         )?;
 
-        let data: serde_json::Value = client
-            .request("/exchange/SF.CI1")
-            .await
-            .unwrap()
-            .unwrap();
+        let data: serde_json::Value = client.request("/exchange/SF.CI1").await.unwrap().unwrap();
         serde_json::to_writer_pretty(
             std::fs::File::create("test_data/exchange_SF_CI1.json")?,
             &data,
         )?;
 
-        let data: serde_json::Value = client
-            .request("/exchange/COT.CI1")
-            .await
-            .unwrap()
-            .unwrap();
+        let data: serde_json::Value = client.request("/exchange/COT.CI1").await.unwrap().unwrap();
         serde_json::to_writer_pretty(
             std::fs::File::create("test_data/exchange_COT_CI1.json")?,
             &data,
@@ -833,7 +792,6 @@ mod tests {
                 .await
                 .unwrap();
             dbg!(storage);
-
         }
     }
 
@@ -961,7 +919,8 @@ mod tests {
                             .get_exchange_info(&format!("{}.CI1", need.ticker))
                             .await
                             .unwrap();
-                        let total = cx_info.ask.unwrap_or(cx_info.price) * daily; //cx_info.instant_buy(daily.ceil() as u32).unwrap();
+                        let total =
+                            cx_info.ask.or_else(|| cx_info.get_any_price()).unwrap() * daily; //cx_info.instant_buy(daily.ceil() as u32).unwrap();
                         println!(
                             "Need {} per day({daily}), costing {}",
                             MaterialWithColor::new(&need.ticker).with_amount(daily.ceil() as i32),

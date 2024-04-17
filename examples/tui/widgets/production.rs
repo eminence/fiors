@@ -164,8 +164,15 @@ impl ProductionWidget {
                 .get_exchange_info(&format!("{material}.CI1"))
                 .await?;
 
-            let cx_min = cx.bid.unwrap_or(cx.price).min(cx.price).min(cx.low);
-            let cx_max = cx.ask.unwrap_or(cx.price).max(cx.price).max(cx.high);
+            let mut prices: Vec<f32> = vec![cx.price, cx.bid, cx.ask, cx.low, cx.high]
+                .iter()
+                .flatten()
+                .copied()
+                .collect();
+            prices.sort_by(f32::total_cmp);
+
+            let cx_min = *prices.first().unwrap();
+            let cx_max = *prices.last().unwrap();
 
             production_rows.push(Row::new(vec![
                 Span::raw("Recurring"),
@@ -212,8 +219,15 @@ impl ProductionWidget {
                         .get_exchange_info(&format!("{}.CI1", output.material_ticker))
                         .await?;
 
-                    let cx_min = cx.bid.unwrap_or(cx.price).min(cx.price).min(cx.low);
-                    let cx_max = cx.ask.unwrap_or(cx.price).max(cx.price).max(cx.high);
+                    let mut prices: Vec<f32> = vec![cx.price, cx.bid, cx.ask, cx.low, cx.high]
+                        .iter()
+                        .flatten()
+                        .copied()
+                        .collect();
+                    prices.sort_by(f32::total_cmp);
+
+                    let cx_min = *prices.first().unwrap();
+                    let cx_max = *prices.last().unwrap();
 
                     production_rows.push(Row::new(vec![
                         Span::raw("Producing"),
