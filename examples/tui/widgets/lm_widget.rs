@@ -7,7 +7,7 @@ use fiors::{
     FIOClient,
 };
 use ratatui::{
-    layout::{Constraint, Direction, Layout, Margin, Rect},
+    layout::{Constraint, Direction, Flex, Layout, Margin, Rect},
     style::{self, Color, Modifier, Style},
     text::{Line, Span},
     widgets::{self, Block, Borders, Paragraph, Row, Scrollbar, Table, Wrap},
@@ -312,6 +312,7 @@ impl LocalMarketWidget {
                 Constraint::Length(5), // percent of CX
             ],
         )
+        .flex(Flex::Start)
         .header(
             Row::new(vec![
                 "", "Company", "Action", "Amt", "Mat", "Price", "PPU", "CX %",

@@ -518,7 +518,7 @@ impl ProductionLine {
         Ok(serde_json::from_value(v)?)
     }
 
-    pub fn building_ticker(&self) -> &str {
+    pub fn building_ticker(&self) -> &'static str {
         let db = get_building_db();
         db.get(self.building_type.as_str())
             .expect("Unknown building type")

@@ -4,7 +4,7 @@ use anyhow::Context;
 use crossterm::event::Event;
 use fiors::{get_material_db, FIOClient};
 use ratatui::{
-    layout::{Constraint, Direction, Layout, Margin, Rect},
+    layout::{Constraint, Direction, Flex, Layout, Margin, Rect},
     style::{self, Color, Modifier, Style},
     text::Span,
     widgets::{self, Block, Borders, Row, Scrollbar, Table},
@@ -147,16 +147,40 @@ impl ProductionWidget {
                     .copied()
                     .unwrap_or_default();
 
-            // what is our COGM?
-            let cogm = self
+            // what is our COGM if we bought everything from the market?
+            let market_cogm = self
                 .client
                 .calc_cost_of_goods_manufactured(
                     &self.username,
                     &self.planet_id,
                     building,
                     material,
+                    None,
                 )
-                .await?;
+                .await?
+                .unwrap();
+
+            // what is our COGM if accounted for our own production?
+            let our_cogm = self
+                .client
+                .calc_cost_of_goods_manufactured(
+                    &self.username,
+                    &self.planet_id,
+                    building,
+                    material,
+                    Some(&shared_state.cogm),
+                )
+                .await?
+                .unwrap();
+
+            let best_cogm = market_cogm.min(our_cogm);
+            let worst_cogm = market_cogm.max(our_cogm);
+
+            shared_state
+                .cogm
+                .entry(material.clone())
+                .and_modify(|x| *x = x.min(best_cogm))
+                .or_insert(best_cogm);
 
             // what's the CX price range
             let cx = self
@@ -164,7 +188,7 @@ impl ProductionWidget {
                 .get_exchange_info(&format!("{material}.CI1"))
                 .await?;
 
-            let mut prices: Vec<f32> = vec![cx.price, cx.bid, cx.ask, cx.low, cx.high]
+            let mut prices: Vec<f32> = [cx.price, cx.bid, cx.ask, cx.low, cx.high]
                 .iter()
                 .flatten()
                 .copied()
@@ -183,7 +207,8 @@ impl ProductionWidget {
                 } else {
                     format!(" {}", format_amount(net_amount))
                 }),
-                Span::raw(format!("${}", format_price(cogm))),
+                Span::raw(format!("${}", format_price(best_cogm))),
+                Span::raw(format!("${}", format_price(worst_cogm))),
                 Span::raw(format!(
                     "${} - ${}",
                     format_price(cx_min),
@@ -193,25 +218,50 @@ impl ProductionWidget {
         }
 
         // now consider production lines that are handling non-recurring orders
-        let mut things_already_reported = Vec::new();
+        let mut things_already_reported: Vec<(String, &str)> = Vec::new();
         for prod in &production_lines {
             for order in &prod.orders {
                 if order.recurring {
                     continue;
                 }
                 for output in &order.outputs {
-                    if things_already_reported.contains(&output.material_ticker) {
+                    if things_already_reported
+                        .contains(&(output.material_ticker.to_string(), prod.building_ticker()))
+                    {
                         continue;
                     }
-                    let cogm = self
+                    let market_cogm = self
                         .client
                         .calc_cost_of_goods_manufactured(
                             &self.username,
                             &self.planet_id,
                             prod.building_ticker(),
                             &output.material_ticker,
+                            None,
                         )
-                        .await?;
+                        .await?
+                        .unwrap();
+
+                    let our_cogm = self
+                        .client
+                        .calc_cost_of_goods_manufactured(
+                            &self.username,
+                            &self.planet_id,
+                            prod.building_ticker(),
+                            &output.material_ticker,
+                            Some(&shared_state.cogm),
+                        )
+                        .await?
+                        .unwrap();
+
+                    let best_cogm = market_cogm.min(our_cogm);
+                    let worst_cogm = market_cogm.max(our_cogm);
+
+                    shared_state
+                        .cogm
+                        .entry(output.material_ticker.clone())
+                        .and_modify(|x| *x = x.min(best_cogm))
+                        .or_insert(best_cogm);
 
                     // what's the CX price range
                     let cx = self
@@ -219,7 +269,7 @@ impl ProductionWidget {
                         .get_exchange_info(&format!("{}.CI1", output.material_ticker))
                         .await?;
 
-                    let mut prices: Vec<f32> = vec![cx.price, cx.bid, cx.ask, cx.low, cx.high]
+                    let mut prices: Vec<f32> = [cx.price, cx.bid, cx.ask, cx.low, cx.high]
                         .iter()
                         .flatten()
                         .copied()
@@ -235,14 +285,16 @@ impl ProductionWidget {
                         Span::raw(output.material_ticker.to_string())
                             .style(get_style_for_material(&output.material_ticker)),
                         Span::raw(" ---"),
-                        Span::raw(format!("${}", format_price(cogm))),
+                        Span::raw(format!("${}", format_price(best_cogm))),
+                        Span::raw(format!("${}", format_price(worst_cogm))),
                         Span::raw(format!(
                             "${} - ${}",
                             format_price(cx_min),
                             format_price(cx_max)
                         )),
                     ]));
-                    things_already_reported.push(output.material_ticker.clone());
+                    things_already_reported
+                        .push((output.material_ticker.clone(), prod.building_ticker()));
                 }
             }
         }
@@ -325,14 +377,44 @@ impl ProductionWidget {
                     planets_with_excess.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
 
                     if !planets_with_excess.is_empty() {
-                        e = Span::raw(format!(
-                            "Take from {}",
-                            planets_with_excess
-                                .iter()
-                                .map(|(p, x)| format!("{}: {}", p, format_amount(*x)))
-                                .collect::<Vec<_>>()
-                                .join(", ")
-                        ));
+                        let (amount_from_market, planets) = planets_with_excess.iter().fold(
+                            (amount_to_buy, "Take from".to_string()),
+                            |(amt_left, s), (p, amt_on_planet)| {
+                                if amt_left <= 0.0 {
+                                    (0.0, s)
+                                } else if *amt_on_planet >= amt_left {
+                                    (0.0, format!("{} {}: {}", s, p, format_amount(amt_left)))
+                                } else if amt_left > *amt_on_planet {
+                                    (
+                                        amt_left - amt_on_planet,
+                                        format!("{} {}: {}", s, p, format_amount(*amt_on_planet)),
+                                    )
+                                } else {
+                                    (0.0, s)
+                                }
+                            },
+                        );
+
+                        if amount_from_market > 0.0 {
+                            e = Span::raw(format!(
+                                "{planets} (plus {} from market)",
+                                format_amount(amount_from_market)
+                            ));
+                        } else {
+                            e = Span::raw(planets.to_string());
+                        }
+                    } else {
+                        let cx_info = self
+                            .client
+                            .get_exchange_info(&format!("{}.CI1", material))
+                            .await?;
+                        if let Some(a) = cx_info.instant_buy(amount_to_buy.ceil() as u32) {
+                            e = Span::raw(format!(
+                                "Buy for ${} at {}/u from CI1",
+                                format_price(a.total_value),
+                                format_price(a.price_limit)
+                            ));
+                        }
                     }
 
                     needs_rows.push(Row::new(vec![
@@ -376,11 +458,12 @@ impl ProductionWidget {
                 Constraint::Length(3), // ticker
                 Constraint::Length(5), // " Net"
                 Constraint::Fill(1),   // "COGM"
-                Constraint::Fill(1),   // CX
+                Constraint::Fill(1),   // "COGM"
+                Constraint::Fill(2),   // CX
             ],
         )
         .header(
-            Row::new(vec!["", "Amt", "Mat", "Net", "COGM", "CX Range"])
+            Row::new(vec!["", "Amt", "Mat", "Net", "COGM", "COGM", "CX Range"])
                 .style(Style::default().add_modifier(Modifier::BOLD)),
         )
         .highlight_style(

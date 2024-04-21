@@ -7,6 +7,9 @@ pub use lm_widget::LocalMarketWidget;
 mod production;
 pub use production::ProductionWidget;
 
+mod buildings;
+pub use buildings::BuildingsWidget;
+
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum WidgetEnum {
     Production,
@@ -107,4 +110,7 @@ pub struct SharedWidgetState {
 
     /// For each planet_id, a map between a material and how much we have in excess
     pub excess: HashMap<String, HashMap<String, f32>>,
+
+    /// The best COGM for each material
+    pub cogm: HashMap<String, f32>,
 }

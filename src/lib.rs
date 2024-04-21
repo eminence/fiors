@@ -533,13 +533,15 @@ impl FIOClient {
         Ok(total_cost)
     }
 
+    /// Returns Ok(None) if the given product is not produced on the given planet
     pub async fn calc_cost_of_goods_manufactured(
         &self,
         username: &str,
         planet: &str,
         building_ticker: &str,
         material_ticker: &str,
-    ) -> anyhow::Result<f32> {
+        cogm: Option<&HashMap<String, f32>>,
+    ) -> anyhow::Result<Option<f32>> {
         let prods = self.get_planet_production(username, planet).await?;
         for prod in prods {
             if !prod.orders.iter().any(|order| {
@@ -596,11 +598,38 @@ impl FIOClient {
                     .await
                     .unwrap();
 
-                if let Some(total) = cx_info.instant_buy(daily_buy_amt.ceil() as u32) {
-                    total_daily_costs += total.total_value;
-                } else if let Some(x) = cx_info.price {
-                    total_daily_costs += x * daily_buy_amt.ceil();
+                let market_costs =
+                    if let Some(total) = cx_info.instant_buy(daily_buy_amt.ceil() as u32) {
+                        total.total_value
+                    } else if let Some(x) = cx_info.price {
+                        x * daily_buy_amt.ceil()
+                    } else if let Some(x) = cx_info.get_any_price() {
+                        x * daily_buy_amt.ceil()
+                    } else {
+                        0.0
+                    };
+
+                // println!(
+                //     "Market costs for {} units of {}: {}",
+                //     daily_buy_amt.ceil(),
+                //     input.material_ticker,
+                //     market_costs
+                // );
+
+                match cogm
+                    .and_then(|m| m.get(&input.material_ticker))
+                    .map(|cost| *cost * daily_buy_amt.ceil())
+                {
+                    Some(x) if x < market_costs => {
+                        // println!(
+                        //     "Making {} for {} is cheaper than buying at market for {}",
+                        //     input.material_ticker, x, market_costs
+                        // );
+                        total_daily_costs += x
+                    }
+                    x => total_daily_costs += market_costs,
                 }
+
                 // println!(
                 //     "{}:  qty={} total={}",
                 //     input.material_ticker, daily_buy_amt, total.total_value
@@ -682,10 +711,10 @@ impl FIOClient {
                 .await;
             }
 
-            return Ok(total_daily_costs / daily_output_amt);
+            return Ok(Some(total_daily_costs / daily_output_amt));
         }
 
-        Ok(0.0)
+        Ok(None)
     }
 }
 
@@ -823,14 +852,14 @@ mod tests {
     async fn test_production() {
         let client = get_test_client();
         let prods = client
-            .get_planet_production("EMINENCE32", "Katoa")
+            .get_planet_production("EMINENCE32", "4d8bcb1963537462b8042799a24ebaac")
             .await
             .unwrap();
         // level load across all production lines (negative values indicate daily need)
         let mut total_daily_production = HashMap::new();
         for prod in prods {
             // if prod.building_type != "prefabPlant1" { continue }
-            // dbg!(&prod);
+            dbg!(&prod);
             let daily = prod.daily_production();
             for (mat, amt) in daily.outputs {
                 *total_daily_production.entry(mat).or_insert(0.0) += amt;
@@ -846,15 +875,15 @@ mod tests {
     async fn test_cogm() {
         let client = get_test_client();
         let prods = client
-            .get_planet_production("EMINENCE32", "Gibson")
+            .get_planet_production("EMINENCE32", "Pyrgos")
             .await
             .unwrap();
 
         for prod in prods {
-            if prod.planet_name != "Gibson" {
+            if prod.planet_name != "Pyrgos" {
                 continue;
             }
-            if prod.building_type != "prefabPlant1" {
+            if prod.building_type != "farm" {
                 continue;
             }
 
@@ -878,7 +907,7 @@ mod tests {
                 .unwrap();
 
             for order in &prod.orders {
-                if !order.outputs.iter().any(|out| out.material_ticker == "BBH")
+                if !order.outputs.iter().any(|out| out.material_ticker == "BEA")
                     || order.started.is_some()
                 {
                     continue;
@@ -958,12 +987,35 @@ mod tests {
     #[tokio::test]
     async fn test_cogm2() {
         let client = get_test_client();
+        let mut map = HashMap::new();
 
         let cogm = client
-            .calc_cost_of_goods_manufactured("EMINENCE32", "Katoa", "WPL", "NL")
+            .calc_cost_of_goods_manufactured("EMINENCE32", "Umbra", "POL", "PG", None)
             .await
             .unwrap();
 
-        dbg!(cogm);
+        println!("Making PG at Umbra costs: {:?}", cogm);
+        map.insert("PG".to_string(), cogm.unwrap());
+
+        let cogm = client
+            .calc_cost_of_goods_manufactured("EMINENCE32", "Katoa", "BMP", "PE", None)
+            .await
+            .unwrap();
+
+        println!("Making PE at Katoa costs: {:?}", cogm);
+        map.insert("PE".to_string(), cogm.unwrap());
+
+        let cogm = client
+            .calc_cost_of_goods_manufactured("EMINENCE32", "Gibson", "PP1", "BDE", Some(&map))
+            .await
+            .unwrap();
+
+        println!("Making BDE at Gibon/PP1 costs: {:?}", cogm);
+        let cogm = client
+            .calc_cost_of_goods_manufactured("EMINENCE32", "Gibson", "PP2", "BDE", Some(&map))
+            .await
+            .unwrap();
+
+        println!("Making BDE at Gibon/PP2 costs: {:?}", cogm);
     }
 }
