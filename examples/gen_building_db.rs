@@ -13,7 +13,10 @@ async fn main() -> anyhow::Result<()> {
         let mut map = HashMap::new();
     };
 
-    for (_ticker, building) in all_buildings.into_iter() {
+    let mut all_buildings: Vec<_> = all_buildings.into_iter().collect();
+    all_buildings.sort_by(|a, b| a.0.cmp(&b.0));
+
+    for (_ticker, building) in all_buildings {
         let name = &building.name;
         let ticker = &building.ticker;
         let expertise = if let Some(exp) = building.expertise {
