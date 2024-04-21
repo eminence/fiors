@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use crate::materials::MaterialCategory;
 use once_cell::sync::OnceCell;
+use std::collections::HashMap;
 #[derive(Debug, Copy, Clone)]
 pub struct StaticBuildingInfo {
     pub name: &'static str,
@@ -16,7 +16,7 @@ pub struct StaticBuildingInfo {
 }
 static DB: once_cell::sync::OnceCell<HashMap<&'static str, StaticBuildingInfo>> = OnceCell::new();
 pub fn get_building_db() -> &'static HashMap<&'static str, StaticBuildingInfo> {
-    DB.get_or_init(|| { construct_building_db() })
+    DB.get_or_init(|| construct_building_db())
 }
 pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
     let mut map = HashMap::new();

@@ -16,7 +16,6 @@ async fn main() -> anyhow::Result<()> {
     let mut all_materials: Vec<_> = all_materials.into_iter().collect();
     all_materials.sort_by(|a, b| a.0.cmp(&b.0));
 
-
     for (_ticker, mat) in all_materials.iter() {
         let material_id = &mat.material_id;
         let category_name = &mat.category_name;

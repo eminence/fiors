@@ -16,12 +16,21 @@ tokio = { version = "1.37.0", features = ["full"] }
 colored = "2.1.0"
 dashmap = "5.5.3"
 
+# Stuff used to generate DB files
+proc-macro2 = { version = "1.0.81", optional = true }
+quote = { version = "1.0.35", optional = true }
+
 [dev-dependencies]
 crossterm = "0.27.0"
 prettyplease = "0.2.17"
+proc-macro2 = "1.0.81"
 quote = "1.0.35"
 ratatui = "0.26.1"
 syn = { version = "2.0.58", features = ["full"] }
+
+[features]
+default = []
+gendb = ["proc-macro2", "quote"]
 
 [profile.release]
 debug = true

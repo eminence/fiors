@@ -18,6 +18,9 @@ pub use material_db::get_material_db;
 mod building_db;
 pub use building_db::get_building_db;
 
+mod recipe_db;
+pub use recipe_db::get_recipe_db;
+
 use crate::types::{Item, WorkforceDetails};
 
 pub mod materials;
@@ -480,6 +483,15 @@ impl FIOClient {
         }
 
         Ok(map)
+    }
+
+    pub async fn get_all_recipes(&self) -> anyhow::Result<Vec<types::Recipe>> {
+        let resp: Option<Vec<serde_json::Value>> = self.request("/recipes/allrecipes").await?;
+
+        resp.unwrap()
+            .into_iter()
+            .map(types::Recipe::from_json)
+            .collect()
     }
 
     pub async fn get_planet_production(

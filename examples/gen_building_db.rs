@@ -79,9 +79,7 @@ async fn main() -> anyhow::Result<()> {
         static DB: once_cell::sync::OnceCell<HashMap<&'static str, StaticBuildingInfo>> = OnceCell::new();
 
         pub fn get_building_db() -> &'static HashMap<&'static str, StaticBuildingInfo> {
-            DB.get_or_init(|| {
-                construct_building_db()
-            })
+            DB.get_or_init(construct_building_db)
         }
 
 

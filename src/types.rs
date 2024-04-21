@@ -626,6 +626,73 @@ impl BuildingInfo {
     }
 }
 
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct Recipe {
+    pub building_ticker: String,
+    pub recipe_name: String,
+    pub standard_recipe_name: String,
+    pub inputs: Vec<RecipeMaterial>,
+    pub outputs: Vec<RecipeMaterial>,
+    #[serde(rename = "TimeMs", deserialize_with = "ms_to_duration")]
+    pub duration: Duration,
+}
+
+impl Recipe {
+    pub(crate) fn from_json(v: serde_json::Value) -> anyhow::Result<Self> {
+        Ok(serde_json::from_value(v)?)
+    }
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct RecipeMaterial {
+    pub ticker: String,
+    pub amount: u32,
+}
+
+#[cfg(feature = "gendb")]
+impl quote::ToTokens for RecipeMaterial {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        use quote::quote;
+        let ticker = self.ticker.as_str();
+        let amt = self.amount;
+
+        tokens.extend(quote! {
+            StaticRecipeMaterial {
+                ticker: #ticker,
+                amount: #amt,
+            }
+        });
+    }
+}
+
+#[cfg(feature = "gendb")]
+impl quote::ToTokens for Recipe {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
+        use quote::quote;
+
+        let building_ticker = self.building_ticker.as_str();
+        let recipe_name = self.recipe_name.as_str();
+        let standard_recipe_name = self.standard_recipe_name.as_str();
+        let duration_ms = self.duration.as_millis() as u64;
+
+        let inputs = &self.inputs;
+        let outputs = &self.outputs;
+
+        tokens.extend(quote! {
+            StaticRecipeInfo {
+                building_ticker: #building_ticker,
+                recipe_name: #recipe_name,
+                standard_recipe_name: #standard_recipe_name,
+                duration: std::time::Duration::from_millis(#duration_ms),
+                inputs: &[ #(#inputs),* ],
+                outputs: &[ #(#outputs),* ],
+            }
+        });
+    }
+}
+
 fn optional_ms_to_date<'de, D>(d: D) -> Result<Option<DateTime<Utc>>, D::Error>
 where
     D: Deserializer<'de>,
