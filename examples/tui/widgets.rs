@@ -10,6 +10,9 @@ pub use production::ProductionWidget;
 mod buildings;
 pub use buildings::BuildingsWidget;
 
+mod debug;
+pub use debug::DebugWidget;
+
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum WidgetEnum {
     Production,
@@ -17,6 +20,7 @@ pub enum WidgetEnum {
     Consumption,
     LMNotes,
     Needs,
+    Buildings,
 }
 
 impl WidgetEnum {
@@ -27,6 +31,7 @@ impl WidgetEnum {
             Self::Consumption => Self::LMNotes,
             Self::LMNotes => Self::Needs,
             Self::Needs => Self::Production,
+            Self::Buildings => Self::Buildings,
         }
     }
     pub fn prev(self) -> Self {
@@ -36,6 +41,7 @@ impl WidgetEnum {
             Self::Consumption => Self::LocalMarket,
             Self::LMNotes => Self::Consumption,
             Self::Needs => Self::LMNotes,
+            Self::Buildings => Self::Buildings,
         }
     }
 }
@@ -113,4 +119,7 @@ pub struct SharedWidgetState {
 
     /// The best COGM for each material
     pub cogm: HashMap<String, f32>,
+
+    /// To be displayed in the debug window
+    pub debug_messages: Vec<String>,
 }

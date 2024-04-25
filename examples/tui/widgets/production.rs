@@ -101,6 +101,9 @@ impl ProductionWidget {
             // if prod.building_type != "prefabPlant1" { continue }
             // dbg!(&prod);
             let daily = prod.daily_production();
+            shared_state
+                .debug_messages
+                .push(format!("{:?} {daily:?}", prod.building_ticker()));
             for (mat, amt) in daily.outputs {
                 *total_daily_production
                     .entry((mat, prod.building_ticker().to_string()))

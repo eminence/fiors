@@ -71,11 +71,12 @@ fn get_events() -> io::Result<Option<Event>> {
     // Ok(None)
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 enum SidebarMode {
     Production,
     Buildings,
     Inventory,
+    Debug,
 }
 
 struct App {
@@ -87,6 +88,7 @@ struct App {
     lm_widget: widgets::LocalMarketWidget,
     production_widgets: widgets::ProductionWidget,
     building_widget: widgets::BuildingsWidget,
+    debug_widget: widgets::DebugWidget,
     mode: SidebarMode,
     sidebar_state: TableState,
 }
@@ -188,6 +190,7 @@ impl App {
             lm_widget: widgets::LocalMarketWidget::new(client, &username, &planets[0].id),
             production_widgets: widgets::ProductionWidget::new(client, &username, &planets[0].id),
             building_widget: widgets::BuildingsWidget::new(client, &username, &planets[0].id),
+            debug_widget: widgets::DebugWidget::new(),
             // client,
             // username,
             current_tab: 0,
@@ -213,6 +216,7 @@ impl App {
                 Row::new(vec!["\nPRD\n"]).height(3),
                 Row::new(vec!["\nBLD\n"]).height(3),
                 Row::new(vec!["\nINV\n"]).height(3),
+                Row::new(vec!["\nDBG\n"]).height(3),
             ],
             [Constraint::Length(3)],
         )
@@ -221,6 +225,7 @@ impl App {
             SidebarMode::Production => self.sidebar_state.select(Some(0)),
             SidebarMode::Buildings => self.sidebar_state.select(Some(1)),
             SidebarMode::Inventory => self.sidebar_state.select(Some(2)),
+            SidebarMode::Debug => self.sidebar_state.select(Some(3)),
         };
 
         frame.render_stateful_widget(table, area, &mut self.sidebar_state);
@@ -275,6 +280,21 @@ impl App {
                     .split(area);
                 self.render_sidebar(frame, chunks[0]);
             }
+            SidebarMode::Debug => {
+                let chunks = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .margin(0)
+                    .constraints(
+                        [
+                            Constraint::Length(3), // sidebar
+                            Constraint::Fill(1),   // TODO
+                        ]
+                        .as_ref(),
+                    )
+                    .split(area);
+                self.render_sidebar(frame, chunks[0]);
+                self.debug_widget.render(frame, chunks[1]);
+            }
         }
     }
 
@@ -287,11 +307,23 @@ impl App {
     fn handle_input(&mut self, event: Event) -> (NeedRefresh, bool) {
         let mut refresh = NeedRefresh::No;
 
-        refresh = refresh.update(self.lm_widget.handle_input(&event, self.current_widget));
-        refresh = refresh.update(
-            self.production_widgets
-                .handle_input(&event, self.current_widget),
-        );
+        match self.mode {
+            SidebarMode::Production => {
+                refresh = refresh.update(self.lm_widget.handle_input(&event, self.current_widget));
+                refresh = refresh.update(
+                    self.production_widgets
+                        .handle_input(&event, self.current_widget),
+                );
+            }
+            SidebarMode::Buildings => {
+                refresh = refresh.update(
+                    self.building_widget
+                        .handle_input(&event, self.current_widget),
+                );
+            }
+            SidebarMode::Inventory => {}
+            SidebarMode::Debug => {}
+        }
 
         let Event::Key(KeyEvent {
             code: key,
@@ -328,15 +360,21 @@ impl App {
             }
             KeyCode::Char('p') if modifiers.contains(KeyModifiers::ALT) => {
                 self.mode = SidebarMode::Production;
-                (NeedRefresh::Redraw, false)
+                self.current_widget = WidgetEnum::Production;
+                (NeedRefresh::APIRefresh, true)
             }
             KeyCode::Char('b') if modifiers.contains(KeyModifiers::ALT) => {
                 self.mode = SidebarMode::Buildings;
-                (NeedRefresh::Redraw, false)
+                self.current_widget = WidgetEnum::Buildings;
+                (NeedRefresh::APIRefresh, true)
             }
             KeyCode::Char('i') if modifiers.contains(KeyModifiers::ALT) => {
                 self.mode = SidebarMode::Inventory;
-                (NeedRefresh::Redraw, false)
+                (NeedRefresh::APIRefresh, true)
+            }
+            KeyCode::Char('d') if modifiers.contains(KeyModifiers::ALT) => {
+                self.mode = SidebarMode::Debug;
+                (NeedRefresh::APIRefresh, true)
             }
 
             _ => (refresh, false),
@@ -407,10 +445,10 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                 // before awaiting these calls to .update(), which might take a while, render a frame with a loading message
 
                 if switching_planets {
-                    app.lm_widget
-                        .switch_planets(&app.planets[app.current_tab].id);
-                    app.production_widgets
-                        .switch_planets(&app.planets[app.current_tab].id);
+                    let planet_id = &app.planets[app.current_tab].id;
+                    app.lm_widget.switch_planets(planet_id);
+                    app.production_widgets.switch_planets(planet_id);
+                    app.building_widget.switch_planets(planet_id);
                 }
 
                 // let jh = tokio::spawn(async {
@@ -453,6 +491,9 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                     }
                     SidebarMode::Inventory => {
                         // app.inventory_widget.update(&mut shared_state).await?;
+                    }
+                    SidebarMode::Debug => {
+                        app.debug_widget.update(&mut shared_state).await?;
                     }
                 }
             }

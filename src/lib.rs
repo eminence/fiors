@@ -574,7 +574,8 @@ impl FIOClient {
                 .map(|s| s.items)
                 .unwrap_or_default();
 
-            let building = get_building_db().get(prod.building_type.as_str()).unwrap();
+            let building: &building_db::StaticBuildingInfo =
+                get_building_db().get(prod.building_type.as_str()).unwrap();
             // dbg!(building);
             let building_cost = self.calc_building_cost(building.ticker).await?;
             // assume we repair our buildings after 90 days
@@ -727,6 +728,92 @@ impl FIOClient {
         }
 
         Ok(None)
+    }
+
+    pub async fn calc_workforce_costs(
+        &self,
+        username: &str,
+        planet_id: &str,
+        building_ticker: &str,
+        lux1: bool,
+        lux2: bool,
+    ) -> anyhow::Result<f32> {
+        let building = get_building_db()
+            .get(building_ticker)
+            .context("No such building")?;
+
+        let mut total_daily_costs = 0.0;
+
+        let wf = self
+            .get_planet_workforce_for_user(username, planet_id)
+            .await
+            .unwrap();
+
+        async fn add_needs(
+            client: &FIOClient,
+            num_workers: u32,
+            details: &WorkforceDetails,
+        ) -> f32 {
+            let mut total = 0.0;
+            for need in &details.needs {
+                // TODO handle lux1 and lux2
+                // TODO handle needs provided by our own buildings
+                if need.essential {
+                    // how much per day do we need?
+                    let daily = need.units_per_one_hundred * (num_workers as f32 / 100.0);
+                    let cx_info = client
+                        .get_exchange_info(&format!("{}.CI1", need.ticker))
+                        .await
+                        .unwrap();
+                    total += cx_info.ask.or_else(|| cx_info.get_any_price()).unwrap() * daily;
+                }
+            }
+            total
+        }
+
+        if building.pioneers > 0 {
+            total_daily_costs += add_needs(
+                self,
+                building.pioneers,
+                wf.details.get(types::PlanetWorkforce::PIONEER).unwrap(),
+            )
+            .await;
+        }
+        if building.settlers > 0 {
+            total_daily_costs += add_needs(
+                self,
+                building.technicians,
+                wf.details.get(types::PlanetWorkforce::SETTLER).unwrap(),
+            )
+            .await;
+        }
+        if building.technicians > 0 {
+            total_daily_costs += add_needs(
+                self,
+                building.technicians,
+                wf.details.get(types::PlanetWorkforce::TECHNICIAN).unwrap(),
+            )
+            .await;
+        }
+        if building.engineers > 0 {
+            total_daily_costs += add_needs(
+                self,
+                building.engineers,
+                wf.details.get(types::PlanetWorkforce::ENGINEER).unwrap(),
+            )
+            .await;
+        }
+
+        if building.scientists > 0 {
+            total_daily_costs += add_needs(
+                self,
+                building.scientists,
+                wf.details.get(types::PlanetWorkforce::SCIENTIST).unwrap(),
+            )
+            .await;
+        }
+
+        Ok(total_daily_costs)
     }
 }
 
@@ -1002,32 +1089,32 @@ mod tests {
         let mut map = HashMap::new();
 
         let cogm = client
-            .calc_cost_of_goods_manufactured("EMINENCE32", "Umbra", "POL", "PG", None)
+            .calc_cost_of_goods_manufactured("EMINENCE32", "Umbra", "CHP", "FLX", None)
             .await
             .unwrap();
 
-        println!("Making PG at Umbra costs: {:?}", cogm);
-        map.insert("PG".to_string(), cogm.unwrap());
+        println!("Making FLX at Umbra costs: {:?}", cogm);
+        map.insert("FLX".to_string(), cogm.unwrap());
 
-        let cogm = client
-            .calc_cost_of_goods_manufactured("EMINENCE32", "Katoa", "BMP", "PE", None)
-            .await
-            .unwrap();
+        // let cogm = client
+        //     .calc_cost_of_goods_manufactured("EMINENCE32", "Katoa", "BMP", "PE", None)
+        //     .await
+        //     .unwrap();
 
-        println!("Making PE at Katoa costs: {:?}", cogm);
-        map.insert("PE".to_string(), cogm.unwrap());
+        // println!("Making PE at Katoa costs: {:?}", cogm);
+        // map.insert("PE".to_string(), cogm.unwrap());
 
-        let cogm = client
-            .calc_cost_of_goods_manufactured("EMINENCE32", "Gibson", "PP1", "BDE", Some(&map))
-            .await
-            .unwrap();
+        // let cogm = client
+        //     .calc_cost_of_goods_manufactured("EMINENCE32", "Gibson", "PP1", "BDE", Some(&map))
+        //     .await
+        //     .unwrap();
 
-        println!("Making BDE at Gibon/PP1 costs: {:?}", cogm);
-        let cogm = client
-            .calc_cost_of_goods_manufactured("EMINENCE32", "Gibson", "PP2", "BDE", Some(&map))
-            .await
-            .unwrap();
+        // println!("Making BDE at Gibon/PP1 costs: {:?}", cogm);
+        // let cogm = client
+        //     .calc_cost_of_goods_manufactured("EMINENCE32", "Gibson", "PP2", "BDE", Some(&map))
+        //     .await
+        //     .unwrap();
 
-        println!("Making BDE at Gibon/PP2 costs: {:?}", cogm);
+        // println!("Making BDE at Gibon/PP2 costs: {:?}", cogm);
     }
 }
