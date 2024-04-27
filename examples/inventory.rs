@@ -47,7 +47,8 @@ struct InvItem {
 async fn main() -> anyhow::Result<()> {
     let api_key = std::env::args()
         .nth(1)
-        .unwrap_or("9dd5160d-acc8-493d-b222-d5f96273f677".into());
+        .or(std::env::var("FIO_AUTH_TOKEN").ok())
+        .unwrap();
     let mut client = FIOClient::new_with_key(api_key);
     client.local_cache_dir = Some(".fio_cache".into());
 

@@ -4,7 +4,7 @@ use quote::{format_ident, quote};
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let mut client = FIOClient::new_with_key("9dd5160d-acc8-493d-b222-d5f96273f677".into());
+    let mut client = FIOClient::new_from_env()?;
     client.local_cache_dir = Some(".fio_cache".into());
 
     let all_materials = client.get_all_materials().await?;

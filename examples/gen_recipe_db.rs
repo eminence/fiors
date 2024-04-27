@@ -6,7 +6,7 @@ use quote::quote;
 #[cfg(feature = "gendb")]
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let mut client = FIOClient::new_with_key("9dd5160d-acc8-493d-b222-d5f96273f677".into());
+    let mut client = FIOClient::new_from_env()?;
     client.local_cache_dir = Some(".fio_cache".into());
 
     let mut all_recipes: Vec<_> = client

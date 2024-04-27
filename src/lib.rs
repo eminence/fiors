@@ -135,6 +135,11 @@ impl FIOClient {
         }
     }
 
+    pub fn new_from_env() -> anyhow::Result<Self> {
+        let auth_token = std::env::var("FIO_AUTH_TOKEN")?;
+        Ok(Self::new_with_key(auth_token))
+    }
+
     fn should_retry(&self) -> bool {
         self.retry_delay.load(std::sync::atomic::Ordering::Relaxed) < 15000
     }
@@ -858,7 +863,7 @@ mod tests {
     use super::*;
 
     fn get_test_client() -> FIOClient {
-        let mut client = FIOClient::new_with_key("9dd5160d-acc8-493d-b222-d5f96273f677".into());
+        let mut client = FIOClient::new_from_env().unwrap();
         client.local_cache_dir = Some(".fio_cache".into());
         client
     }
@@ -913,7 +918,7 @@ mod tests {
 
         assert!(client.is_auth().await.unwrap());
 
-        let client = FIOClient::new_with_key("9dd5160d-acc8-493d-b222-d5f96273f677".into());
+        let client = FIOClient::new_from_env().unwrap();
         assert!(client.is_auth().await.unwrap());
     }
 
