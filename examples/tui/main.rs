@@ -1,4 +1,5 @@
 use std::{
+    fs::File,
     io::{self, stdout},
     time::{Duration, Instant},
 };
@@ -13,6 +14,7 @@ use crossterm::{
 use fiors::{get_material_db, types::Planet, FIOClient};
 use once_cell::sync::OnceCell;
 use ratatui::{prelude::*, widgets::*};
+use tracing::{info, level_filters::LevelFilter, trace};
 use widgets::{SharedWidgetState, WidgetEnum};
 
 static CLIENT: OnceCell<FIOClient> = OnceCell::new();
@@ -32,7 +34,13 @@ fn get_client() -> &'static FIOClient {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt::fmt()
+        .with_ansi(false)
+        .with_writer(File::create("app.log")?)
+        .with_max_level(LevelFilter::TRACE)
+        .init();
     // let client = get_client();
+    info!("Starting up...");
 
     println!("Logging in...");
     let app = App::new().await?;
@@ -402,15 +410,6 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
     loop {
         let mut switching_planets = false;
         if let Some(event) = get_events()? {
-            if let Ok(mut file) = std::fs::File::options()
-                .create(true)
-                .append(true)
-                .open("app.log")
-            {
-                use std::io::Write;
-                writeln!(file, "event {event:?}")?;
-            }
-
             if let Event::Resize(..) = event {
                 // At a minimum, we need to redraw the screen
                 needs_redraw = needs_redraw.update(NeedRefresh::APIRefresh);
@@ -523,15 +522,6 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                 app.render_tabs(frame, chunks[0]);
                 app.render_body(frame, chunks[1]);
             })?;
-
-            if let Ok(mut file) = std::fs::File::options()
-                .create(true)
-                .append(true)
-                .open("app.log")
-            {
-                use std::io::Write;
-                writeln!(file, "Time to render frame: {:?}", last_refresh.elapsed())?;
-            }
         }
         needs_redraw = NeedRefresh::No;
     }

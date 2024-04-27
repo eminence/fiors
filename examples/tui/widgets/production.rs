@@ -177,7 +177,6 @@ impl ProductionWidget {
                 .unwrap();
 
             let best_cogm = market_cogm.min(our_cogm);
-            let worst_cogm = market_cogm.max(our_cogm);
 
             shared_state
                 .cogm
@@ -210,8 +209,8 @@ impl ProductionWidget {
                 } else {
                     format!(" {}", format_amount(net_amount))
                 }),
-                Span::raw(format!("${}", format_price(best_cogm))),
-                Span::raw(format!("${}", format_price(worst_cogm))),
+                Span::raw(format!("${}", format_price(our_cogm))),
+                Span::raw(format!("${}", format_price(market_cogm))),
                 Span::raw(format!(
                     "${} - ${}",
                     format_price(cx_min),

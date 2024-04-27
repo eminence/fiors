@@ -10,8 +10,9 @@ use ratatui::{
     },
     Frame,
 };
+use tracing::{span, trace};
 
-use crate::{format_price, NeedRefresh};
+use crate::{format_amount, format_price, NeedRefresh};
 
 use super::{handle_scroll, SharedWidgetState, WidgetEnum};
 
@@ -66,6 +67,7 @@ impl BuildingsWidget {
         }
     }
 
+    #[tracing::instrument(name = "building::update", skip(self, shared_state), fields(username = %self.username, planet_id = %self.planet_id))]
     pub async fn update(&mut self, shared_state: &mut SharedWidgetState) -> anyhow::Result<()> {
         let prod = self
             .client
@@ -97,8 +99,15 @@ impl BuildingsWidget {
 
             rows.push(Row::new(vec![
                 Cell::from(row.building_ticker()),
-                Cell::default(),
-                Cell::default(),
+                Cell::default(), // recipe
+                Cell::from(format!("{:.0}%", 100.0 * row.efficiency)),
+                Cell::default(), // instant sell
+                Cell::default(), // average sell
+                Cell::default(), // our cogm
+                Cell::default(), // market cogm
+                Cell::default(), // daily output amount
+                Cell::default(), // daily profit-
+                Cell::default(), // daily profit+
             ]));
 
             let workforce_costs = self
@@ -107,13 +116,22 @@ impl BuildingsWidget {
                 .await?;
 
             for recipe in building_recipes {
-                let day_scale = 86400.0 / recipe.duration.as_secs() as f32;
+                let recipe_span =
+                    span!(tracing::Level::DEBUG, "recipe", recipe = %recipe.standard_recipe_name);
+                let _enter = recipe_span.enter();
+                let day_scale = row.efficiency * 86400.0 / recipe.duration.as_secs() as f32;
                 if recipe.outputs.is_empty() {
                     continue;
                 }
                 let daily_output_amt = recipe.outputs[0].amount as f32 * day_scale;
+                trace!(
+                    day_scale,
+                    daily_output_amt,
+                    building_efficency = row.efficiency
+                );
 
-                let mut cogm = daily_repair_cost + workforce_costs;
+                let mut market_cogm = daily_repair_cost + workforce_costs;
+                let mut our_cogm = daily_repair_cost + workforce_costs;
 
                 for input in recipe.inputs {
                     let daily_buy_amt = input.amount as f32 * day_scale;
@@ -134,18 +152,74 @@ impl BuildingsWidget {
                             0.0
                         };
 
-                    cogm += market_costs;
+                    market_cogm += market_costs;
 
                     let our_cogm_costs = shared_state
                         .cogm
                         .get(input.ticker)
                         .map(|cost| *cost * daily_buy_amt.ceil());
+                    our_cogm += our_cogm_costs.unwrap_or(market_costs);
+
+                    trace!(input.ticker, daily_buy_amt, market_costs, our_cogm_costs)
                 }
+
+                let cx_info = self
+                    .client
+                    .get_exchange_info(&format!("{}.CI1", recipe.outputs[0].ticker))
+                    .await?;
+
+                let market_instant_sell = cx_info
+                    .instant_sell(daily_output_amt.ceil() as u32)
+                    .map(|x| x.total_value / daily_output_amt.ceil());
+                let market_average = cx_info.price;
+
+                // best case profit uses our lowest cogm and the higest market sell price
+                let (best_market, worst_market) = match (market_instant_sell, market_average) {
+                    (None, None) => (None, None),
+                    (None, Some(x)) => (Some(x), Some(x)),
+                    (Some(x), None) => (Some(x), Some(x)),
+                    (Some(x), Some(y)) => (Some(x.max(y)), Some(x.min(y))),
+                };
+
+                // .map(|price| price * daily_output_amt);
+
+                let best_daily_costs = our_cogm.min(market_cogm);
+                let best_profits = best_market.map(|x| (x * daily_output_amt) - best_daily_costs);
+                let worst_profits = worst_market.map(|x| (x * daily_output_amt) - best_daily_costs);
+
+                let best_profit_style = best_profits
+                    .map(|x| {
+                        if x > 0.0 {
+                            Style::default().fg(Color::Green)
+                        } else {
+                            Style::default().fg(Color::Red)
+                        }
+                    })
+                    .unwrap_or_default();
+
+                let worst_profit_style = worst_profits
+                    .map(|x| {
+                        if x > 0.0 {
+                            Style::default().fg(Color::Green)
+                        } else {
+                            Style::default().fg(Color::Red)
+                        }
+                    })
+                    .unwrap_or_default();
 
                 rows.push(Row::new(vec![
                     Cell::default(),
-                    Cell::from(format!("{}", recipe.standard_recipe_name)),
-                    Cell::from(format!("{}", format_price(cogm / daily_output_amt))),
+                    Cell::from(recipe.standard_recipe_name.to_string()),
+                    Cell::default(),
+                    Cell::from(format_price(our_cogm / daily_output_amt)),
+                    Cell::from(format_price(market_cogm / daily_output_amt)),
+                    Cell::from(market_instant_sell.map(format_price).unwrap_or_default()),
+                    Cell::from(market_average.map(format_price).unwrap_or_default()),
+                    Cell::from(format_amount(daily_output_amt)),
+                    Cell::from(worst_profits.map(format_price).unwrap_or_default())
+                        .style(worst_profit_style),
+                    Cell::from(best_profits.map(format_price).unwrap_or_default())
+                        .style(best_profit_style),
                 ]));
             }
         }
@@ -160,9 +234,28 @@ impl BuildingsWidget {
         let widths = [
             Constraint::Length(3), // building name
             Constraint::Fill(1),
-            Constraint::Length(10), // cogm
+            Constraint::Length(4), // efficiency
+            Constraint::Length(6), // instant sell
+            Constraint::Length(6), // average sell
+            Constraint::Length(6), // our cogm
+            Constraint::Length(6), // market cogm
+            Constraint::Length(6), // Daily amount
+            Constraint::Length(6), // Worst Daily profit
+            Constraint::Length(6), // Best Daily profit
         ];
         let table = Table::new(self.rows.clone(), widths)
+            .header(Row::new(vec![
+                Cell::default(),      // building name
+                Cell::default(),      // recipe
+                Cell::from("Eff%"),   // efficiency
+                Cell::from("O-COGM"), // our cogm
+                Cell::from("M-COGM"), // market cogm
+                Cell::from("Inst"),   // instant sell price
+                Cell::from("Avg"),    // average sell price
+                Cell::from("DAmt"),   // daily amount
+                Cell::from("DProf-"), // daily profit
+                Cell::from("DProf+"), // daily profit
+            ]))
             .highlight_style(Style::default().fg(Color::Indexed(14)))
             .highlight_spacing(ratatui::widgets::HighlightSpacing::Always)
             .highlight_symbol(">")

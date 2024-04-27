@@ -20,6 +20,7 @@ pub use building_db::get_building_db;
 
 mod recipe_db;
 pub use recipe_db::get_recipe_db;
+use tracing::{instrument, trace, warn};
 
 use crate::types::{Item, WorkforceDetails};
 
@@ -40,7 +41,6 @@ impl<T: Clone> CachedData<T> {
     }
 }
 
-#[derive()]
 pub struct FIOClient {
     url_root: &'static str,
     auth_token: String,
@@ -546,6 +546,7 @@ impl FIOClient {
     }
 
     /// Returns Ok(None) if the given product is not produced on the given planet
+    #[instrument(skip(self, username, cogm), fields(cogm.is_some = cogm.is_some()))]
     pub async fn calc_cost_of_goods_manufactured(
         &self,
         username: &str,
@@ -554,6 +555,7 @@ impl FIOClient {
         material_ticker: &str,
         cogm: Option<&HashMap<String, f32>>,
     ) -> anyhow::Result<Option<f32>> {
+        trace!(username);
         let prods = self.get_planet_production(username, planet).await?;
         for prod in prods {
             if !prod.orders.iter().any(|order| {
@@ -602,6 +604,8 @@ impl FIOClient {
 
             total_daily_costs += daily_repair_cost;
             // production scale -- multiple by this to compute how much stuff is produced per day
+
+            trace!(daily_repair_cost);
 
             let day_scale = 86400.0 / order.duration.as_secs() as f32;
             for input in &order.inputs {
@@ -678,8 +682,10 @@ impl FIOClient {
                 total
             }
 
+            let mut workforce_costs = 0.0;
+
             if building.pioneers > 0 {
-                total_daily_costs += add_needs(
+                workforce_costs += add_needs(
                     self,
                     &inv,
                     building.pioneers,
@@ -688,7 +694,7 @@ impl FIOClient {
                 .await;
             }
             if building.settlers > 0 {
-                total_daily_costs += add_needs(
+                workforce_costs += add_needs(
                     self,
                     &inv,
                     building.settlers,
@@ -697,7 +703,7 @@ impl FIOClient {
                 .await;
             }
             if building.technicians > 0 {
-                total_daily_costs += add_needs(
+                workforce_costs += add_needs(
                     self,
                     &inv,
                     building.technicians,
@@ -706,7 +712,7 @@ impl FIOClient {
                 .await;
             }
             if building.engineers > 0 {
-                total_daily_costs += add_needs(
+                workforce_costs += add_needs(
                     self,
                     &inv,
                     building.engineers,
@@ -715,7 +721,7 @@ impl FIOClient {
                 .await;
             }
             if building.scientists > 0 {
-                total_daily_costs += add_needs(
+                workforce_costs += add_needs(
                     self,
                     &inv,
                     building.scientists,
@@ -723,6 +729,19 @@ impl FIOClient {
                 )
                 .await;
             }
+
+            let new_workforce_cost_calc = self
+                .calc_workforce_costs(username, planet, building_ticker, true, true)
+                .await?;
+            if new_workforce_cost_calc.abs_sub(workforce_costs) > 1.0 {
+                warn!(
+                    old = workforce_costs,
+                    new = new_workforce_cost_calc,
+                    "Differing workforce cost calculations"
+                );
+            }
+
+            total_daily_costs += workforce_costs;
 
             return Ok(Some(total_daily_costs / daily_output_amt));
         }
@@ -753,12 +772,17 @@ impl FIOClient {
             client: &FIOClient,
             num_workers: u32,
             details: &WorkforceDetails,
+            lux1: bool,
+            lux2: bool,
         ) -> f32 {
             let mut total = 0.0;
             for need in &details.needs {
                 // TODO handle lux1 and lux2
                 // TODO handle needs provided by our own buildings
-                if need.essential {
+                if need.essential
+                    || (lux1 && ["COF", "KOM", "ALE", "GIN", "WIN"].contains(&need.ticker.as_str()))
+                    || (lux2 && ["PWO", "REP", "SC", "VG", "NST"].contains(&need.ticker.as_str()))
+                {
                     // how much per day do we need?
                     let daily = need.units_per_one_hundred * (num_workers as f32 / 100.0);
                     let cx_info = client
@@ -776,14 +800,18 @@ impl FIOClient {
                 self,
                 building.pioneers,
                 wf.details.get(types::PlanetWorkforce::PIONEER).unwrap(),
+                lux1,
+                lux2,
             )
             .await;
         }
         if building.settlers > 0 {
             total_daily_costs += add_needs(
                 self,
-                building.technicians,
+                building.settlers,
                 wf.details.get(types::PlanetWorkforce::SETTLER).unwrap(),
+                lux1,
+                lux2,
             )
             .await;
         }
@@ -792,6 +820,8 @@ impl FIOClient {
                 self,
                 building.technicians,
                 wf.details.get(types::PlanetWorkforce::TECHNICIAN).unwrap(),
+                lux1,
+                lux2,
             )
             .await;
         }
@@ -800,6 +830,8 @@ impl FIOClient {
                 self,
                 building.engineers,
                 wf.details.get(types::PlanetWorkforce::ENGINEER).unwrap(),
+                lux1,
+                lux2,
             )
             .await;
         }
@@ -809,6 +841,8 @@ impl FIOClient {
                 self,
                 building.scientists,
                 wf.details.get(types::PlanetWorkforce::SCIENTIST).unwrap(),
+                lux1,
+                lux2,
             )
             .await;
         }
