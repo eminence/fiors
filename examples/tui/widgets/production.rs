@@ -4,7 +4,7 @@ use anyhow::Context;
 use crossterm::event::Event;
 use fiors::{get_material_db, FIOClient};
 use ratatui::{
-    layout::{Constraint, Direction, Flex, Layout, Margin, Rect},
+    layout::{Constraint, Direction, Layout, Margin, Rect},
     style::{self, Color, Modifier, Style},
     text::Span,
     widgets::{self, Block, Borders, Row, Scrollbar, Table},

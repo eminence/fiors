@@ -1,12 +1,11 @@
 use crossterm::event::Event;
-use fiors::{get_building_db, get_recipe_db, types, FIOClient};
+use fiors::{get_building_db, get_recipe_db, FIOClient};
 use ratatui::{
     layout::{Constraint, Margin, Rect},
     style::{Color, Style},
-    symbols,
     widgets::{
-        Block, Borders, Cell, Paragraph, Row, Scrollbar, ScrollbarOrientation, ScrollbarState,
-        Table, TableState, Wrap,
+        Block, Borders, Cell, Row, Scrollbar, ScrollbarOrientation, ScrollbarState, Table,
+        TableState,
     },
     Frame,
 };
@@ -73,12 +72,6 @@ impl BuildingsWidget {
             .client
             .get_planet_production(&self.username, &self.planet_id)
             .await?;
-
-        let wf = self
-            .client
-            .get_planet_workforce_for_user(&self.username, &self.planet_id)
-            .await
-            .unwrap();
 
         let mut rows = Vec::new();
 
