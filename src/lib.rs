@@ -856,8 +856,8 @@ impl FIOClient {
     }
 }
 
-#[cfg(test)]
-mod tests {
+#[cfg(all(test, feature = "live_tests"))]
+mod live_tests {
     use crate::{materials::MaterialWithColor, types::PlanetWorkforce};
 
     use super::*;
@@ -909,21 +909,19 @@ mod tests {
     }
 
     #[tokio::test]
-    #[cfg(live_tests)]
     async fn test_login() {
         let client =
             FIOClient::new_with_password("eminence32".into(), "FYJOL9pNVyUzba14AAzg".into())
                 .await
                 .unwrap();
 
-        assert!(client.is_auth().await.unwrap());
+        assert_eq!("EMINENCE32", client.is_auth().await.unwrap());
 
         let client = FIOClient::new_from_env().unwrap();
-        assert!(client.is_auth().await.unwrap());
+        assert_eq!("EMINENCE32", client.is_auth().await.unwrap());
     }
 
     #[tokio::test]
-    #[cfg(live_tests)]
     async fn test_planet() {
         let client = get_test_client();
         let pli = client.get_planet("JS-952c").await.unwrap();
@@ -931,7 +929,6 @@ mod tests {
     }
 
     #[tokio::test]
-    // #[cfg(live_tests)]
     async fn test_planet_for_user() {
         let client = get_test_client();
         // let pli = client.get_planets_for_user("eminence32").await.unwrap();
@@ -942,7 +939,6 @@ mod tests {
     }
 
     #[tokio::test]
-    // #[cfg(live_tests)]
     async fn test_storage() {
         let client = get_test_client();
         let _storage = client.get_all_storage_for_user("eminence32").await.unwrap();
