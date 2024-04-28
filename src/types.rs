@@ -2,6 +2,7 @@ use std::{collections::HashMap, ops::AddAssign, time::Duration};
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Deserializer};
+use tracing::trace;
 
 use crate::get_building_db;
 
@@ -550,6 +551,8 @@ impl ProductionLine {
 
         // let building_ticker = self.orders.first().unwrap().get_building_ticker();
 
+        trace!(queued_orders.len = queued_orders.len(), total_duration_days = total_duration_days);
+
         // dbg!(&queued_orders);
         let mut total_inputs = HashMap::new();
         let mut total_outputs = HashMap::new();
@@ -557,6 +560,7 @@ impl ProductionLine {
         for order in queued_orders {
             let duration_days = order.duration.as_secs_f32() / 86400.0;
             let scale = duration_days / total_duration_days;
+            trace!(duration_days, scale, order.outputs = ?order.outputs);
 
             for input_material in &order.inputs {
                 let input_per_day =

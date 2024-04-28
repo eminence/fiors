@@ -10,6 +10,7 @@ use ratatui::{
     widgets::{self, Block, Borders, Row, Scrollbar, Table},
     Frame,
 };
+use tracing::{instrument, span, Level};
 
 use crate::{format_amount, format_price, get_style_for_days, get_style_for_material, NeedRefresh};
 
@@ -76,6 +77,7 @@ impl ProductionWidget {
         }
     }
 
+    #[instrument(name="production::update", skip(self, shared_state), fields(planet_id=self.planet_id))]
     pub async fn update(&mut self, shared_state: &mut SharedWidgetState) -> anyhow::Result<()> {
         let mut production_rows = Vec::new();
         let mut consumption_rows = Vec::new();
@@ -98,6 +100,8 @@ impl ProductionWidget {
         // map from material to daily consumption
         let mut total_daily_consumption = HashMap::new();
         for prod in &production_lines {
+            let prod_span = span!(Level::DEBUG, "calc daily prod", building = prod.building_ticker());
+            let _enter = prod_span.enter();
             // if prod.building_type != "prefabPlant1" { continue }
             // dbg!(&prod);
             let daily = prod.daily_production();
