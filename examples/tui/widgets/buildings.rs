@@ -2,7 +2,8 @@ use crossterm::event::Event;
 use fiors::{get_building_db, get_recipe_db, FIOClient};
 use ratatui::{
     layout::{Constraint, Margin, Rect},
-    style::{Color, Style},
+    style::{Color, Style, Stylize},
+    text::{Line, Span},
     widgets::{
         Block, Borders, Cell, Row, Scrollbar, ScrollbarOrientation, ScrollbarState, Table,
         TableState,
@@ -11,7 +12,7 @@ use ratatui::{
 };
 use tracing::{span, trace};
 
-use crate::{format_amount, format_price, NeedRefresh};
+use crate::{format_amount, format_price, get_style_for_material, NeedRefresh};
 
 use super::{handle_scroll, SharedWidgetState, WidgetEnum};
 
@@ -20,6 +21,7 @@ pub struct BuildingsWidget {
     username: String,
     planet_id: String,
     rows: Vec<Row<'static>>,
+    reciepe_columns: usize,
     scrollbar_state: ScrollbarState,
     table_state: TableState,
 }
@@ -31,6 +33,7 @@ impl BuildingsWidget {
             username: username.to_string(),
             planet_id: planet_id.to_string(),
             rows: Vec::new(),
+            reciepe_columns: 0,
             scrollbar_state: ScrollbarState::default(),
             table_state: TableState::default(),
         }
@@ -74,8 +77,15 @@ impl BuildingsWidget {
             .await?;
 
         let mut rows = Vec::new();
+        // each recipe will put its inputs and outputs in this vec, which will get stitched together with "rows" once we know how many colums we need
+        let mut input_output_rows = Vec::new();
 
         let recipe_db = get_recipe_db();
+
+        let planet_inventory = self
+            .client
+            .get_storage_for_user(&self.username, &self.planet_id)
+            .await?;
 
         for row in &prod {
             let building = get_building_db().get(row.building_type.as_str()).unwrap();
@@ -90,9 +100,9 @@ impl BuildingsWidget {
                 .filter(|r| r.building_ticker == row.building_ticker())
                 .collect();
 
-            rows.push(Row::new(vec![
-                Cell::from(row.building_ticker()),
-                Cell::default(), // recipe
+            input_output_rows.push(vec![Some(Cell::from(row.building_ticker()))]);
+            rows.push(vec![
+                Cell::default(), // empty fill column
                 Cell::from(format!("{:.0}%", 100.0 * row.efficiency)),
                 Cell::default(), // instant sell
                 Cell::default(), // average sell
@@ -101,7 +111,7 @@ impl BuildingsWidget {
                 Cell::default(), // daily output amount
                 Cell::default(), // daily profit-
                 Cell::default(), // daily profit+
-            ]));
+            ]);
 
             let workforce_costs = self
                 .client
@@ -123,10 +133,35 @@ impl BuildingsWidget {
                     building_efficency = row.efficiency
                 );
 
+                let mut this_reciepe_row = vec![None];
+
+                this_reciepe_row.push(Some({
+                    let a = Span::raw(format!("{:>3}x", recipe.outputs[0].amount));
+                    let m = Span::raw(format!("{:^3}", recipe.outputs[0].ticker))
+                        .style(get_style_for_material(recipe.outputs[0].ticker));
+                    Cell::from(Line::from(vec![a, m]))
+                }));
+
                 let mut market_cogm = daily_repair_cost + workforce_costs;
                 let mut our_cogm = daily_repair_cost + workforce_costs;
 
                 for input in recipe.inputs {
+                    let have_input_in_inventory = planet_inventory
+                        .as_ref()
+                        .map(|sto| sto.items.contains_key(input.ticker))
+                        .unwrap_or(false);
+
+                    let a = Span::raw(format!("{:>3}x", input.amount)).style(
+                        if have_input_in_inventory {
+                            Style::default().bold()
+                        } else {
+                            Style::default().dim()
+                        },
+                    );
+                    let m = Span::raw(format!("{:^3}", input.ticker))
+                        .style(get_style_for_material(input.ticker));
+                    this_reciepe_row.push(Some(Cell::from(Line::from(vec![a, m]))));
+
                     let daily_buy_amt = input.amount as f32 * day_scale;
                     let cx_info = self
                         .client
@@ -200,10 +235,10 @@ impl BuildingsWidget {
                     })
                     .unwrap_or_default();
 
-                rows.push(Row::new(vec![
-                    Cell::default(),
-                    Cell::from(recipe.standard_recipe_name.to_string()),
-                    Cell::default(),
+                input_output_rows.push(this_reciepe_row);
+                rows.push(vec![
+                    Cell::default(), // empty fill column
+                    Cell::default(), // efficiency
                     Cell::from(format_price(our_cogm / daily_output_amt)),
                     Cell::from(format_price(market_cogm / daily_output_amt)),
                     Cell::from(market_instant_sell.map(format_price).unwrap_or_default()),
@@ -213,20 +248,55 @@ impl BuildingsWidget {
                         .style(worst_profit_style),
                     Cell::from(best_profits.map(format_price).unwrap_or_default())
                         .style(best_profit_style),
-                ]));
+                ]);
             }
         }
 
         self.scrollbar_state = self.scrollbar_state.content_length(rows.len());
-        self.rows = rows;
+
+        // across all our recipes, what's the total number of columns we need for inputs and outputs?
+        assert_eq!(input_output_rows.len(), rows.len());
+        let max = input_output_rows.iter().map(|v| v.len()).max().unwrap();
+        trace!(max, "max columns");
+
+        self.rows = input_output_rows
+            .into_iter()
+            .zip(rows.into_iter())
+            .map(|(mut ior, r)| {
+                // if the first element of ior is Some(cell), then it's the name of the building
+                if let Some(building) = ior.remove(0) {
+                    // then this row is just the building name, plus `max` empty cells
+                    let mut v = vec![building];
+                    v.resize(max + 1, Cell::default());
+                    v.extend(r);
+                    Row::new(v)
+                } else {
+                    // the first element of r is the output, so remove that first and tack it on the end later
+                    let output = ior.remove(0);
+                    let mut v = vec![Cell::default()]; // empty building name
+                    v.extend(
+                        ior.into_iter()
+                            .map(|maybe_cell| maybe_cell.unwrap_or_default()),
+                    ); // inputs
+                    v.resize(max, Cell::default()); // fill
+                    v.push(output.unwrap_or_default()); // add output
+                    v.extend(r); // add inputs
+
+                    Row::new(v)
+                }
+            })
+            .collect();
+        self.reciepe_columns = max;
 
         Ok(())
     }
 
     pub fn render(&mut self, frame: &mut Frame, area: Rect, _current_widget: WidgetEnum) {
-        let widths = [
-            Constraint::Length(3), // building name
-            Constraint::Fill(1),
+        let mut widths = vec![Constraint::Length(3)]; // building name
+        widths.resize(self.reciepe_columns + 1, Constraint::Length(7)); // inputs and outputs
+        widths.push(Constraint::Fill(1)); // empty fill column
+
+        widths.extend([
             Constraint::Length(4), // efficiency
             Constraint::Length(6), // instant sell
             Constraint::Length(6), // average sell
@@ -235,21 +305,26 @@ impl BuildingsWidget {
             Constraint::Length(6), // Daily amount
             Constraint::Length(6), // Worst Daily profit
             Constraint::Length(6), // Best Daily profit
-        ];
+        ]);
+
+        let mut headers = vec![Cell::default()];
+        headers.resize(self.reciepe_columns + 1, Cell::default());
+        headers.extend([
+            Cell::default(),      // empty fill column
+            Cell::from("Eff%"),   // efficiency
+            Cell::from("O-COGM"), // our cogm
+            Cell::from("M-COGM"), // market cogm
+            Cell::from("Inst"),   // instant sell price
+            Cell::from("Avg"),    // average sell price
+            Cell::from("DAmt"),   // daily amount
+            Cell::from("DProf-"), // daily profit
+            Cell::from("DProf+"), // daily profit
+        ]);
+        assert_eq!(widths.len(), headers.len());
+
         let table = Table::new(self.rows.clone(), widths)
-            .header(Row::new(vec![
-                Cell::default(),      // building name
-                Cell::default(),      // recipe
-                Cell::from("Eff%"),   // efficiency
-                Cell::from("O-COGM"), // our cogm
-                Cell::from("M-COGM"), // market cogm
-                Cell::from("Inst"),   // instant sell price
-                Cell::from("Avg"),    // average sell price
-                Cell::from("DAmt"),   // daily amount
-                Cell::from("DProf-"), // daily profit
-                Cell::from("DProf+"), // daily profit
-            ]))
-            .highlight_style(Style::default().fg(Color::Indexed(14)))
+            .header(Row::new(headers))
+            .highlight_style(Style::default().bg(Color::DarkGray))
             .highlight_spacing(ratatui::widgets::HighlightSpacing::Always)
             .highlight_symbol(">")
             .block(Block::new().title("Table").borders(Borders::ALL));
