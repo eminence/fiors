@@ -434,7 +434,7 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
             needs_redraw = needs_redraw.update(x);
             switching_planets = y;
         }
-        if last_refresh.elapsed() > Duration::from_secs(600) {
+        if last_refresh.elapsed() > Duration::from_secs(3600) {
             needs_redraw = needs_redraw.update(NeedRefresh::APIRefresh);
         }
 
