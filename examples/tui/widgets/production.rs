@@ -315,6 +315,7 @@ impl ProductionWidget {
             .excess
             .entry(self.planet_id.clone())
             .or_default();
+        excess_map.clear();
         for (ticker, item) in &inv.items {
             let long_term_needed =
                 total_daily_consumption.get(ticker.as_str()).unwrap_or(&0.0) * 21.0;
