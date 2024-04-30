@@ -551,7 +551,10 @@ impl ProductionLine {
 
         // let building_ticker = self.orders.first().unwrap().get_building_ticker();
 
-        trace!(queued_orders.len = queued_orders.len(), total_duration_days = total_duration_days);
+        trace!(
+            queued_orders.len = queued_orders.len(),
+            total_duration_days = total_duration_days
+        );
 
         // dbg!(&queued_orders);
         let mut total_inputs = HashMap::new();

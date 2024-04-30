@@ -166,18 +166,12 @@ impl FIOClient {
         // println!("Retry delay now {:?}", self.retry_delay);
     }
 
+    #[instrument(skip(self))]
     async fn request<T: DeserializeOwned + Serialize>(
         &self,
         url: &str,
     ) -> anyhow::Result<Option<T>> {
-        if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
-            use std::io::Write;
-            let now = Utc::now();
-            writeln!(file, "{now:?} Requesting: {url}")?;
-        }
-
         while self.should_retry() {
-            let now = Utc::now();
             let resp = self
                 .client
                 .get(format!("{}/{url}", self.url_root))
@@ -188,11 +182,7 @@ impl FIOClient {
 
             let status = resp.status();
             if status.as_u16() == 522 {
-                // log this to client.log
-                if let Ok(mut file) = File::options().create(true).append(true).open("client.log") {
-                    use std::io::Write;
-                    writeln!(file, "{now:?} url={url} status={status:?}")?;
-                }
+                warn!("Got a 522, retrying");
             }
 
             if status.as_u16() == 429 || status.as_u16() == 522 {

@@ -100,7 +100,11 @@ impl ProductionWidget {
         // map from material to daily consumption
         let mut total_daily_consumption = HashMap::new();
         for prod in &production_lines {
-            let prod_span = span!(Level::DEBUG, "calc daily prod", building = prod.building_ticker());
+            let prod_span = span!(
+                Level::DEBUG,
+                "calc daily prod",
+                building = prod.building_ticker()
+            );
             let _enter = prod_span.enter();
             // if prod.building_type != "prefabPlant1" { continue }
             // dbg!(&prod);
