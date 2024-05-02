@@ -557,10 +557,10 @@ impl FIOClient {
             }
         }
 
-        // production info is cached for 60 minutes
+        // production info is cached for 15 minutes
         self.planet_production_cache.insert(
             (username.to_string(), planet.to_string()),
-            CachedData::new(v.clone(), Duration::from_secs(3600)),
+            CachedData::new(v.clone(), Duration::from_secs(900)),
         );
 
         Ok(v)
