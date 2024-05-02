@@ -15,8 +15,7 @@ fn read_from_stdin() -> bool {
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let mut client = FIOClient::new_from_env()?;
-    client.local_cache_dir = Some(".fio_cache".into());
+    let client = FIOClient::new_from_env()?;
 
     let username = client.is_auth().await?;
 

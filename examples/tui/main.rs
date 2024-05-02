@@ -27,9 +27,7 @@ fn get_client() -> &'static FIOClient {
         .or(std::env::var("FIO_AUTH_TOKEN").ok())
         .unwrap();
     CLIENT.get_or_init(|| {
-        let mut client = FIOClient::new_with_key(api_key);
-        client.local_cache_dir = Some(".fio_cache".into());
-        client
+        FIOClient::new_with_key(api_key)
     })
 }
 

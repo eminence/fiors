@@ -4,8 +4,7 @@ use quote::quote;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let mut client = FIOClient::new_from_env()?;
-    client.local_cache_dir = Some(".fio_cache".into());
+    let client = FIOClient::new_from_env()?;
 
     let all_buildings = client.get_all_buildings().await?;
 

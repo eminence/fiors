@@ -49,8 +49,7 @@ async fn main() -> anyhow::Result<()> {
         .nth(1)
         .or(std::env::var("FIO_AUTH_TOKEN").ok())
         .unwrap();
-    let mut client = FIOClient::new_with_key(api_key);
-    client.local_cache_dir = Some(".fio_cache".into());
+    let client = FIOClient::new_with_key(api_key);
 
     let username = client.is_auth().await?;
 

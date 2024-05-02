@@ -171,6 +171,34 @@ impl FIOClient {
         &self,
         url: &str,
     ) -> anyhow::Result<Option<T>> {
+        let get_cache = |path: &Path| {
+            path.join(url.trim_matches('/').replace(['/', '.'], "_"))
+                .with_extension("json")
+        };
+
+        if let Some(cache) = self
+            .local_cache_dir
+            .as_deref()
+            .map(get_cache)
+            .and_then(|path| File::open(path).ok())
+        {
+            let md = cache
+                .metadata()
+                .ok()
+                .and_then(|md| md.modified().ok())
+                .and_then(|md| md.elapsed().ok())
+                .map(|d| d.as_secs() < 3600)
+                .unwrap_or(false);
+
+            trace!("Trying to load data from local disk cache");
+            if md {
+                if let Ok(loaded_from_cache) = serde_json::from_reader(cache) {
+                    // println!("Returning from cache");
+                    return Ok(Some(loaded_from_cache));
+                }
+            }
+        }
+
         while self.should_retry() {
             let resp = self
                 .client
@@ -196,6 +224,20 @@ impl FIOClient {
                 return Ok(None);
             } else if status.is_success() {
                 let data: T = resp.json().await?;
+                if let Some(cache) = self
+                    .local_cache_dir
+                    .as_deref()
+                    .map(get_cache)
+                    .map(|path| {
+                        if let Some(p) = path.parent() {
+                            let _ = std::fs::create_dir_all(p);
+                        }
+                        path
+                    })
+                    .and_then(|path| File::create(path).ok())
+                {
+                    serde_json::to_writer(cache, &data)?;
+                }
                 return Ok(Some(data));
             } else {
                 bail!("Request not successful: {:?}", status);
