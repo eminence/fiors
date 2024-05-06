@@ -13,6 +13,9 @@ pub use buildings::BuildingsWidget;
 mod debug;
 pub use debug::DebugWidget;
 
+mod inventory;
+pub use inventory::InventoryWidget;
+
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum WidgetEnum {
     Production,
@@ -21,6 +24,7 @@ pub enum WidgetEnum {
     LMNotes,
     Needs,
     Buildings,
+    Inventory,
 }
 
 impl WidgetEnum {
@@ -32,6 +36,7 @@ impl WidgetEnum {
             Self::LMNotes => Self::Needs,
             Self::Needs => Self::Production,
             Self::Buildings => Self::Buildings,
+            Self::Inventory => Self::Inventory,
         }
     }
     pub fn prev(self) -> Self {
@@ -42,6 +47,7 @@ impl WidgetEnum {
             Self::LMNotes => Self::Consumption,
             Self::Needs => Self::LMNotes,
             Self::Buildings => Self::Buildings,
+            Self::Inventory => Self::Inventory,
         }
     }
 }

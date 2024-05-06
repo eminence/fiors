@@ -95,6 +95,7 @@ struct App {
     lm_widget: widgets::LocalMarketWidget,
     production_widgets: widgets::ProductionWidget,
     building_widget: widgets::BuildingsWidget,
+    inventory_widget: widgets::InventoryWidget,
     debug_widget: widgets::DebugWidget,
     mode: SidebarMode,
     sidebar_state: TableState,
@@ -198,6 +199,7 @@ impl App {
             production_widgets: widgets::ProductionWidget::new(client, &username, &planets[0].id),
             building_widget: widgets::BuildingsWidget::new(client, &username, &planets[0].id),
             debug_widget: widgets::DebugWidget::new(),
+            inventory_widget: widgets::InventoryWidget::new(client, &username, &planets[0].id),
             // client,
             // username,
             current_tab: 0,
@@ -271,7 +273,8 @@ impl App {
                     )
                     .split(area);
                 self.render_sidebar(frame, chunks[0]);
-                self.render_buildings(frame, chunks[1]);
+                self.building_widget
+                    .render(frame, chunks[1], self.current_widget);
             }
             SidebarMode::Inventory => {
                 let chunks = Layout::default()
@@ -286,6 +289,8 @@ impl App {
                     )
                     .split(area);
                 self.render_sidebar(frame, chunks[0]);
+                self.inventory_widget
+                    .render(frame, chunks[1], self.current_widget);
             }
             SidebarMode::Debug => {
                 let chunks = Layout::default()
@@ -303,11 +308,6 @@ impl App {
                 self.debug_widget.render(frame, chunks[1]);
             }
         }
-    }
-
-    fn render_buildings(&mut self, frame: &mut Frame, chunk: Rect) {
-        self.building_widget
-            .render(frame, chunk, self.current_widget);
     }
 
     /// Returns info about if we need to redresh/redraw and if we're switching planets
@@ -328,7 +328,12 @@ impl App {
                         .handle_input(&event, self.current_widget),
                 );
             }
-            SidebarMode::Inventory => {}
+            SidebarMode::Inventory => {
+                refresh = refresh.update(
+                    self.inventory_widget
+                        .handle_input(&event, self.current_widget),
+                );
+            }
             SidebarMode::Debug => {}
         }
 
@@ -377,6 +382,7 @@ impl App {
             }
             KeyCode::Char('i') if modifiers.contains(KeyModifiers::ALT) => {
                 self.mode = SidebarMode::Inventory;
+                self.current_widget = WidgetEnum::Inventory;
                 (NeedRefresh::APIRefresh, true)
             }
             KeyCode::Char('d') if modifiers.contains(KeyModifiers::ALT) => {
@@ -447,6 +453,7 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                     app.lm_widget.switch_planets(planet_id);
                     app.production_widgets.switch_planets(planet_id);
                     app.building_widget.switch_planets(planet_id);
+                    app.inventory_widget.switch_planets(planet_id);
                 }
 
                 // let jh = tokio::spawn(async {
@@ -488,7 +495,7 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                         app.building_widget.update(&mut shared_state).await?;
                     }
                     SidebarMode::Inventory => {
-                        // app.inventory_widget.update(&mut shared_state).await?;
+                        app.inventory_widget.update(&mut shared_state).await?;
                     }
                     SidebarMode::Debug => {
                         app.debug_widget.update(&mut shared_state).await?;
