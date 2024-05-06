@@ -5,7 +5,7 @@ use ratatui::{
     layout::{Constraint, Rect},
     style::{Color, Style},
     text::{Line, Text},
-    widgets::{Block, Borders, Cell, Row, Table},
+    widgets::{Block, Borders, Cell, Padding, Row, Table},
     Frame,
 };
 
@@ -158,7 +158,12 @@ impl InventoryWidget {
 
         let table = Table::new(rows, widths)
             .flex(ratatui::layout::Flex::SpaceBetween)
-            .block(Block::default().borders(Borders::ALL).title("Inventory"));
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .title("Inventory")
+                    .padding(Padding::uniform(1)),
+            );
 
         frame.render_widget(table, area);
     }
