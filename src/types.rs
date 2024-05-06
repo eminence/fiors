@@ -297,38 +297,28 @@ impl Ticker {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "PascalCase")]
 pub struct Planet {
+    #[serde(rename = "PlanetName")]
     pub name: String,
     /// The name of the form AB-123x
+    #[serde(rename = "PlanetNaturalId")]
     pub natural_id: String,
+    #[serde(rename = "PlanetId")]
     pub id: String,
     pub has_local_market: bool,
     pub local_market_fee_factor: f32,
+    pub faction_code: Option<String>,
+    pub currency_code: Option<String>,
+    pub has_warehouse: bool,
 }
 
 impl Planet {
     pub(crate) fn from_json(v: serde_json::Value) -> anyhow::Result<Self> {
-        #[derive(Deserialize)]
-        #[allow(unused)]
-        #[serde(rename_all = "PascalCase")]
-        struct Inner {
-            planet_id: String,
-            planet_name: String,
-            planet_natural_id: String,
-            has_local_market: bool,
-            local_market_fee_factor: f32,
-        }
+        let planet: Planet = serde_json::from_value(v)?;
 
-        let inner: Inner = serde_json::from_value(v)?;
-
-        Ok(Self {
-            name: inner.planet_name,
-            natural_id: inner.planet_natural_id,
-            id: inner.planet_id,
-            has_local_market: inner.has_local_market,
-            local_market_fee_factor: inner.local_market_fee_factor,
-        })
+        Ok(planet)
     }
 }
 
@@ -545,7 +535,10 @@ impl ProductionLine {
             .orders
             .iter()
             .filter(|order| order.started.is_none())
-            .map(|order| order.duration.as_secs_f32())
+            .map(|order| {
+                trace!(?order);
+                order.duration.as_secs_f32()
+            })
             .sum::<f32>()
             / 86400.0;
 

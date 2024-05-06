@@ -287,7 +287,9 @@ impl FIOClient {
 
         // planet info is cached for 24 hours
         if let Some(planet) = resp {
-            let data = types::Planet::from_json(planet)?;
+            let data = types::Planet::from_json(planet).with_context(|| {
+                format!("Failed to construct Planet object for planet_id={planet_id}")
+            })?;
             self.planet_cache.insert(
                 planet_id.to_string(),
                 CachedData::new(data.clone(), Duration::from_secs(86400)),
