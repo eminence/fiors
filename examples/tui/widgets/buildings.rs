@@ -76,6 +76,9 @@ impl BuildingsWidget {
             .get_planet_production(&self.username, &self.planet_id)
             .await?;
 
+        let planet = self.client.get_planet(&self.planet_id).await?;
+        let planet_cxid = planet.get_cx_mid().unwrap_or("CI1");
+
         let mut rows = Vec::new();
         // each recipe will put its inputs and outputs in this vec, which will get stitched together with "rows" once we know how many colums we need
         let mut input_output_rows = Vec::new();
@@ -90,7 +93,10 @@ impl BuildingsWidget {
         for row in &prod {
             let building = get_building_db().get(row.building_type.as_str()).unwrap();
 
-            let building_cost = self.client.calc_building_cost(building.ticker).await?;
+            let building_cost = self
+                .client
+                .calc_building_cost(building.ticker, planet_cxid)
+                .await?;
             // assume we repair our buildings after 90 days
             let repair_cost = building_cost - (building_cost * 0.5).floor();
             let daily_repair_cost = repair_cost / 90.0;
@@ -165,7 +171,7 @@ impl BuildingsWidget {
                     let daily_buy_amt = input.amount as f32 * day_scale;
                     let cx_info = self
                         .client
-                        .get_exchange_info(&format!("{}.CI1", input.ticker))
+                        .get_exchange_info(&format!("{}.{planet_cxid}", input.ticker))
                         .await
                         .unwrap();
 
@@ -193,7 +199,7 @@ impl BuildingsWidget {
 
                 let cx_info = self
                     .client
-                    .get_exchange_info(&format!("{}.CI1", recipe.outputs[0].ticker))
+                    .get_exchange_info(&format!("{}.{planet_cxid}", recipe.outputs[0].ticker))
                     .await?;
 
                 let market_instant_sell = cx_info

@@ -320,6 +320,23 @@ impl Planet {
 
         Ok(planet)
     }
+    /// Get the default market/exchange code for this planet
+    pub fn get_cx_mid(&self) -> Option<&'static str> {
+        match self.currency_code.as_deref() {
+            Some("CIS") => return Some("CI1"),
+            Some("AIC") => return Some("AI1"),
+            Some("ICA") => return Some("IC1"),
+            Some("NCC") => return Some("NC1"),
+            _ => {}
+        }
+        match self.faction_code.as_deref() {
+            Some("CI") => Some("CI1"),
+            Some("AI") => Some("AI1"),
+            Some("IC") => Some("IC1"),
+            Some("NC") => Some("NC1"),
+            _ => None,
+        }
+    }
 }
 
 #[derive(Debug, Clone)]

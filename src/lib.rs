@@ -568,11 +568,17 @@ impl FIOClient {
         Ok(v)
     }
 
-    pub async fn calc_building_cost(&self, building_ticker: &str) -> anyhow::Result<f32> {
+    pub async fn calc_building_cost(
+        &self,
+        building_ticker: &str,
+        planet_cxid: &str,
+    ) -> anyhow::Result<f32> {
         let building = get_building_db().get(building_ticker).unwrap();
         let mut total_cost = 0.0;
         for (ticker, amount) in building.building_cost.iter() {
-            let cx_info = self.get_exchange_info(&format!("{}.CI1", ticker)).await?;
+            let cx_info = self
+                .get_exchange_info(&format!("{}.{planet_cxid}", ticker))
+                .await?;
             let total = cx_info
                 .instant_buy(*amount)
                 .map(|o| o.total_value)
@@ -595,6 +601,10 @@ impl FIOClient {
         cogm: Option<&HashMap<String, f32>>,
     ) -> anyhow::Result<Option<f32>> {
         trace!(username);
+
+        let planet_obj = self.get_planet(&planet).await?;
+        let planet_cxid = planet_obj.get_cx_mid().unwrap_or("CI1");
+
         let prods = self.get_planet_production(username, planet).await?;
         for prod in prods {
             if !prod.orders.iter().any(|order| {
@@ -618,7 +628,9 @@ impl FIOClient {
             let building: &building_db::StaticBuildingInfo =
                 get_building_db().get(prod.building_type.as_str()).unwrap();
             // dbg!(building);
-            let building_cost = self.calc_building_cost(building.ticker).await?;
+            let building_cost = self
+                .calc_building_cost(building.ticker, planet_cxid)
+                .await?;
             // assume we repair our buildings after 90 days
             let repair_cost = building_cost - (building_cost * 0.5).floor();
             let daily_repair_cost = repair_cost / 90.0;
@@ -650,7 +662,7 @@ impl FIOClient {
             for input in &order.inputs {
                 let daily_buy_amt = input.material_amount as f32 * day_scale;
                 let cx_info = self
-                    .get_exchange_info(&format!("{}.CI1", input.material_ticker))
+                    .get_exchange_info(&format!("{}.{planet_cxid}", input.material_ticker))
                     .await
                     .unwrap();
 
@@ -703,6 +715,7 @@ impl FIOClient {
                 client: &FIOClient,
                 inv: &HashMap<String, Item>,
                 num_workers: u32,
+                planet_cxid: &str,
                 details: &WorkforceDetails,
             ) -> f32 {
                 let mut total = 0.0;
@@ -712,7 +725,7 @@ impl FIOClient {
                         // how much per day do we need?
                         let daily = need.units_per_one_hundred * (num_workers as f32 / 100.0);
                         let cx_info = client
-                            .get_exchange_info(&format!("{}.CI1", need.ticker))
+                            .get_exchange_info(&format!("{}.{planet_cxid}", need.ticker))
                             .await
                             .unwrap();
                         total += cx_info.ask.or_else(|| cx_info.get_any_price()).unwrap() * daily;
@@ -728,6 +741,7 @@ impl FIOClient {
                     self,
                     &inv,
                     building.pioneers,
+                    planet_cxid,
                     wf.details.get(types::PlanetWorkforce::PIONEER).unwrap(),
                 )
                 .await;
@@ -737,6 +751,7 @@ impl FIOClient {
                     self,
                     &inv,
                     building.settlers,
+                    planet_cxid,
                     wf.details.get(types::PlanetWorkforce::SETTLER).unwrap(),
                 )
                 .await;
@@ -746,6 +761,7 @@ impl FIOClient {
                     self,
                     &inv,
                     building.technicians,
+                    planet_cxid,
                     wf.details.get(types::PlanetWorkforce::TECHNICIAN).unwrap(),
                 )
                 .await;
@@ -755,6 +771,7 @@ impl FIOClient {
                     self,
                     &inv,
                     building.engineers,
+                    planet_cxid,
                     wf.details.get(types::PlanetWorkforce::ENGINEER).unwrap(),
                 )
                 .await;
@@ -764,6 +781,7 @@ impl FIOClient {
                     self,
                     &inv,
                     building.scientists,
+                    planet_cxid,
                     wf.details.get(types::PlanetWorkforce::SCIENTIST).unwrap(),
                 )
                 .await;
@@ -800,6 +818,9 @@ impl FIOClient {
             .get(building_ticker)
             .context("No such building")?;
 
+        let planet = self.get_planet(planet_id).await?;
+        let planet_cxid = planet.get_cx_mid().unwrap_or("CI1");
+
         let mut total_daily_costs = 0.0;
 
         let wf = self
@@ -811,6 +832,7 @@ impl FIOClient {
             client: &FIOClient,
             num_workers: u32,
             details: &WorkforceDetails,
+            planet_cxid: &str,
             lux1: bool,
             lux2: bool,
         ) -> f32 {
@@ -825,7 +847,7 @@ impl FIOClient {
                     // how much per day do we need?
                     let daily = need.units_per_one_hundred * (num_workers as f32 / 100.0);
                     let cx_info = client
-                        .get_exchange_info(&format!("{}.CI1", need.ticker))
+                        .get_exchange_info(&format!("{}.{planet_cxid}", need.ticker))
                         .await
                         .unwrap();
                     total += cx_info.ask.or_else(|| cx_info.get_any_price()).unwrap() * daily;
@@ -839,6 +861,7 @@ impl FIOClient {
                 self,
                 building.pioneers,
                 wf.details.get(types::PlanetWorkforce::PIONEER).unwrap(),
+                planet_cxid,
                 lux1,
                 lux2,
             )
@@ -849,6 +872,7 @@ impl FIOClient {
                 self,
                 building.settlers,
                 wf.details.get(types::PlanetWorkforce::SETTLER).unwrap(),
+                planet_cxid,
                 lux1,
                 lux2,
             )
@@ -859,6 +883,7 @@ impl FIOClient {
                 self,
                 building.technicians,
                 wf.details.get(types::PlanetWorkforce::TECHNICIAN).unwrap(),
+                planet_cxid,
                 lux1,
                 lux2,
             )
@@ -869,6 +894,7 @@ impl FIOClient {
                 self,
                 building.engineers,
                 wf.details.get(types::PlanetWorkforce::ENGINEER).unwrap(),
+                planet_cxid,
                 lux1,
                 lux2,
             )
@@ -880,6 +906,7 @@ impl FIOClient {
                 self,
                 building.scientists,
                 wf.details.get(types::PlanetWorkforce::SCIENTIST).unwrap(),
+                planet_cxid,
                 lux1,
                 lux2,
             )

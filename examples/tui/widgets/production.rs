@@ -83,6 +83,9 @@ impl ProductionWidget {
         let mut consumption_rows = Vec::new();
         let mut needs_rows = Vec::new();
 
+        let planet = self.client.get_planet(&self.planet_id).await?;
+        let planet_cxid = planet.get_cx_mid().unwrap_or("CI1");
+
         // get our base inventory for this planet
         let inv = self
             .client
@@ -195,7 +198,7 @@ impl ProductionWidget {
             // what's the CX price range
             let cx = self
                 .client
-                .get_exchange_info(&format!("{material}.CI1"))
+                .get_exchange_info(&format!("{material}.{planet_cxid}"))
                 .await?;
 
             let mut prices: Vec<f32> = [cx.price, cx.bid, cx.ask, cx.low, cx.high]
@@ -276,7 +279,7 @@ impl ProductionWidget {
                     // what's the CX price range
                     let cx = self
                         .client
-                        .get_exchange_info(&format!("{}.CI1", output.material_ticker))
+                        .get_exchange_info(&format!("{}.{planet_cxid}", output.material_ticker))
                         .await?;
 
                     let mut prices: Vec<f32> = [cx.price, cx.bid, cx.ask, cx.low, cx.high]
@@ -417,7 +420,7 @@ impl ProductionWidget {
                     } else {
                         let cx_info = self
                             .client
-                            .get_exchange_info(&format!("{}.CI1", material))
+                            .get_exchange_info(&format!("{}.{planet_cxid}", material))
                             .await?;
                         if let Some(a) = cx_info.instant_buy(amount_to_buy.ceil() as u32) {
                             e = Span::raw(format!(

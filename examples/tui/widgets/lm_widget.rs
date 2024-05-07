@@ -129,6 +129,8 @@ impl LocalMarketWidget {
     //
     pub async fn update(&mut self, shared_state: &mut SharedWidgetState) -> anyhow::Result<()> {
         let lm = self.client.get_planet_localmarket(&self.planet_id).await?;
+        let planet = self.client.get_planet(&self.planet_id).await?;
+        let planet_cxid = planet.get_cx_mid().unwrap_or("CI1");
         // keep track of our own selling orders, we'll need this later
         let mut our_selling_orders = Vec::new();
         let mut notes = Vec::new();
@@ -147,7 +149,7 @@ impl LocalMarketWidget {
 
             let cx = self
                 .client
-                .get_exchange_info(&format!("{}.CI1", ad.material_ticker))
+                .get_exchange_info(&format!("{}.{planet_cxid}", ad.material_ticker))
                 .await?;
 
             let price_per_unit = ad.total_price / ad.material_amount as f32;
@@ -204,7 +206,7 @@ impl LocalMarketWidget {
             let price_per_unit = ad.total_price / ad.material_amount as f32;
             let cx = self
                 .client
-                .get_exchange_info(&format!("{}.CI1", ad.material_ticker))
+                .get_exchange_info(&format!("{}.{planet_cxid}", ad.material_ticker))
                 .await?;
             if price_per_unit > cx.bid.unwrap_or(cx.price.unwrap()) {
                 notes.push(Line::raw(format!("Good deal on {}", ad.material_ticker)));
@@ -271,7 +273,7 @@ impl LocalMarketWidget {
                 let ticker_style = get_style_for_material(needed_material);
                 let cx = self
                     .client
-                    .get_exchange_info(&format!("{needed_material}.CI1"))
+                    .get_exchange_info(&format!("{needed_material}.{planet_cxid}"))
                     .await?;
                 let lm_fee = if planet.local_market_fee_factor > 0.0 {
                     50.0 + (30.0 * planet.local_market_fee_factor)
