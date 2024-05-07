@@ -1,4 +1,4 @@
-use crossterm::event::Event;
+use crossterm::event::{Event, KeyCode, KeyEvent};
 use fiors::{get_building_db, get_recipe_db, FIOClient};
 use ratatui::{
     layout::{Constraint, Margin, Rect},
@@ -24,6 +24,8 @@ pub struct BuildingsWidget {
     reciepe_columns: usize,
     scrollbar_state: ScrollbarState,
     table_state: TableState,
+    use_lux1: bool,
+    use_lux2: bool,
 }
 
 impl BuildingsWidget {
@@ -36,6 +38,8 @@ impl BuildingsWidget {
             reciepe_columns: 0,
             scrollbar_state: ScrollbarState::default(),
             table_state: TableState::default(),
+            use_lux1: true,
+            use_lux2: true,
         }
     }
 
@@ -50,6 +54,25 @@ impl BuildingsWidget {
     pub fn handle_input(&mut self, event: &Event, current_widget: WidgetEnum) -> NeedRefresh {
         if current_widget != WidgetEnum::Buildings {
             return NeedRefresh::No;
+        }
+
+        if let Event::Key(KeyEvent {
+            code: KeyCode::Char('1'),
+            ..
+        }) = event
+        {
+            self.use_lux1 = !self.use_lux1;
+            trace!(use_lux1 = self.use_lux1, "toggled L1");
+            return NeedRefresh::APIRefresh;
+        }
+        if let Event::Key(KeyEvent {
+            code: KeyCode::Char('2'),
+            ..
+        }) = event
+        {
+            self.use_lux2 = !self.use_lux2;
+            trace!(use_lux1 = self.use_lux1, "toggled L2");
+            return NeedRefresh::APIRefresh;
         }
 
         let i = self.table_state.selected();
@@ -109,6 +132,8 @@ impl BuildingsWidget {
             input_output_rows.push(vec![Some(Cell::from(row.building_ticker()))]);
             rows.push(vec![
                 Cell::default(), // empty fill column
+                Cell::default(), // L1
+                Cell::default(), // L2
                 Cell::from(format!("{:.0}%", 100.0 * row.efficiency)),
                 Cell::default(), // instant sell
                 Cell::default(), // average sell
@@ -119,9 +144,19 @@ impl BuildingsWidget {
                 Cell::default(), // daily profit+
             ]);
 
+            // the current building efficiency already takes into account the supplies provided at this base.
+            // so figure out what supplies we are currently providing
+            // TODO
+
             let workforce_costs = self
                 .client
-                .calc_workforce_costs(&self.username, &self.planet_id, building.ticker, true, true)
+                .calc_workforce_costs(
+                    &self.username,
+                    &self.planet_id,
+                    building.ticker,
+                    self.use_lux1,
+                    self.use_lux2,
+                )
                 .await?;
 
             for recipe in building_recipes {
@@ -243,8 +278,10 @@ impl BuildingsWidget {
 
                 input_output_rows.push(this_reciepe_row);
                 rows.push(vec![
-                    Cell::default(), // empty fill column
-                    Cell::default(), // efficiency
+                    Cell::default(),                                   // empty fill column
+                    Cell::from(if self.use_lux1 { "Y" } else { " " }), // L1
+                    Cell::from(if self.use_lux2 { "Y" } else { " " }), // L2
+                    Cell::default(),                                   // efficiency
                     Cell::from(format_price(our_cogm / daily_output_amt)),
                     Cell::from(format_price(market_cogm / daily_output_amt)),
                     Cell::from(market_instant_sell.map(format_price).unwrap_or_default()),
@@ -303,6 +340,8 @@ impl BuildingsWidget {
         widths.push(Constraint::Fill(1)); // empty fill column
 
         widths.extend([
+            Constraint::Length(1), // L1
+            Constraint::Length(1), // L2
             Constraint::Length(4), // efficiency
             Constraint::Length(6), // instant sell
             Constraint::Length(6), // average sell
@@ -317,6 +356,8 @@ impl BuildingsWidget {
         headers.resize(self.reciepe_columns + 1, Cell::default());
         headers.extend([
             Cell::default(),      // empty fill column
+            Cell::default(),      // L1
+            Cell::default(),      // L2
             Cell::from("Eff%"),   // efficiency
             Cell::from("O-COGM"), // our cogm
             Cell::from("M-COGM"), // market cogm
@@ -333,7 +374,11 @@ impl BuildingsWidget {
             .highlight_style(Style::default().bg(Color::DarkGray))
             .highlight_spacing(ratatui::widgets::HighlightSpacing::Always)
             .highlight_symbol(">")
-            .block(Block::new().title("Table").borders(Borders::ALL));
+            .block(
+                Block::new()
+                    .title("Production Buildings")
+                    .borders(Borders::ALL),
+            );
 
         frame.render_stateful_widget(table, area, &mut self.table_state);
         let scrollbar = Scrollbar::default()
