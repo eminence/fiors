@@ -144,7 +144,7 @@ impl InventoryWidget {
                         Line::from(item.name.clone())
                             .centered()
                             .style(Style::default().fg(fg_color).bg(bg_color)),
-                        Line::from(format_amount(item.amount as f32))
+                        Line::from(item.amount.to_string())
                             .centered()
                             .style(Style::default().fg(fg_color).bg(bg_color)),
                         Line::from(""),
