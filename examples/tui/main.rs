@@ -14,6 +14,7 @@ use crossterm::{
 use fiors::{get_material_db, types::Planet, FIOClient};
 use once_cell::sync::OnceCell;
 use ratatui::{prelude::*, widgets::*};
+use ratatui_macros::{horizontal, vertical};
 use tracing::{info, level_filters::LevelFilter, trace};
 use widgets::{SharedWidgetState, WidgetEnum};
 
@@ -229,7 +230,7 @@ impl App {
             ],
             [Constraint::Length(3)],
         )
-        .highlight_style(Style::default().bg(Color::LightBlue));
+        .highlight_style(Style::default().bg(Color::Blue));
         match self.mode {
             SidebarMode::Production => self.sidebar_state.select(Some(0)),
             SidebarMode::Buildings => self.sidebar_state.select(Some(1)),
@@ -242,70 +243,52 @@ impl App {
     fn render_body(&mut self, frame: &mut Frame, area: Rect) {
         match self.mode {
             SidebarMode::Production => {
-                let chunks = Layout::default()
-                    .direction(Direction::Horizontal)
+                let [planet_area, main_area, footer_area] = vertical![==3, >=1, ==3]
                     .margin(0)
-                    .constraints(
-                        [
-                            Constraint::Length(3),      // sidebar
-                            Constraint::Percentage(50), // Production
-                            Constraint::Fill(1),        // Local market
-                        ]
-                        .as_ref(),
-                    )
-                    .split(area);
+                    .split(area)
+                    .to_vec()
+                    .try_into()
+                    .unwrap();
 
-                self.render_sidebar(frame, chunks[0]);
+                self.render_tabs(frame, planet_area);
+
+                let [x, y] = horizontal![==1/2, ==1/2]
+                    .split(main_area)
+                    .to_vec()
+                    .try_into()
+                    .unwrap();
+
                 self.production_widgets
-                    .render(frame, chunks[1], self.current_widget);
-                self.lm_widget.render(frame, chunks[2], self.current_widget);
+                    .render(frame, x, self.current_widget);
+                self.lm_widget.render(frame, y, self.current_widget);
             }
             SidebarMode::Buildings => {
-                let chunks = Layout::default()
-                    .direction(Direction::Horizontal)
+                let [planet_area, main_area, footer_area] = vertical![==3, >=1, ==3]
                     .margin(0)
-                    .constraints(
-                        [
-                            Constraint::Length(3), // sidebar
-                            Constraint::Fill(1),   // TODO
-                        ]
-                        .as_ref(),
-                    )
-                    .split(area);
-                self.render_sidebar(frame, chunks[0]);
+                    .split(area)
+                    .to_vec()
+                    .try_into()
+                    .unwrap();
+
+                self.render_tabs(frame, planet_area);
                 self.building_widget
-                    .render(frame, chunks[1], self.current_widget);
+                    .render(frame, main_area, self.current_widget);
             }
             SidebarMode::Inventory => {
-                let chunks = Layout::default()
-                    .direction(Direction::Horizontal)
+                let [planet_area, main_area, footer_area] = vertical![==3, >=1, ==3]
                     .margin(0)
-                    .constraints(
-                        [
-                            Constraint::Length(3), // sidebar
-                            Constraint::Fill(1),   // TODO
-                        ]
-                        .as_ref(),
-                    )
-                    .split(area);
-                self.render_sidebar(frame, chunks[0]);
+                    .split(area)
+                    .to_vec()
+                    .try_into()
+                    .unwrap();
+
+                self.render_tabs(frame, planet_area);
+
                 self.inventory_widget
-                    .render(frame, chunks[1], self.current_widget);
+                    .render(frame, main_area, self.current_widget);
             }
             SidebarMode::Debug => {
-                let chunks = Layout::default()
-                    .direction(Direction::Horizontal)
-                    .margin(0)
-                    .constraints(
-                        [
-                            Constraint::Length(3), // sidebar
-                            Constraint::Fill(1),   // TODO
-                        ]
-                        .as_ref(),
-                    )
-                    .split(area);
-                self.render_sidebar(frame, chunks[0]);
-                self.debug_widget.render(frame, chunks[1]);
+                self.debug_widget.render(frame, area);
             }
         }
     }
@@ -464,19 +447,18 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
 
                 terminal.draw(|frame| {
                     let chunks = Layout::default()
-                        .direction(Direction::Vertical)
+                        .direction(Direction::Horizontal)
                         .margin(0)
                         .constraints(
                             [
-                                Constraint::Length(3), // tab selector
-                                Constraint::Fill(1),   // tab body
-                                Constraint::Length(3), // Details
+                                Constraint::Length(4), // Left sidebar
+                                Constraint::Fill(1),   // main body
                             ]
                             .as_ref(),
                         )
                         .split(frame.size());
 
-                    app.render_tabs(frame, chunks[0]);
+                    app.render_sidebar(frame, chunks[0]);
                     app.render_body(frame, chunks[1]);
 
                     let area = centered_rect(50, 20, frame.size());
@@ -513,19 +495,18 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
 
             terminal.draw(|frame| {
                 let chunks = Layout::default()
-                    .direction(Direction::Vertical)
+                    .direction(Direction::Horizontal)
                     .margin(0)
                     .constraints(
                         [
-                            Constraint::Length(3), // tab selector
-                            Constraint::Fill(1),   // tab body
-                            Constraint::Length(3), // status bar
+                            Constraint::Length(4), // Left sidebar
+                            Constraint::Fill(1),   // main body
                         ]
                         .as_ref(),
                     )
                     .split(frame.size());
 
-                app.render_tabs(frame, chunks[0]);
+                app.render_sidebar(frame, chunks[0]);
                 app.render_body(frame, chunks[1]);
             })?;
         }
