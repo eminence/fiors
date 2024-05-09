@@ -4,7 +4,7 @@ use fiors::{get_material_db, FIOClient};
 use ratatui::{
     layout::{Constraint, Rect},
     style::{Color, Style},
-    text::{Line, Text},
+    text::{Line, Span, Text},
     widgets::{Block, Borders, Cell, Padding, Row, Table},
     Frame,
 };
@@ -79,8 +79,8 @@ impl InventoryWidget {
         NeedRefresh::No
     }
 
-    #[tracing::instrument(name="inventory::update", skip(self, _shared_state), fields(planet_id=self.planet_id))]
-    pub async fn update(&mut self, _shared_state: &mut SharedWidgetState) -> anyhow::Result<()> {
+    #[tracing::instrument(name="inventory::update", skip(self, shared_state), fields(planet_id=self.planet_id))]
+    pub async fn update(&mut self, shared_state: &mut SharedWidgetState) -> anyhow::Result<()> {
         let inv = self
             .client
             .get_storage_for_user(&self.username, &self.planet_id)
@@ -120,6 +120,7 @@ impl InventoryWidget {
             })
             .collect();
 
+        shared_state.help_text.extend(vec![Span::raw("This page shows your inventory. ")]);
         Ok(())
     }
 

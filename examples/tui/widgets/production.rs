@@ -440,6 +440,12 @@ impl ProductionWidget {
             }
         }
 
+        shared_state.help_text.extend(vec![
+            Span::raw("This page shows your production and consumption. Press "),
+            Span::styled("tab", crate::HELP_TEXT_KEY_STYLE),
+            Span::raw(" to switch widgets. " ),
+        ]);
+
         self.scrollbar_state[0] = self.scrollbar_state[0].content_length(production_rows.len());
         self.production_rows = production_rows;
         self.scrollbar_state[1] = self.scrollbar_state[1].content_length(consumption_rows.len());

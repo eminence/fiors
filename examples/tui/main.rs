@@ -22,6 +22,9 @@ static CLIENT: OnceCell<FIOClient> = OnceCell::new();
 
 mod widgets;
 
+const HELP_TEXT_KEY_STYLE: ratatui::style::Style =
+    Style::new().fg(Color::Magenta).add_modifier(Modifier::BOLD);
+
 fn get_client() -> &'static FIOClient {
     let api_key = std::env::args()
         .nth(1)
@@ -240,12 +243,27 @@ impl App {
 
         frame.render_stateful_widget(table, area, &mut self.sidebar_state);
     }
-    fn render_body(&mut self, frame: &mut Frame, area: Rect) {
+    fn render_help(&self, frame: &mut Frame, area: Rect, help_text: Vec<Span<'static>>) {
+        let line = Line::from(help_text);
+        let help = Paragraph::new(line).wrap(Wrap { trim: true });
+
+        frame.render_widget(help, area);
+    }
+
+    fn render_body(&mut self, frame: &mut Frame, area: Rect, help_text: &[Span<'static>]) {
+        let mut help_text = help_text.to_vec();
+
+        let [main_body, footer_area] = vertical![>=1, ==3]
+            .margin(0)
+            .split(area)
+            .to_vec()
+            .try_into()
+            .unwrap();
+
         match self.mode {
             SidebarMode::Production => {
-                let [planet_area, main_area, footer_area] = vertical![==3, >=1, ==3]
-                    .margin(0)
-                    .split(area)
+                let [planet_area, main_area] = vertical![==3, >=1]
+                    .split(main_body)
                     .to_vec()
                     .try_into()
                     .unwrap();
@@ -263,9 +281,8 @@ impl App {
                 self.lm_widget.render(frame, y, self.current_widget);
             }
             SidebarMode::Buildings => {
-                let [planet_area, main_area, footer_area] = vertical![==3, >=1, ==3]
-                    .margin(0)
-                    .split(area)
+                let [planet_area, main_area] = vertical![==3, >=1]
+                    .split(main_body)
                     .to_vec()
                     .try_into()
                     .unwrap();
@@ -275,9 +292,8 @@ impl App {
                     .render(frame, main_area, self.current_widget);
             }
             SidebarMode::Inventory => {
-                let [planet_area, main_area, footer_area] = vertical![==3, >=1, ==3]
-                    .margin(0)
-                    .split(area)
+                let [planet_area, main_area] = vertical![==3, >=1]
+                    .split(main_body)
                     .to_vec()
                     .try_into()
                     .unwrap();
@@ -288,9 +304,24 @@ impl App {
                     .render(frame, main_area, self.current_widget);
             }
             SidebarMode::Debug => {
-                self.debug_widget.render(frame, area);
+                self.debug_widget.render(frame, main_body);
             }
         }
+
+        match self.mode {
+            SidebarMode::Production | SidebarMode::Buildings | SidebarMode::Inventory => {
+                help_text.extend(vec![
+                    Span::raw("Press "),
+                    Span::styled("left", HELP_TEXT_KEY_STYLE),
+                    Span::raw(" and "),
+                    Span::styled("right", HELP_TEXT_KEY_STYLE),
+                    Span::raw(" to switch bases. "),
+                ]);
+            }
+            _ => {}
+        }
+
+        self.render_help(frame, footer_area, help_text);
     }
 
     /// Returns info about if we need to redresh/redraw and if we're switching planets
@@ -459,7 +490,7 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                         .split(frame.size());
 
                     app.render_sidebar(frame, chunks[0]);
-                    app.render_body(frame, chunks[1]);
+                    app.render_body(frame, chunks[1], &shared_state.help_text);
 
                     let area = centered_rect(50, 20, frame.size());
                     let para =
@@ -468,6 +499,7 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                     frame.render_widget(para, area);
                 })?;
 
+                shared_state.help_text.clear();
                 match app.mode {
                     SidebarMode::Production => {
                         app.production_widgets.update(&mut shared_state).await?;
@@ -507,7 +539,7 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                     .split(frame.size());
 
                 app.render_sidebar(frame, chunks[0]);
-                app.render_body(frame, chunks[1]);
+                app.render_body(frame, chunks[1], &shared_state.help_text);
             })?;
         }
         needs_redraw = NeedRefresh::No;
