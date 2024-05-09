@@ -120,7 +120,9 @@ impl InventoryWidget {
             })
             .collect();
 
-        shared_state.help_text.extend(vec![Span::raw("This page shows your inventory. ")]);
+        shared_state
+            .help_text
+            .extend(vec![Span::raw("This page shows your inventory. ")]);
         Ok(())
     }
 

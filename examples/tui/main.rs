@@ -321,6 +321,14 @@ impl App {
             _ => {}
         }
 
+        help_text.extend(vec![
+            Span::styled("Alt-up", HELP_TEXT_KEY_STYLE),
+            Span::raw(" and "),
+            Span::styled("Alt-down", HELP_TEXT_KEY_STYLE),
+            Span::raw(" to switch modes, "),
+            Span::styled("q", HELP_TEXT_KEY_STYLE),
+            Span::raw(" to quit."),
+        ]);
         self.render_help(frame, footer_area, help_text);
     }
 
@@ -403,7 +411,46 @@ impl App {
                 self.mode = SidebarMode::Debug;
                 (NeedRefresh::APIRefresh, true)
             }
-
+            KeyCode::Down if modifiers.contains(KeyModifiers::ALT) => {
+                match self.mode {
+                    SidebarMode::Production => {
+                        self.mode = SidebarMode::Buildings;
+                        self.current_widget = WidgetEnum::Buildings;
+                    }
+                    SidebarMode::Buildings => {
+                        self.mode = SidebarMode::Inventory;
+                        self.current_widget = WidgetEnum::Inventory;
+                    }
+                    SidebarMode::Inventory => {
+                        self.mode = SidebarMode::Debug;
+                    }
+                    SidebarMode::Debug => {
+                        self.mode = SidebarMode::Production;
+                        self.current_widget = WidgetEnum::Production;
+                    }
+                }
+                (NeedRefresh::APIRefresh, true)
+            }
+            KeyCode::Up if modifiers.contains(KeyModifiers::ALT) => {
+                match self.mode {
+                    SidebarMode::Production => {
+                        self.mode = SidebarMode::Debug;
+                    }
+                    SidebarMode::Buildings => {
+                        self.mode = SidebarMode::Production;
+                        self.current_widget = WidgetEnum::Production;
+                    }
+                    SidebarMode::Inventory => {
+                        self.mode = SidebarMode::Buildings;
+                        self.current_widget = WidgetEnum::Buildings;
+                    }
+                    SidebarMode::Debug => {
+                        self.mode = SidebarMode::Inventory;
+                        self.current_widget = WidgetEnum::Inventory;
+                    }
+                }
+                (NeedRefresh::APIRefresh, true)
+            }
             _ => (refresh, false),
         }
     }

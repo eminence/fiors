@@ -331,9 +331,9 @@ impl BuildingsWidget {
             .collect();
         self.reciepe_columns = max;
 
-        shared_state.help_text.extend(vec![
-            Span::raw("This page shows all possible production receipes for each building at your base. ")
-        ]);
+        shared_state.help_text.extend(vec![Span::raw(
+            "This page shows all possible production receipes for each building at your base. ",
+        )]);
 
         Ok(())
     }

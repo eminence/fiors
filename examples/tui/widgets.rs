@@ -16,6 +16,8 @@ pub use debug::DebugWidget;
 mod inventory;
 pub use inventory::InventoryWidget;
 
+use ratatui::text::Span;
+
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum WidgetEnum {
     Production,
@@ -128,4 +130,6 @@ pub struct SharedWidgetState {
 
     /// To be displayed in the debug window
     pub debug_messages: Vec<String>,
+
+    pub help_text: Vec<Span<'static>>,
 }

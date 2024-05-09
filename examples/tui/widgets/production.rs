@@ -441,9 +441,11 @@ impl ProductionWidget {
         }
 
         shared_state.help_text.extend(vec![
-            Span::raw("This page shows your production and consumption. Press "),
+            Span::raw("This mode shows your production and consumption. "),
+            Span::raw("Needs are based on a 21 day resupply period. "),
+            Span::raw("Press "),
             Span::styled("tab", crate::HELP_TEXT_KEY_STYLE),
-            Span::raw(" to switch widgets. " ),
+            Span::raw(" to switch widgets. "),
         ]);
 
         self.scrollbar_state[0] = self.scrollbar_state[0].content_length(production_rows.len());
