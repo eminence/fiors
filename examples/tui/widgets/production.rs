@@ -564,22 +564,36 @@ impl ProductionWidget {
                 .borders(Borders::ALL),
         );
 
-        frame.render_stateful_widget(production_table, chunks[0], &mut self.table_state[0]);
-        frame.render_stateful_widget(consumption_table, chunks[1], &mut self.table_state[1]);
-        frame.render_stateful_widget(needs_table, chunks[2], &mut self.table_state[2]);
-
         let scrollbar = Scrollbar::default()
             .orientation(widgets::ScrollbarOrientation::VerticalRight)
             .begin_symbol(None)
             .end_symbol(None);
 
-        for (idx, state) in &mut self.scrollbar_state.iter_mut().enumerate() {
-            let area = chunks[idx].inner(&Margin {
-                vertical: 1,
-                horizontal: 0,
-            });
+        for (idx, ((table, row_count), margin)) in
+            [production_table, consumption_table, needs_table]
+                .into_iter()
+                .zip([
+                    self.production_rows.len(),
+                    self.consumption_rows.len(),
+                    self.needs_rows.len(),
+                ])
+                .zip([3u16, 2, 2]) // production widget has a different margin due to table header
+                .enumerate()
+        {
+            frame.render_stateful_widget(table, chunks[idx], &mut self.table_state[idx]);
 
-            frame.render_stateful_widget(scrollbar.clone(), area, state);
+            if chunks[idx].height - margin < row_count as u16 {
+                let area = chunks[idx].inner(&Margin {
+                    vertical: 1,
+                    horizontal: 0,
+                });
+
+                frame.render_stateful_widget(
+                    scrollbar.clone(),
+                    area,
+                    &mut self.scrollbar_state[idx],
+                );
+            }
         }
     }
 }
