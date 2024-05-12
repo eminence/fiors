@@ -57,6 +57,7 @@ pub struct FIOClient {
     localmarket_cache: DashMap<String, CachedData<types::LocalMarket>>,
     exchange_cache: DashMap<String, CachedData<types::Ticker>>,
     planet_production_cache: DashMap<(String, String), CachedData<Vec<types::ProductionLine>>>,
+    own_orders_cache: DashMap<String, CachedData<Vec<types::OwnMarketOrder>>>,
 }
 
 impl FIOClient {
@@ -111,6 +112,7 @@ impl FIOClient {
             localmarket_cache: DashMap::new(),
             exchange_cache: DashMap::new(),
             planet_production_cache: DashMap::new(),
+            own_orders_cache: DashMap::new(),
         })
     }
 
@@ -132,6 +134,7 @@ impl FIOClient {
             localmarket_cache: DashMap::new(),
             exchange_cache: DashMap::new(),
             planet_production_cache: DashMap::new(),
+            own_orders_cache: DashMap::new(),
         }
     }
 
@@ -562,6 +565,36 @@ impl FIOClient {
         // production info is cached for 15 minutes
         self.planet_production_cache.insert(
             (username.to_string(), planet.to_string()),
+            CachedData::new(v.clone(), Duration::from_secs(900)),
+        );
+
+        Ok(v)
+    }
+
+    pub async fn get_cxos_for_user(
+        &self,
+        username: &str,
+    ) -> anyhow::Result<Vec<types::OwnMarketOrder>> {
+        if let Some(cached) = self.own_orders_cache.get(username) {
+            if cached.expiry > Utc::now() {
+                return Ok(cached.data.clone());
+            }
+        }
+
+        let resp: Option<Vec<serde_json::Value>> =
+            self.request(&format!("/cxos/{username}")).await?;
+
+        let mut v = Vec::new();
+        if let Some(orders) = resp {
+            for order in orders {
+                let order = serde_json::from_value(order)?;
+                v.push(order);
+            }
+        }
+
+        // cache for 15 minutes
+        self.own_orders_cache.insert(
+            username.to_string(),
             CachedData::new(v.clone(), Duration::from_secs(900)),
         );
 

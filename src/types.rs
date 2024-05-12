@@ -668,6 +668,32 @@ pub struct RecipeMaterial {
     pub amount: u32,
 }
 
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct OwnMarketOrder {
+    // pub trades: Vec<Trade>,
+    pub exchange_code: String,
+    /// Either "BUYING" or "SELLING"
+    pub order_type: String,
+    /// Note, this doesn't contain the full ticker, just the material name
+    pub material_ticker: String,
+    pub amount: u32,
+    pub initial_amount: u32,
+    pub limit: f32,
+    pub limit_currency: String,
+    /// Either "PLACED" or "FILLED" or "PARTIALLY_FILLED"
+    pub status: String,
+    #[serde(rename = "CreatedEpochMs", deserialize_with = "ms_to_date")]
+    pub created: DateTime<Utc>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct Trade {
+    pub amount: u32,
+    pub price: f32,
+}
+
 #[cfg(feature = "gendb")]
 impl quote::ToTokens for RecipeMaterial {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
