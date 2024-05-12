@@ -17,9 +17,9 @@ impl DebugWidget {
     }
 
     pub async fn update(&mut self, shared_state: &mut SharedWidgetState) -> anyhow::Result<()> {
-        for line in &shared_state.debug_messages {
-            self.lines.push(Line::from(line.to_string()));
-        }
+        // for line in &shared_state.debug_messages {
+        //     self.lines.push(Line::from(line.to_string()));
+        // }
 
         Ok(())
     }

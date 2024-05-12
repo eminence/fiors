@@ -87,7 +87,6 @@ enum SidebarMode {
     Production,
     Buildings,
     Inventory,
-    Debug,
 }
 
 struct App {
@@ -229,7 +228,6 @@ impl App {
                 Row::new(vec!["\nPRD\n"]).height(3),
                 Row::new(vec!["\nBLD\n"]).height(3),
                 Row::new(vec!["\nINV\n"]).height(3),
-                Row::new(vec!["\nDBG\n"]).height(3),
             ],
             [Constraint::Length(3)],
         )
@@ -238,7 +236,6 @@ impl App {
             SidebarMode::Production => self.sidebar_state.select(Some(0)),
             SidebarMode::Buildings => self.sidebar_state.select(Some(1)),
             SidebarMode::Inventory => self.sidebar_state.select(Some(2)),
-            SidebarMode::Debug => self.sidebar_state.select(Some(3)),
         };
 
         frame.render_stateful_widget(table, area, &mut self.sidebar_state);
@@ -303,9 +300,6 @@ impl App {
                 self.inventory_widget
                     .render(frame, main_area, self.current_widget);
             }
-            SidebarMode::Debug => {
-                self.debug_widget.render(frame, main_body);
-            }
         }
 
         match self.mode {
@@ -356,7 +350,6 @@ impl App {
                         .handle_input(&event, self.current_widget),
                 );
             }
-            SidebarMode::Debug => {}
         }
 
         let Event::Key(KeyEvent {
@@ -407,10 +400,6 @@ impl App {
                 self.current_widget = WidgetEnum::Inventory;
                 (NeedRefresh::APIRefresh, true)
             }
-            KeyCode::Char('d') if modifiers.contains(KeyModifiers::ALT) => {
-                self.mode = SidebarMode::Debug;
-                (NeedRefresh::APIRefresh, true)
-            }
             KeyCode::Down if modifiers.contains(KeyModifiers::ALT) => {
                 match self.mode {
                     SidebarMode::Production => {
@@ -422,9 +411,6 @@ impl App {
                         self.current_widget = WidgetEnum::Inventory;
                     }
                     SidebarMode::Inventory => {
-                        self.mode = SidebarMode::Debug;
-                    }
-                    SidebarMode::Debug => {
                         self.mode = SidebarMode::Production;
                         self.current_widget = WidgetEnum::Production;
                     }
@@ -434,7 +420,8 @@ impl App {
             KeyCode::Up if modifiers.contains(KeyModifiers::ALT) => {
                 match self.mode {
                     SidebarMode::Production => {
-                        self.mode = SidebarMode::Debug;
+                        self.mode = SidebarMode::Inventory;
+                        self.current_widget = WidgetEnum::Inventory;
                     }
                     SidebarMode::Buildings => {
                         self.mode = SidebarMode::Production;
@@ -443,10 +430,6 @@ impl App {
                     SidebarMode::Inventory => {
                         self.mode = SidebarMode::Buildings;
                         self.current_widget = WidgetEnum::Buildings;
-                    }
-                    SidebarMode::Debug => {
-                        self.mode = SidebarMode::Inventory;
-                        self.current_widget = WidgetEnum::Inventory;
                     }
                 }
                 (NeedRefresh::APIRefresh, true)
@@ -557,9 +540,6 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                     }
                     SidebarMode::Inventory => {
                         app.inventory_widget.update(&mut shared_state).await?;
-                    }
-                    SidebarMode::Debug => {
-                        app.debug_widget.update(&mut shared_state).await?;
                     }
                 }
             }

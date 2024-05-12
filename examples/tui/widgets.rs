@@ -128,8 +128,7 @@ pub struct SharedWidgetState {
     /// The best COGM for each material
     pub cogm: HashMap<String, f32>,
 
-    /// To be displayed in the debug window
-    pub debug_messages: Vec<String>,
-
+    // To be displayed in the debug window
+    // pub debug_messages: Vec<String>,
     pub help_text: Vec<Span<'static>>,
 }

@@ -293,12 +293,6 @@ impl LocalMarketWidget {
             }
         }
 
-        shared_state.debug_messages.push(format!(
-            "hello from LM widget, details.is_some()={:?} table_state.selected={:?}",
-            self.details.is_some(),
-            self.table_state.selected()
-        ));
-
         self.scrollbar_state = self.scrollbar_state.content_length(rows.len());
         self.table_rows = rows;
         self.notes = notes;
