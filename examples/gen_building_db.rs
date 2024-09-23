@@ -35,6 +35,14 @@ async fn main() -> anyhow::Result<()> {
             .map(|bc| bc.commodity_ticker.as_str());
         let building_cost_amount = building.building_costs.iter().map(|bc| bc.amount);
 
+        let mut building_cost: Vec<(_, _)> = building_cost_ticker.zip(building_cost_amount).collect();
+        building_cost.sort_by(|a, b| a.0.cmp(b.0));
+
+        // now that we've stored it, split it back into two iterators:
+        let building_cost_ticker = building_cost.iter().map(|(ticker, _)| *ticker);
+        let building_cost_amount = building_cost.iter().map(|(_, amount)| *amount);
+        
+
         pre.extend(quote! {
             let x = StaticBuildingInfo {
                 name: #name,
@@ -57,7 +65,6 @@ async fn main() -> anyhow::Result<()> {
 
     let f = quote! {
         use std::collections::HashMap;
-        use crate::materials::MaterialCategory;
         use once_cell::sync::OnceCell;
 
 

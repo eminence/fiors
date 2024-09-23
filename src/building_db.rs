@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use crate::materials::MaterialCategory;
 use once_cell::sync::OnceCell;
 #[derive(Debug, Copy, Clone)]
 pub struct StaticBuildingInfo {
@@ -31,16 +30,16 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
-            ("LIT", 2u32),
-            ("LDE", 42u32),
-            ("LTA", 24u32),
-            ("TRU", 40u32),
             ("ADS", 1u32),
-            ("FUN", 10u32),
-            ("MCG", 600u32),
             ("BMF", 2u32),
+            ("FUN", 10u32),
             ("LBH", 42u32),
+            ("LDE", 42u32),
+            ("LIT", 2u32),
             ("LSE", 42u32),
+            ("LTA", 24u32),
+            ("MCG", 600u32),
+            ("TRU", 40u32),
         ],
     };
     map.insert("4DA", x);
@@ -56,11 +55,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 20u32,
         area_cost: 50u32,
         building_cost: &[
-            ("TRU", 8u32),
-            ("ADE", 8u32),
             ("ABH", 6u32),
+            ("ADE", 8u32),
             ("ASE", 8u32),
             ("ATA", 1u32),
+            ("TRU", 8u32),
         ],
     };
     map.insert("AAF", x);
@@ -76,13 +75,13 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
-            ("MCG", 300u32),
-            ("TRU", 20u32),
             ("DEC", 32u32),
-            ("RTA", 12u32),
-            ("RDE", 24u32),
+            ("MCG", 300u32),
             ("RBH", 16u32),
+            ("RDE", 24u32),
             ("RSE", 24u32),
+            ("RTA", 12u32),
+            ("TRU", 20u32),
         ],
     };
     map.insert("ACA", x);
@@ -99,12 +98,12 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         area_cost: 400u32,
         building_cost: &[
             ("BMF", 2u32),
-            ("LSE", 25u32),
             ("BWS", 10u32),
             ("LBH", 16u32),
-            ("RTA", 5u32),
             ("LDE", 32u32),
+            ("LSE", 25u32),
             ("MCG", 750u32),
+            ("RTA", 5u32),
         ],
     };
     map.insert("ADM", x);
@@ -119,7 +118,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 30u32,
         scientists: 0u32,
         area_cost: 45u32,
-        building_cost: &[("ABH", 10u32), ("ASE", 6u32), ("TRU", 6u32), ("ADE", 6u32)],
+        building_cost: &[("ABH", 10u32), ("ADE", 6u32), ("ASE", 6u32), ("TRU", 6u32)],
     };
     map.insert("AML", x);
     map.insert("advancedMaterialLab", x);
@@ -133,7 +132,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 20u32,
         scientists: 0u32,
         area_cost: 40u32,
-        building_cost: &[("ABH", 6u32), ("ASE", 10u32), ("TRU", 8u32), ("ADE", 10u32)],
+        building_cost: &[("ABH", 6u32), ("ADE", 10u32), ("ASE", 10u32), ("TRU", 8u32)],
     };
     map.insert("APF", x);
     map.insert("appliancesFactory", x);
@@ -148,14 +147,14 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 500u32,
         building_cost: &[
-            ("LTA", 16u32),
             ("DEC", 10u32),
-            ("LSE", 32u32),
             ("LBH", 24u32),
-            ("WOR", 2u32),
             ("LDE", 32u32),
-            ("TRU", 20u32),
+            ("LSE", 32u32),
+            ("LTA", 16u32),
             ("MCG", 300u32),
+            ("TRU", 20u32),
+            ("WOR", 2u32),
         ],
     };
     map.insert("ART", x);
@@ -171,10 +170,10 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 34u32,
         building_cost: &[
-            ("LTA", 2u32),
-            ("LSE", 6u32),
-            ("LDE", 2u32),
             ("LBH", 4u32),
+            ("LDE", 2u32),
+            ("LSE", 6u32),
+            ("LTA", 2u32),
             ("TRU", 4u32),
         ],
     };
@@ -190,7 +189,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 12u32,
-        building_cost: &[("BSE", 6u32), ("BBH", 4u32), ("BDE", 2u32)],
+        building_cost: &[("BBH", 4u32), ("BDE", 2u32), ("BSE", 6u32)],
     };
     map.insert("BMP", x);
     map.insert("basicMaterialsPlant", x);
@@ -205,13 +204,13 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 100u32,
         building_cost: &[
-            ("RTA", 32u32),
-            ("RSE", 16u32),
-            ("RDE", 24u32),
-            ("RBH", 24u32),
-            ("TAC", 6u32),
             ("FFC", 1u32),
+            ("RBH", 24u32),
+            ("RDE", 24u32),
+            ("RSE", 16u32),
+            ("RTA", 32u32),
             ("SP", 32u32),
+            ("TAC", 6u32),
         ],
     };
     map.insert("CFL", x);
@@ -226,7 +225,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 18u32,
-        building_cost: &[("BSE", 3u32), ("BDE", 3u32), ("BBH", 3u32), ("TRU", 4u32)],
+        building_cost: &[("BBH", 3u32), ("BDE", 3u32), ("BSE", 3u32), ("TRU", 4u32)],
     };
     map.insert("CHP", x);
     map.insert("chemPlant", x);
@@ -241,13 +240,13 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 100u32,
         building_cost: &[
-            ("SP", 36u32),
-            ("RTA", 16u32),
-            ("RSE", 16u32),
-            ("RDE", 16u32),
+            ("CRU", 4u32),
             ("LIS", 1u32),
             ("RBH", 32u32),
-            ("CRU", 4u32),
+            ("RDE", 16u32),
+            ("RSE", 16u32),
+            ("RTA", 16u32),
+            ("SP", 36u32),
         ],
     };
     map.insert("CIM", x);
@@ -277,11 +276,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 27u32,
         building_cost: &[
-            ("LSE", 4u32),
-            ("LDE", 4u32),
-            ("TRU", 4u32),
-            ("LTA", 4u32),
             ("LBH", 6u32),
+            ("LDE", 4u32),
+            ("LSE", 4u32),
+            ("LTA", 4u32),
+            ("TRU", 4u32),
         ],
     };
     map.insert("CLR", x);
@@ -298,10 +297,10 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         area_cost: 25u32,
         building_cost: &[
             ("LDE", 4u32),
-            ("TRU", 8u32),
+            ("LSE", 4u32),
             ("LTA", 4u32),
             ("PSL", 12u32),
-            ("LSE", 4u32),
+            ("TRU", 8u32),
         ],
     };
     map.insert("CM", x);
@@ -317,12 +316,12 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
-            ("LSE", 24u32),
-            ("LTA", 32u32),
-            ("LBH", 32u32),
             ("BMF", 1u32),
             ("BWS", 16u32),
+            ("LBH", 32u32),
             ("LDE", 16u32),
+            ("LSE", 24u32),
+            ("LTA", 32u32),
             ("SP", 32u32),
         ],
     };
@@ -353,13 +352,13 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 100u32,
         building_cost: &[
-            ("RDE", 32u32),
-            ("SP", 24u32),
-            ("RSE", 32u32),
-            ("RBH", 16u32),
-            ("RTA", 8u32),
             ("BMF", 2u32),
             ("BWS", 8u32),
+            ("RBH", 16u32),
+            ("RDE", 32u32),
+            ("RSE", 32u32),
+            ("RTA", 8u32),
+            ("SP", 24u32),
         ],
     };
     map.insert("COR", x);
@@ -375,17 +374,17 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 100u32,
         building_cost: &[
-            ("LIT", 40u32),
-            ("DEC", 80u32),
-            ("LOG", 1u32),
-            ("ATA", 100u32),
-            ("TRU", 400u32),
             ("ABH", 100u32),
             ("ADE", 100u32),
             ("ADS", 1u32),
             ("ASE", 100u32),
-            ("SP", 200u32),
+            ("ATA", 100u32),
             ("CBL", 4u32),
+            ("DEC", 80u32),
+            ("LIT", 40u32),
+            ("LOG", 1u32),
+            ("SP", 200u32),
+            ("TRU", 400u32),
         ],
     };
     map.insert("CRC", x);
@@ -401,13 +400,13 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 100u32,
         building_cost: &[
+            ("CC", 5u32),
             ("LIS", 1u32),
-            ("SP", 44u32),
-            ("RTA", 8u32),
+            ("RBH", 32u32),
             ("RDE", 32u32),
             ("RSE", 32u32),
-            ("RBH", 32u32),
-            ("CC", 5u32),
+            ("RTA", 8u32),
+            ("SP", 44u32),
         ],
     };
     map.insert("CTE", x);
@@ -423,11 +422,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 30u32,
         building_cost: &[
-            ("TRU", 6u32),
-            ("RSE", 6u32),
-            ("RTA", 2u32),
             ("RBH", 4u32),
             ("RDE", 6u32),
+            ("RSE", 6u32),
+            ("RTA", 2u32),
+            ("TRU", 6u32),
         ],
     };
     map.insert("DRS", x);
@@ -443,11 +442,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 35u32,
         building_cost: &[
-            ("RTA", 2u32),
-            ("RSE", 6u32),
-            ("RDE", 6u32),
-            ("TRU", 6u32),
             ("RBH", 4u32),
+            ("RDE", 6u32),
+            ("RSE", 6u32),
+            ("RTA", 2u32),
+            ("TRU", 6u32),
         ],
     };
     map.insert("ECA", x);
@@ -462,7 +461,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 30u32,
-        building_cost: &[("LDE", 4u32), ("TRU", 4u32), ("LBH", 4u32), ("LSE", 6u32)],
+        building_cost: &[("LBH", 4u32), ("LDE", 4u32), ("LSE", 6u32), ("TRU", 4u32)],
     };
     map.insert("EDM", x);
     map.insert("electronicDeviceManufactory", x);
@@ -477,10 +476,10 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 40u32,
         area_cost: 100u32,
         building_cost: &[
-            ("RTA", 2u32),
-            ("RDE", 6u32),
             ("RBH", 6u32),
+            ("RDE", 6u32),
             ("RSE", 12u32),
+            ("RTA", 2u32),
             ("TRU", 6u32),
         ],
     };
@@ -496,7 +495,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 35u32,
-        building_cost: &[("RDE", 4u32), ("TRU", 6u32), ("RSE", 6u32), ("RBH", 4u32)],
+        building_cost: &[("RBH", 4u32), ("RDE", 4u32), ("RSE", 6u32), ("TRU", 6u32)],
     };
     map.insert("ELP", x);
     map.insert("electronicsPlant", x);
@@ -511,13 +510,13 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
-            ("LDE", 32u32),
-            ("TCU", 1u32),
-            ("DOU", 1u32),
             ("BTA", 16u32),
-            ("LSE", 24u32),
+            ("DOU", 1u32),
             ("LBH", 32u32),
+            ("LDE", 32u32),
+            ("LSE", 24u32),
             ("MCG", 300u32),
+            ("TCU", 1u32),
         ],
     };
     map.insert("EMC", x);
@@ -546,7 +545,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 25u32,
-        building_cost: &[("LDE", 2u32), ("LBH", 2u32), ("LSE", 2u32), ("TRU", 5u32)],
+        building_cost: &[("LBH", 2u32), ("LDE", 2u32), ("LSE", 2u32), ("TRU", 5u32)],
     };
     map.insert("FER", x);
     map.insert("fermentationFacility", x);
@@ -574,7 +573,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 30u32,
-        building_cost: &[("BSE", 4u32), ("BBH", 4u32)],
+        building_cost: &[("BBH", 4u32), ("BSE", 4u32)],
     };
     map.insert("FRM", x);
     map.insert("farm", x);
@@ -588,7 +587,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 25u32,
-        building_cost: &[("BBH", 2u32), ("TRU", 4u32), ("LDE", 2u32), ("LBH", 2u32)],
+        building_cost: &[("BBH", 2u32), ("LBH", 2u32), ("LDE", 2u32), ("TRU", 4u32)],
     };
     map.insert("FS", x);
     map.insert("fineSmithy", x);
@@ -602,7 +601,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 27u32,
-        building_cost: &[("LBH", 4u32), ("TRU", 5u32), ("LSE", 6u32)],
+        building_cost: &[("LBH", 4u32), ("LSE", 6u32), ("TRU", 5u32)],
     };
     map.insert("GF", x);
     map.insert("glassFurnace", x);
@@ -616,7 +615,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 10u32,
-        building_cost: &[("BTA", 1u32), ("BDE", 2u32), ("BBH", 4u32), ("BSE", 2u32)],
+        building_cost: &[("BBH", 4u32), ("BDE", 2u32), ("BSE", 2u32), ("BTA", 1u32)],
     };
     map.insert("HB1", x);
     map.insert("habitationPioneer", x);
@@ -631,11 +630,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 12u32,
         building_cost: &[
-            ("BSE", 2u32),
-            ("TRU", 2u32),
-            ("BDE", 2u32),
             ("BBH", 2u32),
+            ("BDE", 2u32),
+            ("BSE", 2u32),
             ("BTA", 2u32),
+            ("TRU", 2u32),
         ],
     };
     map.insert("HB2", x);
@@ -650,7 +649,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 14u32,
-        building_cost: &[("LBH", 4u32), ("LTA", 8u32), ("LDE", 4u32), ("LSE", 4u32)],
+        building_cost: &[("LBH", 4u32), ("LDE", 4u32), ("LSE", 4u32), ("LTA", 8u32)],
     };
     map.insert("HB3", x);
     map.insert("habitationTechnician", x);
@@ -664,7 +663,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 16u32,
-        building_cost: &[("RDE", 6u32), ("RBH", 6u32), ("RSE", 4u32), ("RTA", 4u32)],
+        building_cost: &[("RBH", 6u32), ("RDE", 6u32), ("RSE", 4u32), ("RTA", 4u32)],
     };
     map.insert("HB4", x);
     map.insert("habitationEngineer", x);
@@ -678,7 +677,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 18u32,
-        building_cost: &[("ATA", 4u32), ("ABH", 6u32), ("ADE", 6u32), ("ASE", 4u32)],
+        building_cost: &[("ABH", 6u32), ("ADE", 6u32), ("ASE", 4u32), ("ATA", 4u32)],
     };
     map.insert("HB5", x);
     map.insert("habitationScientist", x);
@@ -692,7 +691,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 14u32,
-        building_cost: &[("LSE", 2u32), ("BBH", 4u32), ("BDE", 4u32), ("LTA", 2u32)],
+        building_cost: &[("BBH", 4u32), ("BDE", 4u32), ("LSE", 2u32), ("LTA", 2u32)],
     };
     map.insert("HBB", x);
     map.insert("habitationBarracks", x);
@@ -707,11 +706,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 17u32,
         building_cost: &[
-            ("RTA", 4u32),
-            ("LDE", 2u32),
             ("LBH", 4u32),
-            ("TRU", 2u32),
+            ("LDE", 2u32),
             ("RSE", 2u32),
+            ("RTA", 4u32),
+            ("TRU", 2u32),
         ],
     };
     map.insert("HBC", x);
@@ -726,7 +725,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 22u32,
-        building_cost: &[("ATA", 6u32), ("ABH", 8u32), ("ADE", 8u32), ("ASE", 6u32)],
+        building_cost: &[("ABH", 8u32), ("ADE", 8u32), ("ASE", 6u32), ("ATA", 6u32)],
     };
     map.insert("HBL", x);
     map.insert("habitationLuxury", x);
@@ -740,7 +739,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 20u32,
-        building_cost: &[("ASE", 6u32), ("RBH", 8u32), ("RDE", 8u32), ("ATA", 4u32)],
+        building_cost: &[("ASE", 6u32), ("ATA", 4u32), ("RBH", 8u32), ("RDE", 8u32)],
     };
     map.insert("HBM", x);
     map.insert("habitationManagers", x);
@@ -755,15 +754,15 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
-            ("RTA", 16u32),
-            ("TRU", 16u32),
-            ("MCG", 400u32),
-            ("RDE", 20u32),
-            ("SU", 1u32),
-            ("RSE", 20u32),
             ("DOU", 1u32),
+            ("MCG", 400u32),
             ("RBH", 24u32),
+            ("RDE", 20u32),
+            ("RSE", 20u32),
+            ("RTA", 16u32),
+            ("SU", 1u32),
             ("TCU", 1u32),
+            ("TRU", 16u32),
         ],
     };
     map.insert("HOS", x);
@@ -779,11 +778,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 25u32,
         building_cost: &[
-            ("TRU", 4u32),
-            ("BDE", 6u32),
-            ("LTA", 2u32),
-            ("BSE", 6u32),
             ("BBH", 4u32),
+            ("BDE", 6u32),
+            ("BSE", 6u32),
+            ("LTA", 2u32),
+            ("TRU", 4u32),
         ],
     };
     map.insert("HWP", x);
@@ -798,7 +797,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 15u32,
-        building_cost: &[("BSE", 2u32), ("MHL", 16u32), ("TRU", 4u32), ("LBH", 4u32)],
+        building_cost: &[("BSE", 2u32), ("LBH", 4u32), ("MHL", 16u32), ("TRU", 4u32)],
     };
     map.insert("HYF", x);
     map.insert("hydroponicsFarm", x);
@@ -812,7 +811,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 10u32,
-        building_cost: &[("BSE", 4u32), ("BDE", 2u32), ("BBH", 3u32), ("BTA", 1u32)],
+        building_cost: &[("BBH", 3u32), ("BDE", 2u32), ("BSE", 4u32), ("BTA", 1u32)],
     };
     map.insert("INC", x);
     map.insert("incinerator", x);
@@ -827,11 +826,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 500u32,
         building_cost: &[
-            ("MCG", 300u32),
-            ("BSE", 16u32),
-            ("BDE", 24u32),
             ("BBH", 24u32),
+            ("BDE", 24u32),
+            ("BSE", 16u32),
             ("BTA", 12u32),
+            ("MCG", 300u32),
             ("TRU", 10u32),
         ],
     };
@@ -848,11 +847,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 32u32,
         building_cost: &[
-            ("TRU", 6u32),
-            ("RDE", 4u32),
-            ("RTA", 2u32),
             ("RBH", 6u32),
+            ("RDE", 4u32),
             ("RSE", 4u32),
+            ("RTA", 2u32),
+            ("TRU", 6u32),
         ],
     };
     map.insert("IVP", x);
@@ -867,7 +866,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 25u32,
-        building_cost: &[("LDE", 12u32), ("TRU", 8u32), ("LSE", 6u32)],
+        building_cost: &[("LDE", 12u32), ("LSE", 6u32), ("TRU", 8u32)],
     };
     map.insert("LAB", x);
     map.insert("laboratory", x);
@@ -883,13 +882,13 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         area_cost: 500u32,
         building_cost: &[
             ("ABH", 8u32),
+            ("ADE", 12u32),
             ("ASE", 12u32),
             ("ATA", 6u32),
-            ("ADE", 12u32),
+            ("COM", 1u32),
+            ("LOG", 1u32),
             ("MCG", 250u32),
             ("TRU", 20u32),
-            ("LOG", 1u32),
-            ("COM", 1u32),
         ],
     };
     map.insert("LIB", x);
@@ -906,10 +905,10 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         area_cost: 500u32,
         building_cost: &[
             ("BDE", 8u32),
-            ("LBH", 8u32),
-            ("BTA", 8u32),
-            ("TRU", 10u32),
             ("BSE", 12u32),
+            ("BTA", 8u32),
+            ("LBH", 8u32),
+            ("TRU", 10u32),
         ],
     };
     map.insert("LM", x);
@@ -924,7 +923,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 35u32,
-        building_cost: &[("RDE", 6u32), ("RBH", 4u32), ("TRU", 6u32), ("RSE", 4u32)],
+        building_cost: &[("RBH", 4u32), ("RDE", 6u32), ("RSE", 4u32), ("TRU", 6u32)],
     };
     map.insert("MCA", x);
     map.insert("mediumComponentsAssembly", x);
@@ -938,7 +937,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 120u32,
-        building_cost: &[("TRU", 2u32), ("ASE", 8u32), ("ATA", 4u32)],
+        building_cost: &[("ASE", 8u32), ("ATA", 4u32), ("TRU", 2u32)],
     };
     map.insert("ORC", x);
     map.insert("orchard", x);
@@ -953,13 +952,13 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 500u32,
         building_cost: &[
-            ("BTA", 10u32),
-            ("SOI", 100u32),
-            ("BSE", 20u32),
-            ("MCG", 300u32),
-            ("HAB", 5u32),
-            ("BDE", 16u32),
             ("BBH", 16u32),
+            ("BDE", 16u32),
+            ("BSE", 20u32),
+            ("BTA", 10u32),
+            ("HAB", 5u32),
+            ("MCG", 300u32),
+            ("SOI", 100u32),
         ],
     };
     map.insert("PAR", x);
@@ -975,14 +974,14 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
-            ("TRU", 30u32),
-            ("RSE", 24u32),
-            ("MCG", 300u32),
-            ("RTA", 12u32),
             ("ADS", 1u32),
-            ("RDE", 24u32),
             ("COM", 1u32),
+            ("MCG", 300u32),
             ("RBH", 16u32),
+            ("RDE", 24u32),
+            ("RSE", 24u32),
+            ("RTA", 12u32),
+            ("TRU", 30u32),
         ],
     };
     map.insert("PBH", x);
@@ -998,10 +997,10 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 35u32,
         building_cost: &[
-            ("LSE", 8u32),
-            ("LTA", 2u32),
             ("LBH", 4u32),
             ("LDE", 6u32),
+            ("LSE", 8u32),
+            ("LTA", 2u32),
             ("TRU", 6u32),
         ],
     };
@@ -1017,7 +1016,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 15u32,
-        building_cost: &[("BDE", 4u32), ("BSE", 4u32), ("TRU", 2u32), ("LBH", 8u32)],
+        building_cost: &[("BDE", 4u32), ("BSE", 4u32), ("LBH", 8u32), ("TRU", 2u32)],
     };
     map.insert("POL", x);
     map.insert("polymerPlant", x);
@@ -1031,7 +1030,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 19u32,
-        building_cost: &[("BDE", 3u32), ("BSE", 4u32), ("BBH", 3u32)],
+        building_cost: &[("BBH", 3u32), ("BDE", 3u32), ("BSE", 4u32)],
     };
     map.insert("PP1", x);
     map.insert("prefabPlant1", x);
@@ -1045,7 +1044,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 25u32,
-        building_cost: &[("BSE", 3u32), ("TRU", 4u32), ("BDE", 6u32), ("BBH", 6u32)],
+        building_cost: &[("BBH", 6u32), ("BDE", 6u32), ("BSE", 3u32), ("TRU", 4u32)],
     };
     map.insert("PP2", x);
     map.insert("prefabPlant2", x);
@@ -1059,7 +1058,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 32u32,
-        building_cost: &[("TRU", 6u32), ("LDE", 6u32), ("LSE", 4u32)],
+        building_cost: &[("LDE", 6u32), ("LSE", 4u32), ("TRU", 6u32)],
     };
     map.insert("PP3", x);
     map.insert("prefabPlant3", x);
@@ -1073,7 +1072,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 30u32,
         scientists: 0u32,
         area_cost: 40u32,
-        building_cost: &[("RBH", 6u32), ("RSE", 8u32), ("RDE", 6u32), ("TRU", 4u32)],
+        building_cost: &[("RBH", 6u32), ("RDE", 6u32), ("RSE", 8u32), ("TRU", 4u32)],
     };
     map.insert("PP4", x);
     map.insert("prefabPlant4", x);
@@ -1087,7 +1086,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 16u32,
-        building_cost: &[("LBH", 4u32), ("TRU", 2u32), ("LDE", 2u32), ("BSE", 2u32)],
+        building_cost: &[("BSE", 2u32), ("LBH", 4u32), ("LDE", 2u32), ("TRU", 2u32)],
     };
     map.insert("PPF", x);
     map.insert("plasticsPrinterFacility", x);
@@ -1102,10 +1101,10 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
-            ("ATA", 8u32),
-            ("ADE", 24u32),
             ("ABH", 32u32),
+            ("ADE", 24u32),
             ("ASE", 24u32),
+            ("ATA", 8u32),
             ("TRU", 24u32),
         ],
     };
@@ -1122,10 +1121,10 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
-            ("MCG", 300u32),
             ("BBH", 24u32),
             ("BDE", 24u32),
             ("BSE", 12u32),
+            ("MCG", 300u32),
             ("TRU", 20u32),
         ],
     };
@@ -1169,7 +1168,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 35u32,
-        building_cost: &[("TRU", 4u32), ("RDE", 6u32), ("RSE", 2u32), ("RBH", 3u32)],
+        building_cost: &[("RBH", 3u32), ("RDE", 6u32), ("RSE", 2u32), ("TRU", 4u32)],
     };
     map.insert("SCA", x);
     map.insert("smallComponentsAssembly", x);
@@ -1184,11 +1183,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 20u32,
         building_cost: &[
+            ("LBH", 6u32),
             ("LDE", 6u32),
             ("LSE", 10u32),
-            ("TRU", 8u32),
-            ("LBH", 6u32),
             ("LTA", 4u32),
+            ("TRU", 8u32),
         ],
     };
     map.insert("SD", x);
@@ -1204,15 +1203,15 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
-            ("RTA", 8u32),
-            ("DOU", 1u32),
-            ("RDE", 16u32),
-            ("RSE", 10u32),
-            ("MCG", 300u32),
-            ("TRU", 8u32),
             ("ADS", 1u32),
             ("BMF", 1u32),
+            ("DOU", 1u32),
+            ("MCG", 300u32),
             ("RBH", 16u32),
+            ("RDE", 16u32),
+            ("RSE", 10u32),
+            ("RTA", 8u32),
+            ("TRU", 8u32),
         ],
     };
     map.insert("SDP", x);
@@ -1228,11 +1227,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 20u32,
         building_cost: &[
-            ("TRU", 4u32),
-            ("RSE", 6u32),
             ("RBH", 4u32),
             ("RDE", 6u32),
+            ("RSE", 6u32),
             ("RTA", 2u32),
+            ("TRU", 4u32),
         ],
     };
     map.insert("SE", x);
@@ -1250,9 +1249,9 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         building_cost: &[
             ("BBH", 4u32),
             ("BDE", 6u32),
+            ("BSE", 4u32),
             ("LTA", 2u32),
             ("TRU", 6u32),
-            ("BSE", 4u32),
         ],
     };
     map.insert("SKF", x);
@@ -1268,11 +1267,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 20u32,
         area_cost: 20u32,
         building_cost: &[
+            ("LDE", 8u32),
+            ("LTA", 6u32),
+            ("RBH", 12u32),
             ("RSE", 12u32),
             ("TRU", 8u32),
-            ("LTA", 6u32),
-            ("LDE", 8u32),
-            ("RBH", 12u32),
         ],
     };
     map.insert("SL", x);
@@ -1287,7 +1286,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 17u32,
-        building_cost: &[("BDE", 4u32), ("BBH", 4u32), ("BSE", 6u32)],
+        building_cost: &[("BBH", 4u32), ("BDE", 4u32), ("BSE", 6u32)],
     };
     map.insert("SME", x);
     map.insert("smelter", x);
@@ -1303,10 +1302,10 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         area_cost: 40u32,
         building_cost: &[
             ("RBH", 8u32),
-            ("TRU", 6u32),
             ("RDE", 6u32),
             ("RSE", 6u32),
             ("RTA", 2u32),
+            ("TRU", 6u32),
         ],
     };
     map.insert("SPF", x);
@@ -1322,10 +1321,10 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 60u32,
         building_cost: &[
-            ("RTA", 2u32),
             ("RBH", 12u32),
-            ("RSE", 6u32),
             ("RDE", 6u32),
+            ("RSE", 6u32),
+            ("RTA", 2u32),
             ("TRU", 8u32),
         ],
     };
@@ -1342,12 +1341,12 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 500u32,
         building_cost: &[
-            ("BTA", 6u32),
             ("BBH", 24u32),
-            ("TRU", 10u32),
-            ("MCG", 300u32),
-            ("BSE", 12u32),
             ("BDE", 24u32),
+            ("BSE", 12u32),
+            ("BTA", 6u32),
+            ("MCG", 300u32),
+            ("TRU", 10u32),
         ],
     };
     map.insert("SST", x);
@@ -1362,7 +1361,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 15u32,
-        building_cost: &[("BDE", 6u32), ("BBH", 6u32), ("BSE", 2u32)],
+        building_cost: &[("BBH", 6u32), ("BDE", 6u32), ("BSE", 2u32)],
     };
     map.insert("STO", x);
     map.insert("storageFacility", x);
@@ -1376,7 +1375,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 30u32,
-        building_cost: &[("LSE", 12u32), ("TRU", 8u32), ("LBH", 6u32), ("LDE", 8u32)],
+        building_cost: &[("LBH", 6u32), ("LDE", 8u32), ("LSE", 12u32), ("TRU", 8u32)],
     };
     map.insert("TNP", x);
     map.insert("technetiumProcessing", x);
@@ -1391,15 +1390,15 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
-            ("ADE", 16u32),
             ("ABH", 12u32),
-            ("MCG", 400u32),
-            ("TRU", 30u32),
-            ("ATA", 12u32),
+            ("ADE", 16u32),
             ("ASE", 16u32),
+            ("ATA", 12u32),
+            ("BMF", 2u32),
             ("LOG", 1u32),
             ("LU", 4u32),
-            ("BMF", 2u32),
+            ("MCG", 400u32),
+            ("TRU", 30u32),
         ],
     };
     map.insert("UNI", x);
@@ -1415,11 +1414,11 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 50u32,
         building_cost: &[
-            ("TRU", 8u32),
-            ("BSE", 10u32),
-            ("BTA", 3u32),
             ("BBH", 8u32),
             ("BDE", 10u32),
+            ("BSE", 10u32),
+            ("BTA", 3u32),
+            ("TRU", 8u32),
         ],
     };
     map.insert("UPF", x);
@@ -1435,14 +1434,14 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
-            ("DEC", 20u32),
-            ("RDE", 32u32),
-            ("RBH", 24u32),
-            ("RSE", 32u32),
             ("ADS", 1u32),
+            ("DEC", 20u32),
             ("MCG", 500u32),
-            ("TRU", 30u32),
+            ("RBH", 24u32),
+            ("RDE", 32u32),
+            ("RSE", 32u32),
             ("RTA", 12u32),
+            ("TRU", 30u32),
         ],
     };
     map.insert("VRT", x);
@@ -1458,14 +1457,14 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         scientists: 0u32,
         area_cost: 1000u32,
         building_cost: &[
+            ("DEC", 40u32),
+            ("FLO", 12u32),
+            ("LBH", 36u32),
+            ("LDE", 36u32),
+            ("LSE", 32u32),
+            ("LTA", 24u32),
             ("MCG", 500u32),
             ("TRU", 16u32),
-            ("LTA", 24u32),
-            ("LSE", 32u32),
-            ("FLO", 12u32),
-            ("LDE", 36u32),
-            ("LBH", 36u32),
-            ("DEC", 40u32),
         ],
     };
     map.insert("WCE", x);
@@ -1494,7 +1493,7 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
         engineers: 0u32,
         scientists: 0u32,
         area_cost: 40u32,
-        building_cost: &[("LBH", 6u32), ("TRU", 6u32), ("BDE", 2u32), ("LSE", 3u32)],
+        building_cost: &[("BDE", 2u32), ("LBH", 6u32), ("LSE", 3u32), ("TRU", 6u32)],
     };
     map.insert("WPL", x);
     map.insert("weavingPlant", x);
