@@ -65,7 +65,9 @@ impl FIOClient {
         // first post a login and extract the authtoken and expiry
 
         let post_data = serde_json::json!({"UserName": username, "Password": password});
-        let client = reqwest::Client::new();
+        let client = reqwest::ClientBuilder::new()
+            .timeout(Duration::from_secs(60))
+            .build()?;
         let url_root = "https://rest.fnar.net";
 
         let req = client
@@ -117,7 +119,10 @@ impl FIOClient {
     }
 
     pub fn new_with_key(auth_token: String) -> Self {
-        let client = reqwest::Client::new();
+        let client = reqwest::ClientBuilder::new()
+            .timeout(Duration::from_secs(60))
+            .build()
+            .unwrap();
         let url_root = "https://rest.fnar.net";
         Self {
             url_root,
@@ -205,11 +210,20 @@ impl FIOClient {
         while self.should_retry() {
             let resp = self
                 .client
-                .get(format!("{}/{url}", self.url_root))
+                .get(format!("{}{url}", self.url_root))
                 .header("Authorization", &self.auth_token)
                 .header("accept", "application/json")
                 .send()
-                .await?;
+                .await;
+
+            if matches!(resp, Err(ref e) if e.is_timeout()) {
+                warn!("Request timed out, retrying");
+                self.retry_sleep().await;
+                self.increase_retry();
+                continue;
+            }
+
+            let resp = resp?;
 
             let status = resp.status();
             if status.as_u16() == 522 {
