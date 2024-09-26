@@ -1,6 +1,6 @@
 use anyhow::Context;
 use crossterm::event::Event;
-use fiors::{get_material_db, FIOClient};
+use fiors::{get_material_db, types::StorageType, FIOClient};
 use ratatui::{
     layout::{Constraint, Rect},
     style::{Color, Style},

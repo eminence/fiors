@@ -10,11 +10,14 @@ pub use production::ProductionWidget;
 mod buildings;
 pub use buildings::BuildingsWidget;
 
-mod debug;
-pub use debug::DebugWidget;
-
 mod inventory;
 pub use inventory::InventoryWidget;
+
+mod market;
+pub use market::MarketWidget;
+
+mod depth;
+pub use depth::DepthChartWidget;
 
 use ratatui::text::Span;
 
@@ -27,6 +30,7 @@ pub enum WidgetEnum {
     Needs,
     Buildings,
     Inventory,
+    Market,
 }
 
 impl WidgetEnum {
@@ -39,6 +43,7 @@ impl WidgetEnum {
             Self::Needs => Self::Production,
             Self::Buildings => Self::Buildings,
             Self::Inventory => Self::Inventory,
+            Self::Market => Self::Market,
         }
     }
     pub fn prev(self) -> Self {
@@ -50,6 +55,7 @@ impl WidgetEnum {
             Self::Needs => Self::LMNotes,
             Self::Buildings => Self::Buildings,
             Self::Inventory => Self::Inventory,
+            Self::Market => Self::Market,
         }
     }
 }

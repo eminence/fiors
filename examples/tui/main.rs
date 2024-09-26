@@ -1,3 +1,4 @@
+use core::error;
 use std::{
     fs::File,
     io::{self, stdout},
@@ -87,6 +88,7 @@ enum SidebarMode {
     Production,
     Buildings,
     Inventory,
+    Market,
 }
 
 struct App {
@@ -99,7 +101,7 @@ struct App {
     production_widgets: widgets::ProductionWidget,
     building_widget: widgets::BuildingsWidget,
     inventory_widget: widgets::InventoryWidget,
-    debug_widget: widgets::DebugWidget,
+    market_widget: widgets::MarketWidget,
     mode: SidebarMode,
     sidebar_state: TableState,
 }
@@ -194,6 +196,7 @@ impl App {
     async fn new() -> anyhow::Result<Self> {
         let client = get_client();
         let username = client.is_auth().await?;
+        trace!("Logged in as {}", username);
 
         let planets = client.get_storage_planets_for_user(&username).await?;
 
@@ -201,8 +204,8 @@ impl App {
             lm_widget: widgets::LocalMarketWidget::new(client, &username, &planets[0].id),
             production_widgets: widgets::ProductionWidget::new(client, &username, &planets[0].id),
             building_widget: widgets::BuildingsWidget::new(client, &username, &planets[0].id),
-            debug_widget: widgets::DebugWidget::new(),
             inventory_widget: widgets::InventoryWidget::new(client, &username, &planets[0].id),
+            market_widget: widgets::MarketWidget::new(client, &username),
             // client,
             // username,
             current_tab: 0,
@@ -228,6 +231,7 @@ impl App {
                 Row::new(vec!["\nPRD\n"]).height(3),
                 Row::new(vec!["\nBLD\n"]).height(3),
                 Row::new(vec!["\nINV\n"]).height(3),
+                Row::new(vec!["\nMKT\n"]).height(3),
             ],
             [Constraint::Length(3)],
         )
@@ -236,6 +240,7 @@ impl App {
             SidebarMode::Production => self.sidebar_state.select(Some(0)),
             SidebarMode::Buildings => self.sidebar_state.select(Some(1)),
             SidebarMode::Inventory => self.sidebar_state.select(Some(2)),
+            SidebarMode::Market => self.sidebar_state.select(Some(3)),
         };
 
         frame.render_stateful_widget(table, area, &mut self.sidebar_state);
@@ -300,6 +305,9 @@ impl App {
                 self.inventory_widget
                     .render(frame, main_area, self.current_widget);
             }
+            SidebarMode::Market => {
+                self.market_widget.render(frame, main_body, self.current_widget);
+            }
         }
 
         match self.mode {
@@ -347,6 +355,12 @@ impl App {
             SidebarMode::Inventory => {
                 refresh = refresh.update(
                     self.inventory_widget
+                        .handle_input(&event, self.current_widget),
+                );
+            }
+            SidebarMode::Market => {
+                refresh = refresh.update(
+                    self.market_widget
                         .handle_input(&event, self.current_widget),
                 );
             }
@@ -411,8 +425,13 @@ impl App {
                         self.current_widget = WidgetEnum::Inventory;
                     }
                     SidebarMode::Inventory => {
+                        self.mode = SidebarMode::Market;
+                        self.current_widget = WidgetEnum::Market;
+                    }
+                    SidebarMode::Market => {
                         self.mode = SidebarMode::Production;
                         self.current_widget = WidgetEnum::Production;
+                    
                     }
                 }
                 (NeedRefresh::APIRefresh, true)
@@ -420,8 +439,8 @@ impl App {
             KeyCode::Up if modifiers.contains(KeyModifiers::ALT) => {
                 match self.mode {
                     SidebarMode::Production => {
-                        self.mode = SidebarMode::Inventory;
-                        self.current_widget = WidgetEnum::Inventory;
+                        self.mode = SidebarMode::Market;
+                        self.current_widget = WidgetEnum::Market;
                     }
                     SidebarMode::Buildings => {
                         self.mode = SidebarMode::Production;
@@ -430,6 +449,10 @@ impl App {
                     SidebarMode::Inventory => {
                         self.mode = SidebarMode::Buildings;
                         self.current_widget = WidgetEnum::Buildings;
+                    }
+                    SidebarMode::Market => {
+                        self.mode = SidebarMode::Inventory;
+                        self.current_widget = WidgetEnum::Inventory;
                     }
                 }
                 (NeedRefresh::APIRefresh, true)
@@ -540,6 +563,9 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                     }
                     SidebarMode::Inventory => {
                         app.inventory_widget.update(&mut shared_state).await?;
+                    }
+                    SidebarMode::Market => {
+                        app.market_widget.update(&mut shared_state).await?;
                     }
                 }
             }
