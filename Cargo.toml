@@ -30,6 +30,7 @@ proc-macro2 = "1.0.81"
 quote = "1.0.35"
 ratatui = "0.26.1"
 syn = { version = "2.0.58", features = ["full"] }
+toml = "0.8.19"
 
 [features]
 default = []

@@ -10,7 +10,7 @@ use ratatui::{
     widgets::{self, Block, Borders, Row, Scrollbar, Table},
     Frame,
 };
-use tracing::{instrument, span, Level};
+use tracing::{debug, instrument, span, Level};
 
 use crate::{format_amount, format_price, get_style_for_days, get_style_for_material, NeedRefresh};
 
@@ -309,6 +309,26 @@ impl ProductionWidget {
             }
         }
 
+        let resupply_period = shared_state
+            .overrides
+            .planet_resupply_period
+            .get(
+                shared_state
+                    .planet_id_map
+                    .get(&self.planet_id)
+                    .unwrap_or(&self.planet_id),
+            )
+            .copied()
+            .unwrap_or(21);
+
+        // our material overrides for this planet
+        let materials_override = shared_state.overrides.planet_materials.get(
+            shared_state
+                .planet_id_map
+                .get(&self.planet_id)
+                .unwrap_or(&self.planet_id),
+        );
+
         shared_state
             .needs
             .entry(self.planet_id.clone())
@@ -321,125 +341,185 @@ impl ProductionWidget {
             .or_default();
         excess_map.clear();
         for (ticker, item) in &inv.items {
-            let long_term_needed =
-                total_daily_consumption.get(ticker.as_str()).unwrap_or(&0.0) * 21.0;
+            let long_term_needed = total_daily_consumption.get(ticker.as_str()).unwrap_or(&0.0)
+                * (resupply_period as f32);
+            let needed_due_to_override = materials_override
+                .and_then(|x| x.get(ticker.as_str()).copied())
+                .unwrap_or(0.0);
+            let long_term_needed = long_term_needed.max(needed_due_to_override);
             if item.quantity > long_term_needed.ceil() as u32 {
                 excess_map.insert(ticker.clone(), item.quantity as f32 - long_term_needed);
             }
         }
 
+        // if we have materials overrides, split the overrides into two lists: materials that we're already consuming and materials that we're not
+        let (consumed_materials_overrides, new_materials_overrides): (
+            HashMap<_, _>,
+            HashMap<_, _>,
+        ) = materials_override
+            .map(|x| {
+                x.iter()
+                    .partition(|(mat, _)| total_daily_consumption.contains_key(*mat))
+            })
+            .unwrap_or_default();
+
+        debug!(?consumed_materials_overrides, ?new_materials_overrides);
+
+        enum ConsumptionType {
+            Rate(f32),
+            Amount(f32),
+        }
+
         let total_daily_consumption: Vec<_> = {
-            let mut v: Vec<_> = total_daily_consumption.into_iter().collect();
+            let mut v: Vec<_> = total_daily_consumption
+                .into_iter()
+                .map(|(mat, rate)| (mat, ConsumptionType::Rate(rate)))
+                .collect();
+
+            for (mat, amt) in new_materials_overrides {
+                v.push((mat.clone(), ConsumptionType::Amount(*amt)));
+            }
+
             v.sort_by(|(a, _), (b, _)| {
                 let a_cat = get_material_db().get(a.as_str()).unwrap().category;
                 let b_cat = get_material_db().get(b.as_str()).unwrap().category;
 
                 a_cat.cmp(&b_cat).then(a.cmp(b))
             });
+
             v
         };
 
         for (material, amount) in total_daily_consumption {
-            let net_amount = amount
-                - total_daily_production
-                    .iter()
-                    .filter(|((m, _), _)| *m == material)
-                    .map(|(_, a)| *a)
-                    .sum::<f32>();
-            if net_amount > 0.0 {
-                let inv_amount = inv.items.get(&*material).map(|i| i.quantity).unwrap_or(0);
-                let days = inv_amount as f32 / net_amount;
+            let amount_to_buy = match amount {
+                ConsumptionType::Rate(amount) => {
+                    let net_amount_per_day = amount
+                        - total_daily_production
+                            .iter()
+                            .filter(|((m, _), _)| *m == material)
+                            .map(|(_, a)| *a)
+                            .sum::<f32>();
 
-                consumption_rows.push(Row::new(vec![
-                    Span::raw("Consuming"),
-                    Span::raw(format_amount(net_amount)),
-                    Span::raw(material.to_string()).style(get_style_for_material(&material)),
-                    Span::raw("per day"),
-                    Span::raw("lasting"),
-                    Span::raw(format!("{:.1} days", days)).style(get_style_for_days(days)),
-                ]));
+                    if net_amount_per_day > 0.0 {
+                        let inv_amount = inv.items.get(&*material).map(|i| i.quantity).unwrap_or(0);
+                        let days = inv_amount as f32 / net_amount_per_day;
 
-                // assuming we want 21 days worth of materials, how much should we buy?
-                let amount_in_inventory =
-                    inv.items.get(&*material).map(|i| i.quantity).unwrap_or(0);
-                let target_amount = net_amount * 21.0;
-                let amount_to_buy = target_amount - amount_in_inventory as f32;
-                if amount_to_buy > 0.0 {
-                    // are any other bases producing a surplus of this material?
+                        consumption_rows.push(Row::new(vec![
+                            Span::raw("Consuming"),
+                            Span::raw(format_amount(net_amount_per_day)),
+                            Span::raw(material.to_string())
+                                .style(get_style_for_material(&material)),
+                            Span::raw("per day"),
+                            Span::raw("lasting"),
+                            Span::raw(format!("{:.1} days", days)).style(get_style_for_days(days)),
+                        ]));
 
-                    let mut e = Span::raw("");
+                        // assuming we want 21 days worth of materials, how much should we buy?
+                        let amount_in_inventory =
+                            inv.items.get(&*material).map(|i| i.quantity).unwrap_or(0);
 
-                    let mut planets_with_excess: Vec<_> = shared_state
-                        .excess
-                        .iter()
-                        .filter_map(|(planet_id, excess)| {
-                            excess.get(&material).map(|x| {
-                                (
-                                    shared_state
-                                        .planet_id_map
-                                        .get(planet_id)
-                                        .map(|s| s.as_str())
-                                        .unwrap_or("?"),
-                                    *x,
-                                )
-                            })
-                        })
-                        .collect();
-                    planets_with_excess.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
-
-                    if !planets_with_excess.is_empty() {
-                        let (amount_from_market, planets) = planets_with_excess.iter().fold(
-                            (amount_to_buy, "Take from".to_string()),
-                            |(amt_left, s), (p, amt_on_planet)| {
-                                if amt_left <= 0.0 {
-                                    (0.0, s)
-                                } else if *amt_on_planet >= amt_left {
-                                    (0.0, format!("{} {}: {}", s, p, format_amount(amt_left)))
-                                } else if amt_left > *amt_on_planet {
-                                    (
-                                        amt_left - amt_on_planet,
-                                        format!("{} {}: {}", s, p, format_amount(*amt_on_planet)),
-                                    )
-                                } else {
-                                    (0.0, s)
-                                }
-                            },
-                        );
-
-                        if amount_from_market > 0.0 {
-                            e = Span::raw(format!(
-                                "{planets} (plus {} from market)",
-                                format_amount(amount_from_market)
-                            ));
+                        let target_amount = if let Some(override_amount) =
+                            consumed_materials_overrides.get(&material)
+                        {
+                            **override_amount
                         } else {
-                            e = Span::raw(planets.to_string());
-                        }
-                    } else {
-                        let cx_info = self
-                            .client
-                            .get_exchange_info(&format!("{}.{planet_cxid}", material))
-                            .await?;
-                        if let Some(a) = cx_info.instant_buy(amount_to_buy.ceil() as u32) {
-                            e = Span::raw(format!(
-                                "Buy for ${} at {}/u from CI1",
-                                format_price(a.total_value),
-                                format_price(a.price_limit)
-                            ));
-                        }
-                    }
+                            net_amount_per_day * (resupply_period as f32)
+                        };
 
-                    needs_rows.push(Row::new(vec![
-                        Span::raw(format_amount(amount_to_buy)),
-                        Span::raw(material.to_string()).style(get_style_for_material(&material)),
-                        e,
-                    ]));
+                        target_amount - amount_in_inventory as f32
+                    } else {
+                        0.0
+                    }
                 }
+                ConsumptionType::Amount(a) => {
+                    let amount_in_inventory =
+                        inv.items.get(&*material).map(|i| i.quantity).unwrap_or(0);
+
+                    (a - amount_in_inventory as f32).max(0.0)
+                }
+            };
+
+            if amount_to_buy > 0.0 {
+                // are any other bases producing a surplus of this material?
+
+                let mut e = Span::raw("");
+
+                let mut planets_with_excess: Vec<_> = shared_state
+                    .excess
+                    .iter()
+                    .filter_map(|(planet_id, excess)| {
+                        // ignore our own planet:
+                        if planet_id == &self.planet_id {
+                            return None;
+                        }
+                        excess.get(&material).map(|x| {
+                            (
+                                shared_state
+                                    .planet_id_map
+                                    .get(planet_id)
+                                    .map(|s| s.as_str())
+                                    .unwrap_or("?"),
+                                *x,
+                            )
+                        })
+                    })
+                    .collect();
+                planets_with_excess.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
+
+                if !planets_with_excess.is_empty() {
+                    let (amount_from_market, planets) = planets_with_excess.iter().fold(
+                        (amount_to_buy, "Take from".to_string()),
+                        |(amt_left, s), (p, amt_on_planet)| {
+                            if amt_left <= 0.0 {
+                                (0.0, s)
+                            } else if *amt_on_planet >= amt_left {
+                                (0.0, format!("{} {}: {}", s, p, format_amount(amt_left)))
+                            } else if amt_left > *amt_on_planet {
+                                (
+                                    amt_left - amt_on_planet,
+                                    format!("{} {}: {}", s, p, format_amount(*amt_on_planet)),
+                                )
+                            } else {
+                                (0.0, s)
+                            }
+                        },
+                    );
+
+                    if amount_from_market > 0.0 {
+                        e = Span::raw(format!(
+                            "{planets} (plus {} from market)",
+                            format_amount(amount_from_market)
+                        ));
+                    } else {
+                        e = Span::raw(planets.to_string());
+                    }
+                } else {
+                    let cx_info = self
+                        .client
+                        .get_exchange_info(&format!("{}.{planet_cxid}", material))
+                        .await?;
+                    if let Some(a) = cx_info.instant_buy(amount_to_buy.ceil() as u32) {
+                        e = Span::raw(format!(
+                            "Buy for ${} at {}/u from CI1",
+                            format_price(a.total_value),
+                            format_price(a.price_limit)
+                        ));
+                    }
+                }
+
+                needs_rows.push(Row::new(vec![
+                    Span::raw(format_amount(amount_to_buy)),
+                    Span::raw(material.to_string()).style(get_style_for_material(&material)),
+                    e,
+                ]));
             }
         }
 
         shared_state.help_text.extend(vec![
             Span::raw("This mode shows your production and consumption. "),
-            Span::raw("Needs are based on a 21 day resupply period. "),
+            Span::raw(format!(
+                "Needs are based on a {resupply_period} day resupply period. "
+            )),
             Span::raw("Press "),
             Span::styled("tab", crate::HELP_TEXT_KEY_STYLE),
             Span::raw(" to switch widgets. "),

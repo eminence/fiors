@@ -479,6 +479,16 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
             .insert(p.id.clone(), p.name.clone());
     }
 
+    match widgets::Overrides::read() {
+        Ok(overrides) => {
+            // TODO rewrite the overrides to use planet_ids instead of planet names
+            shared_state.overrides = overrides;
+        }
+        Err(e) => {
+            tracing::error!("Failed to read overrides: {:?}", e);
+        }
+    }
+
     loop {
         let mut switching_planets = false;
         if let Some(event) = get_events()? {

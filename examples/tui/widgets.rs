@@ -119,6 +119,55 @@ fn handle_scroll(event: &Event, selected: Option<usize>, table_row_len: usize) -
     Some(new_i)
 }
 
+#[derive(Debug, Default)]
+pub struct Overrides {
+    /// How much of a given material we should keep in our inventory
+    pub planet_materials: HashMap<String, HashMap<String, f32>>,
+
+    /// How often we should resupply a planet
+    pub planet_resupply_period: HashMap<String, i32>,
+}
+
+impl Overrides {
+    pub fn read() -> anyhow::Result<Self> {
+        let x: toml::Table = toml::from_str(std::fs::read_to_string("override.toml")?.as_str())?;
+
+        let mut planet_materials = HashMap::new();
+        let mut planet_resupply_period = HashMap::new();
+
+        for (planet, data) in x {
+            let toml::Value::Table(data) = data else {
+                continue;
+            };
+            if let Some(toml::Value::Table(materials)) = data.get("materials") {
+                planet_materials.insert(
+                    planet.clone(),
+                    materials
+                        .into_iter()
+                        .filter_map(|(k, v)| {
+                            if let toml::Value::Float(v) = v {
+                                Some((k.to_string(), *v as f32))
+                            } else if let toml::Value::Integer(v) = v {
+                                Some((k.to_string(), *v as f32))
+                            } else {
+                                None
+                            }
+                        })
+                        .collect(),
+                );
+            }
+            if let Some(toml::Value::Integer(i)) = data.get("resupply") {
+                planet_resupply_period.insert(planet.clone(), *i as i32);
+            }
+        }
+
+        Ok(Self {
+            planet_materials,
+            planet_resupply_period,
+        })
+    }
+}
+
 /// State that is shared between all widgets
 #[derive(Debug, Default)]
 pub struct SharedWidgetState {
@@ -137,4 +186,12 @@ pub struct SharedWidgetState {
     // To be displayed in the debug window
     // pub debug_messages: Vec<String>,
     pub help_text: Vec<Span<'static>>,
+
+    pub overrides: Overrides,
+}
+
+#[test]
+fn test_toml() {
+    let x = Overrides::read().unwrap();
+    dbg!(x);
 }
