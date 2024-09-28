@@ -1,5 +1,5 @@
 use crossterm::event::{Event, KeyCode, KeyEvent};
-use fiors::{get_building_db, get_recipe_db, FIOClient};
+use fiors::{get_building_db, get_material_db, get_recipe_db, types::ResourceType, FIOClient};
 use ratatui::{
     layout::{Constraint, Margin, Rect},
     style::{Color, Style, Stylize},
@@ -107,6 +107,7 @@ impl BuildingsWidget {
         let mut input_output_rows = Vec::new();
 
         let recipe_db = get_recipe_db();
+        let material_db = get_material_db();
 
         let planet_inventory = self
             .client
@@ -159,12 +160,80 @@ impl BuildingsWidget {
                 )
                 .await?;
 
+            // if the build recipe has inputs, additional costs will be added later
+            let mut market_cogm = daily_repair_cost + workforce_costs;
+            let mut our_cogm = daily_repair_cost + workforce_costs;
+
             for recipe in building_recipes {
                 let recipe_span =
                     span!(tracing::Level::DEBUG, "recipe", recipe = %recipe.standard_recipe_name);
                 let _enter = recipe_span.enter();
                 let day_scale = row.efficiency * 86400.0 / recipe.duration.as_secs() as f32;
                 if recipe.outputs.is_empty() {
+                    // resource extraction buildings will have no outputs, and need special handling here.
+                    // we need to look at what resources are avaialble on the planet
+
+                    let Some((rtype, a, b)) = (match recipe.building_ticker {
+                        "COL" => Some((ResourceType::Gaseous, 60.0, 4.0)),
+                        "EXT" => Some((ResourceType::Mineral, 70.0, 2.0)),
+                        "RIG" => Some((ResourceType::Liquid, 70.0, 5.0)),
+                        _ => None,
+                    }) else {
+                        continue;
+                    };
+
+                    for planet_resource in
+                        planet.resources.iter().filter(|r| r.resource_type == rtype)
+                    {
+                        let mut this_reciepe_row = vec![None];
+
+                        let material = material_db
+                            .values()
+                            .find(|mat| mat.material_id == planet_resource.material_id)
+                            .unwrap();
+
+                        let cx_info = self
+                            .client
+                            .get_exchange_info(&format!("{}.{planet_cxid}", material.ticker,))
+                            .await?;
+                        // how much we can produce per day:
+                        // note: this doesn't take efficiency into account
+                        let daily_amount_base = planet_resource.factor * a;
+                        // how man units we make for each production cycle
+                        let units_per_cycle = (daily_amount_base / b).ceil();
+                        let cycle_time = units_per_cycle / daily_amount_base / row.efficiency; // in days, taking into account efficiency
+                                                                                               // we need this to calculate how much production fees we'll pay
+                        let cycles_per_day = 1.0 / cycle_time;
+
+                        this_reciepe_row.push(Some({
+                            let a = Span::raw(format!("{:>3}x", units_per_cycle));
+                            let m = Span::raw(format!("{:^3}", material.ticker))
+                                .style(get_style_for_material(material.ticker));
+                            Cell::from(Line::from(vec![a, m]))
+                        }));
+
+                        rows.push(vec![
+                            Cell::default(),                                   // empty fill column
+                            Cell::from(if self.use_lux1 { "Y" } else { " " }), // L1
+                            Cell::from(if self.use_lux2 { "Y" } else { " " }), // L2
+                            Cell::default(),                                   // efficiency
+                            Cell::from(format_price(
+                                our_cogm / (daily_amount_base * row.efficiency),
+                            )),
+                            Cell::from(format_price(
+                                market_cogm / (daily_amount_base * row.efficiency),
+                            )),
+                            Cell::from(""), // market instant sell
+                            Cell::from(cx_info.price.map(format_price).unwrap_or_default()), // market average sell
+                            Cell::from(format_amount(daily_amount_base * row.efficiency)),
+                            Cell::from("") // worst profit
+                                .style(Style::default()),
+                            Cell::from("") // best profit
+                                .style(Style::default()),
+                        ]);
+                        input_output_rows.push(this_reciepe_row);
+                    }
+
                     continue;
                 }
                 let daily_output_amt = recipe.outputs[0].amount as f32 * day_scale;
@@ -182,9 +251,6 @@ impl BuildingsWidget {
                         .style(get_style_for_material(recipe.outputs[0].ticker));
                     Cell::from(Line::from(vec![a, m]))
                 }));
-
-                let mut market_cogm = daily_repair_cost + workforce_costs;
-                let mut our_cogm = daily_repair_cost + workforce_costs;
 
                 for input in recipe.inputs {
                     let have_input_in_inventory = planet_inventory

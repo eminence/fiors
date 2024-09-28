@@ -67,7 +67,7 @@ impl StorageType {
 pub enum ResourceType {
     Liquid,
     Gaseous,
-    Minearal,
+    Mineral,
 }
 
 impl FromStr for ResourceType {
@@ -77,7 +77,7 @@ impl FromStr for ResourceType {
         Ok(match s {
             "LIQUID" => Self::Liquid,
             "GASEOUS" => Self::Gaseous,
-            "MINERAL" => Self::Minearal,
+            "MINERAL" => Self::Mineral,
             _ => return Err("Unknown resource type"),
         })
     }
