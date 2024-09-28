@@ -1,4 +1,4 @@
-use std::{collections::HashMap, ops::AddAssign, time::Duration};
+use std::{collections::HashMap, ops::AddAssign, str::FromStr, time::Duration};
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Deserializer};
@@ -21,7 +21,7 @@ pub struct Storage {
     pub items: HashMap<String, Item>,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum StorageType {
     Store,
     Warehouse,
@@ -38,16 +38,58 @@ pub struct Item {
     pub total_volume: f32,
 }
 
-impl StorageType {
-    pub fn from_str(s: &str) -> Self {
-        match s {
+impl FromStr for StorageType {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
             "STORE" => Self::Store,
             "WAREHOUSE_STORE" => Self::Warehouse,
             "SHIP_STORE" => Self::ShipStore,
             "STL_FUEL_STORE" => Self::StlFuelStore,
             "FTL_FUEL_STORE" => Self::FtlFuelStore,
-            x => panic!("Unknown inventory stype {x:?}"),
-        }
+            _ => return Err("Unknown storage type"),
+        })
+    }
+}
+
+impl StorageType {
+    pub fn deserialize<'de, D>(d: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s: String = String::deserialize(d)?;
+        Self::from_str(&s).map_err(serde::de::Error::custom)
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+pub enum ResourceType {
+    Liquid,
+    Gaseous,
+    Minearal,
+}
+
+impl FromStr for ResourceType {
+    type Err = &'static str;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
+            "LIQUID" => Self::Liquid,
+            "GASEOUS" => Self::Gaseous,
+            "MINERAL" => Self::Minearal,
+            _ => return Err("Unknown resource type"),
+        })
+    }
+}
+
+impl ResourceType {
+    pub fn deserialize<'de, D>(d: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s: String = String::deserialize(d)?;
+        Self::from_str(&s).map_err(serde::de::Error::custom)
     }
 }
 
@@ -93,7 +135,7 @@ impl Storage {
 
         Ok(Self {
             name: inner.name,
-            storage_type: StorageType::from_str(&inner.r#type),
+            storage_type: StorageType::from_str(&inner.r#type).unwrap(),
             addressable_id: inner.addressable_id,
             storage_id: inner.storage_id,
             items: inner
@@ -116,6 +158,82 @@ impl Storage {
                 })
                 .collect(),
         })
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+pub enum ProductionCategory {
+    Agriculture,
+    FuelRefining,
+    Manufacturing,
+    Metallurgy,
+    ResourceExtraction,
+    Chemistry,
+    Construction,
+    Electronics,
+    FoodIndustries,
+}
+
+impl FromStr for ProductionCategory {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
+            "AGRICULTURE" => Self::Agriculture,
+            "FUEL_REFINING" => Self::FuelRefining,
+            "MANUFACTURING" => Self::Manufacturing,
+            "METALLURGY" => Self::Metallurgy,
+            "RESOURCE_EXTRACTION" => Self::ResourceExtraction,
+            "CHEMISTRY" => Self::Chemistry,
+            "CONSTRUCTION" => Self::Construction,
+            "ELECTRONICS" => Self::Electronics,
+            "FOOD_INDUSTRIES" => Self::FoodIndustries,
+            _ => return Err(format!("Unknown production category {s}")),
+        })
+    }
+}
+
+impl ProductionCategory {
+    pub fn deserialize<'de, D>(d: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s: String = String::deserialize(d)?;
+        Self::from_str(&s).map_err(serde::de::Error::custom)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+pub enum Workforce {
+    Pioneers,
+    Settlers,
+    Technicians,
+    Engineers,
+    Scientists,
+}
+
+impl FromStr for Workforce {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(match s {
+            "PIONEER" => Self::Pioneers,
+            "SETTLER" => Self::Settlers,
+            "TECHNICIAN" => Self::Technicians,
+            "ENGINEER" => Self::Engineers,
+            "SCIENTIST" => Self::Scientists,
+            _ => return Err(format!("Unknown workforce type {s}")),
+        })
+    }
+}
+
+impl Workforce {
+    pub fn deserialize<'de, D>(d: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let s: String = String::deserialize(d)?;
+        Self::from_str(&s).map_err(serde::de::Error::custom)
     }
 }
 
@@ -297,6 +415,41 @@ impl Ticker {
     }
 }
 
+/// Like a planet, but has a site_id field
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct PlanetSite {
+    #[serde(rename = "PlanetName")]
+    pub name: String,
+    #[serde(rename = "PlanetId")]
+    pub id: String,
+
+    pub site_id: String,
+    pub planet_identifier: String,
+    pub invested_permits: u8,
+    pub maximum_permits: u8,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct PlanetResource {
+    pub material_id: String,
+    #[serde(deserialize_with = "ResourceType::deserialize")]
+    pub resource_type: ResourceType,
+    pub factor: f32,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct ProductionFee {
+    #[serde(deserialize_with = "ProductionCategory::deserialize")]
+    pub category: ProductionCategory,
+    #[serde(deserialize_with = "Workforce::deserialize")]
+    pub workforce_level: Workforce,
+    pub fee_amount: f32,
+    pub fee_currency: String,
+}
+
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct Planet {
@@ -312,6 +465,9 @@ pub struct Planet {
     pub faction_code: Option<String>,
     pub currency_code: Option<String>,
     pub has_warehouse: bool,
+
+    pub resources: Vec<PlanetResource>,
+    pub production_fees: Vec<ProductionFee>,
 }
 
 impl Planet {
