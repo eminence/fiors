@@ -21,6 +21,7 @@ pub use building_db::get_building_db;
 mod recipe_db;
 pub use recipe_db::get_recipe_db;
 use tracing::{instrument, trace, warn};
+use types::WarehouseInfo;
 
 use crate::types::{Item, WorkforceDetails};
 
@@ -50,9 +51,19 @@ pub struct FIOClient {
     retry_delay: AtomicU64,
 
     planet_cache: DashMap<String, CachedData<types::Planet>>,
+
+    /// Map from (username, storage_id) to a list of all stores (including warehouses)
     storage_user_cache: DashMap<String, CachedData<Vec<types::Storage>>>,
+
+    /// Map from (username, storage_id) to storage info (base storage only)
     storage_cache: DashMap<(String, String), CachedData<Option<types::Storage>>>,
-    storage_planet_cache: DashMap<String, CachedData<Vec<types::Planet>>>,
+
+    /// Map from username to list of storage info.
+    /// 
+    /// The WarehouseInfo struct doesn't contain the actual storage data, but rather the storage ID and the type of storage
+    warehouse_cache: DashMap<String, CachedData<Vec<types::WarehouseInfo>>>,
+
+    planet_info_cache: DashMap<String, CachedData<Vec<types::Planet>>>,
     workforce_cache: DashMap<(String, String), CachedData<types::PlanetWorkforce>>,
     localmarket_cache: DashMap<String, CachedData<types::LocalMarket>>,
     exchange_cache: DashMap<String, CachedData<types::Ticker>>,
@@ -109,7 +120,8 @@ impl FIOClient {
             planet_cache: DashMap::new(),
             storage_user_cache: DashMap::new(),
             storage_cache: DashMap::new(),
-            storage_planet_cache: DashMap::new(),
+            planet_info_cache: DashMap::new(),
+            warehouse_cache: DashMap::new(),
             workforce_cache: DashMap::new(),
             localmarket_cache: DashMap::new(),
             exchange_cache: DashMap::new(),
@@ -134,7 +146,8 @@ impl FIOClient {
             planet_cache: DashMap::new(),
             storage_user_cache: DashMap::new(),
             storage_cache: DashMap::new(),
-            storage_planet_cache: DashMap::new(),
+            planet_info_cache: DashMap::new(),
+            warehouse_cache: DashMap::new(),
             workforce_cache: DashMap::new(),
             localmarket_cache: DashMap::new(),
             exchange_cache: DashMap::new(),
@@ -317,16 +330,48 @@ impl FIOClient {
         }
     }
 
-    pub async fn get_planets_for_user(&self, user: &str) -> anyhow::Result<()> {
+    pub async fn get_planets_for_user(&self, user: &str) -> anyhow::Result<Vec<()>> {
         let _resp: Option<serde_json::Value> =
             self.request(&format!("/sites/planets/{user}")).await?;
         todo!();
     }
 
-    pub async fn get_planet_for_user(&self, user: &str, planet_id: &str) -> anyhow::Result<()> {
-        let _resp: Option<serde_json::Value> =
+    pub async fn get_planetsite_for_user(&self, user: &str, planet_id: &str) -> anyhow::Result<types::PlanetSite> {
+        let resp: Option<serde_json::Value> =
             self.request(&format!("/sites/{user}/{planet_id}")).await?;
-        todo!();
+        
+        if let Some(v) = resp {
+            Ok(serde_json::from_value(v)?)
+        } else {
+            bail!("No planet found")
+        }
+    }
+
+    pub async fn get_warehouse_info_for_user(&self, user: &str) -> anyhow::Result<Vec<types::WarehouseInfo>> {
+        if let Some(cached) = self.warehouse_cache.get(user) {
+            if cached.expiry > Utc::now() {
+                return Ok(cached.data.clone());
+            }
+        }
+
+        let resp: Option<serde_json::Value> = self.request(&format!("/sites/warehouses/{user}")).await?;
+
+        let mut v = Vec::new();
+        if let Some(Value::Array(list)) = resp {
+            for obj in list.into_iter() {
+                let sto:WarehouseInfo = serde_json::from_value(obj).unwrap();
+
+                v.push(sto);
+            }
+        }
+
+        // warehouse info is cached for 1 hour
+        self.warehouse_cache.insert(
+            user.to_string(),
+            CachedData::new(v.clone(), Duration::from_secs(3600)),
+        );
+        Ok(v)
+        
     }
 
     pub async fn get_all_storage_for_user(
@@ -395,7 +440,7 @@ impl FIOClient {
         &self,
         user: &str,
     ) -> anyhow::Result<Vec<types::Planet>> {
-        if let Some(cached) = self.storage_planet_cache.get(user) {
+        if let Some(cached) = self.planet_info_cache.get(user) {
             if cached.expiry > Utc::now() {
                 return Ok(cached.data.clone());
             }
@@ -412,7 +457,7 @@ impl FIOClient {
         }
 
         // storage info is cached for 24 hours
-        self.storage_planet_cache.insert(
+        self.planet_info_cache.insert(
             user.to_string(),
             CachedData::new(v.clone(), Duration::from_secs(86400)),
         );
@@ -964,7 +1009,7 @@ impl FIOClient {
     }
 }
 
-#[cfg(all(test, feature = "live_tests"))]
+#[cfg(any(test, feature = "live_tests"))]
 mod live_tests {
     use crate::{materials::MaterialWithColor, types::PlanetWorkforce};
 
@@ -1032,7 +1077,7 @@ mod live_tests {
     #[tokio::test]
     async fn test_planet() {
         let client = get_test_client();
-        let pli = client.get_planet("JS-952c").await.unwrap();
+        let pli = client.get_planet("CB-282d").await.unwrap();
         dbg!(pli);
     }
 
@@ -1041,7 +1086,7 @@ mod live_tests {
         let client = get_test_client();
         // let pli = client.get_planets_for_user("eminence32").await.unwrap();
         client
-            .get_planet_for_user("eminence32", "1e39248e468e9a6bb12938ba97b58bcf")
+            .get_planetsite_for_user("eminence32", "1e39248e468e9a6bb12938ba97b58bcf")
             .await
             .unwrap();
     }
@@ -1131,7 +1176,7 @@ mod live_tests {
 
             let building = get_building_db().get(prod.building_type.as_str()).unwrap();
             dbg!(building);
-            let building_cost = client.calc_building_cost(building.ticker).await.unwrap();
+            let building_cost = client.calc_building_cost(building.ticker, "TODO").await.unwrap();
             println!("Building cost: {}", building_cost);
             // assume we repair our buildings after 90 days
             let repair_cost = building_cost - (building_cost * 0.5).floor();

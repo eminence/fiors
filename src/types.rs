@@ -19,6 +19,10 @@ pub struct Storage {
     pub storage_id: String,
     pub storage_type: StorageType,
     pub items: HashMap<String, Item>,
+    pub weight_load: f32,
+    pub weight_capacity: f32,
+    pub volume_load: f32,
+    pub volume_capacity: f32,
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -28,6 +32,19 @@ pub enum StorageType {
     ShipStore,
     StlFuelStore,
     FtlFuelStore,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct WarehouseInfo {
+    pub warehouse_id: String,
+    pub store_id: String,
+    pub units: u32,
+    pub weight_capacity: f32,
+    pub volume_capacity: f32,
+    pub location_name: String,
+    pub location_natural_id: String,
+
 }
 
 #[derive(Debug, Clone)]
@@ -97,19 +114,19 @@ impl Storage {
     pub(crate) fn from_json(v: serde_json::Value) -> anyhow::Result<Self> {
         #[derive(Deserialize)]
         #[allow(unused)]
+        #[serde(rename_all = "PascalCase")]
         struct Inner {
-            #[serde(rename = "Name")]
             name: Option<String>,
-            #[serde(rename = "AddressableId")]
             addressable_id: String,
-            #[serde(rename = "StorageId")]
             storage_id: String,
-            #[serde(rename = "FixedStore")]
             fixed_store: bool,
             #[serde(rename = "Type")]
             r#type: String,
-            #[serde(rename = "StorageItems")]
             storage_items: Vec<InnerItem>,
+            pub weight_load: f32,
+            pub weight_capacity: f32,
+            pub volume_load: f32,
+            pub volume_capacity: f32,
         }
         #[derive(Deserialize)]
         #[allow(unused)]
@@ -138,6 +155,10 @@ impl Storage {
             storage_type: StorageType::from_str(&inner.r#type).unwrap(),
             addressable_id: inner.addressable_id,
             storage_id: inner.storage_id,
+            weight_load: inner.weight_load,
+            weight_capacity: inner.weight_capacity,
+            volume_load: inner.volume_load,
+            volume_capacity: inner.volume_capacity,
             items: inner
                 .storage_items
                 .into_iter()
@@ -425,6 +446,7 @@ pub struct PlanetSite {
     pub id: String,
 
     pub site_id: String,
+    /// The "natural id" like "UV-351a"
     pub planet_identifier: String,
     pub invested_permits: u8,
     pub maximum_permits: u8,
