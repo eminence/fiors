@@ -160,11 +160,11 @@ impl BuildingsWidget {
                 )
                 .await?;
 
-            // if the build recipe has inputs, additional costs will be added later
-            let mut market_cogm = daily_repair_cost + workforce_costs;
-            let mut our_cogm = daily_repair_cost + workforce_costs;
-
             for recipe in building_recipes {
+                // if the build recipe has inputs, additional costs will be added later
+                let mut market_cogm = daily_repair_cost + workforce_costs;
+                let mut our_cogm = daily_repair_cost + workforce_costs;
+
                 let recipe_span =
                     span!(tracing::Level::DEBUG, "recipe", recipe = %recipe.standard_recipe_name);
                 let _enter = recipe_span.enter();
