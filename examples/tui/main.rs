@@ -494,7 +494,7 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
         if let Some(event) = get_events()? {
             if let Event::Resize(..) = event {
                 // At a minimum, we need to redraw the screen
-                needs_redraw = needs_redraw.update(NeedRefresh::APIRefresh);
+                needs_redraw = needs_redraw.update(NeedRefresh::Redraw);
             }
             if let Event::Key(KeyEvent {
                 code: KeyCode::Char('q'),
