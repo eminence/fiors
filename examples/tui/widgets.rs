@@ -119,10 +119,40 @@ fn handle_scroll(event: &Event, selected: Option<usize>, table_row_len: usize) -
     Some(new_i)
 }
 
+#[derive(Debug, Copy, Clone)]
+enum OverrideType {
+    Absolute(u32),
+    Minimum(u32),
+    None,
+}
+
+impl OverrideType {
+    pub fn with(&self, current: f32) -> f32 {
+        match self {
+            Self::Absolute(x) => *x as f32,
+            Self::Minimum(x) => current.max(*x as f32),
+            Self::None => current,
+        }
+    }
+    pub fn as_value(&self) -> f32 {
+        match self {
+            Self::Absolute(x) => *x as f32,
+            Self::Minimum(x) => *x as f32,
+            Self::None => 0.0,
+        }
+    }
+}
+
+impl Default for OverrideType {
+    fn default() -> Self {
+        Self::None
+    }
+}
+
 #[derive(Debug, Default)]
 pub struct Overrides {
     /// How much of a given material we should keep in our inventory
-    pub planet_materials: HashMap<String, HashMap<String, f32>>,
+    pub planet_materials: HashMap<String, HashMap<String, OverrideType>>,
 
     /// How often we should resupply a planet
     pub planet_resupply_period: HashMap<String, i32>,
@@ -132,7 +162,7 @@ impl Overrides {
     pub fn read() -> anyhow::Result<Self> {
         let x: toml::Table = toml::from_str(std::fs::read_to_string("override.toml")?.as_str())?;
 
-        let mut planet_materials = HashMap::new();
+        let mut planet_materials: HashMap<String, HashMap<String, OverrideType>> = HashMap::new();
         let mut planet_resupply_period = HashMap::new();
 
         for (planet, data) in x {
@@ -140,21 +170,24 @@ impl Overrides {
                 continue;
             };
             if let Some(toml::Value::Table(materials)) = data.get("materials") {
-                planet_materials.insert(
-                    planet.clone(),
-                    materials
-                        .into_iter()
-                        .filter_map(|(k, v)| {
-                            if let toml::Value::Float(v) = v {
-                                Some((k.to_string(), *v as f32))
-                            } else if let toml::Value::Integer(v) = v {
-                                Some((k.to_string(), *v as f32))
-                            } else {
-                                None
-                            }
-                        })
-                        .collect(),
-                );
+                let m = planet_materials.entry(planet.clone()).or_default();
+                m.extend(materials.into_iter().filter_map(|(k, v)| {
+                    if let toml::Value::Integer(v) = v {
+                        Some((k.to_string(), OverrideType::Minimum(*v as u32)))
+                    } else {
+                        None
+                    }
+                }));
+            }
+            if let Some(toml::Value::Table(materials)) = data.get("materials-override") {
+                let m = planet_materials.entry(planet.clone()).or_default();
+                m.extend(materials.into_iter().filter_map(|(k, v)| {
+                    if let toml::Value::Integer(v) = v {
+                        Some((k.to_string(), OverrideType::Absolute(*v as u32)))
+                    } else {
+                        None
+                    }
+                }));
             }
             if let Some(toml::Value::Integer(i)) = data.get("resupply") {
                 planet_resupply_period.insert(planet.clone(), *i as i32);

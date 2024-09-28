@@ -12,7 +12,7 @@ use ratatui::{
 };
 use tracing::{debug, instrument, span, Level};
 
-use crate::{format_amount, format_price, get_style_for_days, get_style_for_material, NeedRefresh};
+use crate::{format_amount, format_price, get_style_for_days, get_style_for_material, widgets::OverrideType, NeedRefresh};
 
 use super::{handle_scroll, SharedWidgetState, WidgetEnum};
 
@@ -345,8 +345,8 @@ impl ProductionWidget {
                 * (resupply_period as f32);
             let needed_due_to_override = materials_override
                 .and_then(|x| x.get(ticker.as_str()).copied())
-                .unwrap_or(0.0);
-            let long_term_needed = long_term_needed.max(needed_due_to_override);
+                .unwrap_or_default();
+            let long_term_needed = needed_due_to_override.with(long_term_needed);
             if item.quantity > long_term_needed.ceil() as u32 {
                 excess_map.insert(ticker.clone(), item.quantity as f32 - long_term_needed);
             }
@@ -377,7 +377,7 @@ impl ProductionWidget {
                 .collect();
 
             for (mat, amt) in new_materials_overrides {
-                v.push((mat.clone(), ConsumptionType::Amount(*amt)));
+                v.push((mat.clone(), ConsumptionType::Amount(amt.as_value())));
             }
 
             v.sort_by(|(a, _), (b, _)| {
@@ -418,12 +418,19 @@ impl ProductionWidget {
                         let amount_in_inventory =
                             inv.items.get(&*material).map(|i| i.quantity).unwrap_or(0);
 
+                        let target_amount_based_on_consumption = net_amount_per_day * (resupply_period as f32);
                         let target_amount = if let Some(override_amount) =
                             consumed_materials_overrides.get(&material)
                         {
-                            **override_amount
+                            match override_amount {
+                                OverrideType::Minimum(min) => {
+                                    target_amount_based_on_consumption.max(*min as f32)
+                                }
+                                OverrideType::Absolute(a) => *a as f32,
+                                OverrideType::None => target_amount_based_on_consumption,
+                            }
                         } else {
-                            net_amount_per_day * (resupply_period as f32)
+                            target_amount_based_on_consumption
                         };
 
                         target_amount - amount_in_inventory as f32
