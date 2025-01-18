@@ -655,7 +655,9 @@ pub struct ProductionLine {
     #[serde(rename = "Type")]
     pub building_type: String,
     pub capacity: u32,
+    /// Total efficiency
     pub efficiency: f32,
+    /// Production line condition
     pub condition: f32,
     pub orders: Vec<ProductionOrderDetails>,
 }
@@ -669,8 +671,8 @@ pub struct ProductionOrderDetails {
     pub created: DateTime<Utc>,
     #[serde(rename = "StartedEpochMs", deserialize_with = "optional_ms_to_date")]
     pub started: Option<DateTime<Utc>>,
-    #[serde(rename = "DurationMs", deserialize_with = "ms_to_duration")]
-    pub duration: Duration,
+    #[serde(rename = "DurationMs", deserialize_with = "optional_ms_to_duration")]
+    pub duration: Option<Duration>,
     pub completed_percentage: Option<f32>,
     #[serde(rename = "CompletionEpochMs", deserialize_with = "optional_ms_to_date")]
     pub completion: Option<DateTime<Utc>>,
@@ -723,16 +725,16 @@ impl ProductionLine {
         let queued_orders: Vec<_> = self
             .orders
             .iter()
-            .filter(|order| order.started.is_none() && order.recurring)
+            .filter(|order| order.started.is_none() && order.recurring && order.duration.is_some())
             .collect();
 
         let total_duration_days = self
             .orders
             .iter()
-            .filter(|order| order.started.is_none())
+            .filter(|order| order.started.is_none() && order.duration.is_some())
             .map(|order| {
                 trace!(?order);
-                order.duration.as_secs_f32()
+                order.duration.unwrap().as_secs_f32()
             })
             .sum::<f32>()
             / 86400.0;
@@ -749,7 +751,7 @@ impl ProductionLine {
         let mut total_outputs = HashMap::new();
 
         for order in queued_orders {
-            let duration_days = order.duration.as_secs_f32() / 86400.0;
+            let duration_days = order.duration.unwrap().as_secs_f32() / 86400.0;
             let scale = duration_days / total_duration_days;
             trace!(duration_days, scale, order.outputs = ?order.outputs);
 
@@ -944,6 +946,17 @@ where
     let s: u64 = u64::deserialize(d)?;
 
     Ok(Duration::from_millis(s))
+}
+
+fn optional_ms_to_duration<'de, D>(d: D) -> Result<Option<Duration>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let s: Option<u64> = Option::deserialize(d)?;
+    match s {
+        Some(s) => Ok(Some(Duration::from_millis(s))),
+        None => Ok(None),
+    }
 }
 
 #[cfg(test)]

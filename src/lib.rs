@@ -737,7 +737,8 @@ impl FIOClient {
                 .orders
                 .iter()
                 .find(|order| {
-                    order
+                    order.duration.is_some()
+                        && order
                         .outputs
                         .iter()
                         .any(|o| o.material_ticker == material_ticker)
@@ -750,7 +751,7 @@ impl FIOClient {
 
             trace!(daily_repair_cost);
 
-            let day_scale = 86400.0 / order.duration.as_secs() as f32;
+            let day_scale = 86400.0 / order.duration.unwrap().as_secs() as f32;
             for input in &order.inputs {
                 let daily_buy_amt = input.material_amount as f32 * day_scale;
                 let cx_info = self
