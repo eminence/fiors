@@ -1,4 +1,3 @@
-use core::error;
 use std::{
     fs::File,
     io::{self, stdout},
@@ -18,7 +17,7 @@ use ratatui::{prelude::*, widgets::*};
 use ratatui_macros::{horizontal, vertical};
 use tracing::{info, level_filters::LevelFilter, trace};
 use widgets::{SharedWidgetState, WidgetEnum};
-
+use widgets::{Overrides, SharedWidgetState, WidgetEnum};
 static CLIENT: OnceCell<FIOClient> = OnceCell::new();
 
 mod widgets;
@@ -306,7 +305,8 @@ impl App {
                     .render(frame, main_area, self.current_widget);
             }
             SidebarMode::Market => {
-                self.market_widget.render(frame, main_body, self.current_widget);
+                self.market_widget
+                    .render(frame, main_body, self.current_widget);
             }
         }
 
@@ -359,10 +359,8 @@ impl App {
                 );
             }
             SidebarMode::Market => {
-                refresh = refresh.update(
-                    self.market_widget
-                        .handle_input(&event, self.current_widget),
-                );
+                refresh =
+                    refresh.update(self.market_widget.handle_input(&event, self.current_widget));
             }
         }
 
@@ -523,6 +521,20 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
             last_refresh = Instant::now();
 
             if needs_redraw == NeedRefresh::APIRefresh {
+                // check to see if overrides need to be refreshed too
+                if shared_state.overrides.last_updated.elapsed()
+                    > std::time::Duration::from_secs(90)
+                {
+                    match Overrides::read() {
+                        Ok(new) => {
+                            shared_state.overrides = new;
+                        }
+                        Err(e) => {
+                            tracing::error!("Failed to refresh overrides: {e}");
+                        }
+                    }
+                }
+
                 // before awaiting these calls to .update(), which might take a while, render a frame with a loading message
 
                 if switching_planets {

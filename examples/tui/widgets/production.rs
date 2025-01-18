@@ -12,7 +12,10 @@ use ratatui::{
 };
 use tracing::{debug, instrument, span, Level};
 
-use crate::{format_amount, format_price, get_style_for_days, get_style_for_material, widgets::OverrideType, NeedRefresh};
+use crate::{
+    format_amount, format_price, get_style_for_days, get_style_for_material, widgets::OverrideType,
+    NeedRefresh,
+};
 
 use super::{handle_scroll, SharedWidgetState, WidgetEnum};
 
@@ -92,6 +95,12 @@ impl ProductionWidget {
             .get_storage_for_user(&self.username, &self.planet_id)
             .await?
             .context("No inventory found")?;
+
+        // get benten station warehouse
+        let benten_cx_inv = self
+            .client
+            .get_storage_for_user(&self.username, "c2ae5c534bf694c3b1aee295176f7651")
+            .await?;
 
         let production_lines = self
             .client
@@ -418,17 +427,12 @@ impl ProductionWidget {
                         let amount_in_inventory =
                             inv.items.get(&*material).map(|i| i.quantity).unwrap_or(0);
 
-                        let target_amount_based_on_consumption = net_amount_per_day * (resupply_period as f32);
+                        let target_amount_based_on_consumption =
+                            net_amount_per_day * (resupply_period as f32);
                         let target_amount = if let Some(override_amount) =
                             consumed_materials_overrides.get(&material)
                         {
-                            match override_amount {
-                                OverrideType::Minimum(min) => {
-                                    target_amount_based_on_consumption.max(*min as f32)
-                                }
-                                OverrideType::Absolute(a) => *a as f32,
-                                OverrideType::None => target_amount_based_on_consumption,
-                            }
+                            override_amount.with(target_amount_based_on_consumption)
                         } else {
                             target_amount_based_on_consumption
                         };
@@ -471,6 +475,14 @@ impl ProductionWidget {
                         })
                     })
                     .collect();
+
+                // also include bention station warehouse
+                if let Some(wh) = &benten_cx_inv {
+                    if let Some(x) = wh.items.get(&material) {
+                        planets_with_excess.push(("Benten", x.quantity as f32));
+                    }
+                }
+
                 planets_with_excess.sort_unstable_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
 
                 if !planets_with_excess.is_empty() {
@@ -521,6 +533,23 @@ impl ProductionWidget {
                 ]));
             }
         }
+
+        // Do we have any materials in our inventory that we need to move to benten?
+        if let Some(planet_overrides) = materials_override_for_this_planet {
+            for (mat, item) in &inv.items {
+                if let Some(OverrideType::Maxiumum(m)) = planet_overrides.get(mat) {
+                    if item.quantity > *m {
+                        needs_rows.push(Row::new(vec![
+                            Span::raw(format_amount((item.quantity - *m) as f32)),
+                            Span::raw(mat.to_string()).style(get_style_for_material(mat)),
+                            Span::raw("Send to Benten".to_string()),
+                        ]));
+                    }
+                }
+            }
+    
+        }
+       
 
         shared_state.help_text.extend(vec![
             Span::raw("This mode shows your production and consumption. "),

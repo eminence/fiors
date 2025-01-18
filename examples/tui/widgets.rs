@@ -1,5 +1,5 @@
 mod lm_widget;
-use std::collections::HashMap;
+use std::{collections::HashMap, time::Instant};
 
 use crossterm::event::{Event, KeyCode, KeyEvent, MouseEvent, MouseEventKind};
 pub use lm_widget::LocalMarketWidget;
@@ -120,9 +120,13 @@ fn handle_scroll(event: &Event, selected: Option<usize>, table_row_len: usize) -
 }
 
 #[derive(Debug, Copy, Clone)]
-enum OverrideType {
+pub enum OverrideType {
+    /// Hold this much, even if our production needs are higher or lower
     Absolute(u32),
+    /// Hold at least this much, or more if our production needs are higher
     Minimum(u32),
+    /// Hold exactly this much.  Any excess needs to be shipped off planet
+    Maxiumum(u32),
     None,
 }
 
@@ -131,6 +135,7 @@ impl OverrideType {
         match self {
             Self::Absolute(x) => *x as f32,
             Self::Minimum(x) => current.max(*x as f32),
+            Self::Maxiumum(x) => current.min(*x as f32),
             Self::None => current,
         }
     }
@@ -138,6 +143,7 @@ impl OverrideType {
         match self {
             Self::Absolute(x) => *x as f32,
             Self::Minimum(x) => *x as f32,
+            Self::Maxiumum(x) => *x as f32,
             Self::None => 0.0,
         }
     }
@@ -149,13 +155,26 @@ impl Default for OverrideType {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct Overrides {
     /// How much of a given material we should keep in our inventory
     pub planet_materials: HashMap<String, HashMap<String, OverrideType>>,
 
     /// How often we should resupply a planet
     pub planet_resupply_period: HashMap<String, i32>,
+
+    /// When we last loaded these overrides from disk
+    pub last_updated: Instant,
+}
+
+impl Default for Overrides {
+    fn default() -> Self {
+        Self {
+            planet_materials: Default::default(),
+            planet_resupply_period: Default::default(),
+            last_updated: Instant::now(),
+        }
+    }
 }
 
 impl Overrides {
@@ -189,6 +208,16 @@ impl Overrides {
                     }
                 }));
             }
+            if let Some(toml::Value::Table(materials)) = data.get("materials-max") {
+                let m = planet_materials.entry(planet.clone()).or_default();
+                m.extend(materials.into_iter().filter_map(|(k, v)| {
+                    if let toml::Value::Integer(v) = v {
+                        Some((k.to_string(), OverrideType::Maxiumum(*v as u32)))
+                    } else {
+                        None
+                    }
+                }));
+            }
             if let Some(toml::Value::Integer(i)) = data.get("resupply") {
                 planet_resupply_period.insert(planet.clone(), *i as i32);
             }
@@ -197,6 +226,7 @@ impl Overrides {
         Ok(Self {
             planet_materials,
             planet_resupply_period,
+            last_updated: Instant::now(),
         })
     }
 }
@@ -210,7 +240,7 @@ pub struct SharedWidgetState {
     /// For each planet_id, A map between a material and how much we need per day
     pub needs: HashMap<String, HashMap<String, f32>>,
 
-    /// For each planet_id, a map between a material and how much we have in excess
+    /// For each planet_id, a map between a material and how much we have in excess in storage
     pub excess: HashMap<String, HashMap<String, f32>>,
 
     /// The best COGM for each material
