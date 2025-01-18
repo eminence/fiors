@@ -331,7 +331,7 @@ impl ProductionWidget {
             .unwrap_or(21);
 
         // our material overrides for this planet
-        let materials_override = shared_state.overrides.planet_materials.get(
+        let materials_override_for_this_planet = shared_state.overrides.planet_materials.get(
             shared_state
                 .planet_id_map
                 .get(&self.planet_id)
@@ -352,7 +352,7 @@ impl ProductionWidget {
         for (ticker, item) in &inv.items {
             let long_term_needed = total_daily_consumption.get(ticker.as_str()).unwrap_or(&0.0)
                 * (resupply_period as f32);
-            let needed_due_to_override = materials_override
+            let needed_due_to_override = materials_override_for_this_planet
                 .and_then(|x| x.get(ticker.as_str()).copied())
                 .unwrap_or_default();
             let long_term_needed = needed_due_to_override.with(long_term_needed);
@@ -365,7 +365,7 @@ impl ProductionWidget {
         let (consumed_materials_overrides, new_materials_overrides): (
             HashMap<_, _>,
             HashMap<_, _>,
-        ) = materials_override
+        ) = materials_override_for_this_planet
             .map(|x| {
                 x.iter()
                     .partition(|(mat, _)| total_daily_consumption.contains_key(*mat))
