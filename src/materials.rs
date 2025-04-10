@@ -71,6 +71,9 @@ pub enum MaterialCategory {
     // background: linear-gradient(135deg, rgb(136, 24, 39), rgb(161, 49, 64)); color: rgb(255, 151, 166);
     ConsumablesLuxury,
 
+    // background: linear-gradient(135deg, rgb(62, 10, 17), rgb(87, 35, 42)); color: rgb(189, 137, 144);
+    ConsumableBundle,
+
     // background: linear-gradient(135deg, rgb(140, 52, 18), rgb(165, 77, 43)); color: rgb(255, 179, 145);
     Drones,
 
@@ -157,6 +160,7 @@ impl MaterialCategory {
             "construction prefabs" => Some(MaterialCategory::ConstructionPrefabs),
             "consumables (basic)" => Some(MaterialCategory::ConsumablesBasic),
             "consumables (luxury)" => Some(MaterialCategory::ConsumablesLuxury),
+            "consumable bundles" => Some(MaterialCategory::ConsumableBundle),
             "drones" => Some(MaterialCategory::Drones),
             "electronic devices" => Some(MaterialCategory::ElectronicDevices),
             "electronic parts" => Some(MaterialCategory::ElectronicParts),
@@ -191,6 +195,7 @@ impl MaterialCategory {
             MaterialCategory::ConstructionPrefabs => average_rgb((15, 30, 98), (40, 55, 123)),
             MaterialCategory::ConsumablesBasic => average_rgb((149, 46, 46), (174, 71, 71)),
             MaterialCategory::ConsumablesLuxury => average_rgb((136, 24, 39), (161, 49, 64)),
+            MaterialCategory::ConsumableBundle => average_rgb((62, 10, 17), (87, 35, 42)),
             MaterialCategory::Metals => average_rgb((54, 54, 54), (79, 79, 79)),
             MaterialCategory::Gases => average_rgb((0, 105, 107), (25, 130, 132)),
             MaterialCategory::Fuels => average_rgb((30, 123, 30), (55, 148, 55)),
@@ -234,6 +239,7 @@ impl MaterialCategory {
             MaterialCategory::ConstructionPrefabs => (142, 157, 225),
             MaterialCategory::ConsumablesBasic => (255, 173, 173),
             MaterialCategory::ConsumablesLuxury => (255, 151, 166),
+            MaterialCategory::ConsumableBundle => (189, 137, 144),
             MaterialCategory::Drones => (255, 179, 145),
             MaterialCategory::ElectronicDevices => (213, 147, 255),
             MaterialCategory::ElectronicParts => (218, 173, 255),

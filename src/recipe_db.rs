@@ -30,11 +30,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SA",
+                    ticker: "BMF",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BMF",
+                    ticker: "SA",
                     amount: 1u32,
                 },
             ],
@@ -50,11 +50,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(172800000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SNM",
+                    ticker: "BMF",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BMF",
+                    ticker: "SNM",
                     amount: 1u32,
                 },
             ],
@@ -70,32 +70,32 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(190080000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "PCB",
+                    ticker: "WAI",
                     amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "FLP",
-                    amount: 6u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "CST",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SAR",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "WAI",
-                    amount: 1u32,
+                    ticker: "ES",
+                    amount: 10u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "FC",
                     amount: 3u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "ES",
-                    amount: 10u32,
+                    ticker: "FLP",
+                    amount: 6u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SAR",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "PCB",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -134,16 +134,8 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "FC",
-                    amount: 8u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "THF",
                     amount: 20u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "PCB",
-                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "WAI",
@@ -152,6 +144,14 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                 StaticRecipeMaterial {
                     ticker: "GV",
                     amount: 100u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "PCB",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "FC",
+                    amount: 8u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -230,12 +230,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "BOR",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AL",
                     amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "BOR",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "SI",
@@ -296,15 +296,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
+                    ticker: "WR",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "BMF",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "WAI",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "WR",
                     amount: 1u32,
                 },
             ],
@@ -356,15 +356,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(216000000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "WAI",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "NS",
+                    ticker: "FC",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "HCP",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "BAC",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -384,11 +384,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BAC",
+                    ticker: "WAI",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "FC",
+                    ticker: "NS",
                     amount: 1u32,
                 },
             ],
@@ -404,10 +404,6 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(216000000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "DA",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "WAI",
                     amount: 1u32,
                 },
@@ -417,6 +413,10 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                 },
                 StaticRecipeMaterial {
                     ticker: "BMF",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "DA",
                     amount: 1u32,
                 },
             ],
@@ -436,11 +436,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SAL",
+                    ticker: "BMF",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BMF",
+                    ticker: "SAL",
                     amount: 1u32,
                 },
             ],
@@ -460,7 +460,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "DA",
+                    ticker: "BWS",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -468,7 +468,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BWS",
+                    ticker: "DA",
                     amount: 1u32,
                 },
             ],
@@ -504,16 +504,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(86400000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "BWS",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "OS",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "TRA",
                     amount: 8u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "BWS",
-                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -528,7 +528,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(51840000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SAR",
+                    ticker: "WAI",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "FC",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -536,11 +540,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "WAI",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "FC",
+                    ticker: "SAR",
                     amount: 1u32,
                 },
             ],
@@ -616,12 +616,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "TI",
-                    amount: 3u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "FE",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "TI",
+                    amount: 3u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -636,16 +636,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "WAL",
-                    amount: 2u32,
+                    ticker: "SI",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "O",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SI",
-                    amount: 1u32,
+                    ticker: "WAL",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -680,11 +680,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "AL",
+                    ticker: "FE",
                     amount: 3u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "FE",
+                    ticker: "AL",
                     amount: 3u32,
                 },
             ],
@@ -700,12 +700,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(51840000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "PG",
-                    amount: 25u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PE",
                     amount: 100u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "PG",
+                    amount: 25u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -744,11 +744,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SFK",
+                    ticker: "MFK",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MFK",
+                    ticker: "SFK",
                     amount: 1u32,
                 },
             ],
@@ -906,11 +906,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(30240000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "TRN",
+                    ticker: "STL",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "STL",
+                    ticker: "TRN",
                     amount: 1u32,
                 },
             ],
@@ -926,11 +926,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(30240000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "W",
+                    ticker: "STL",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "STL",
+                    ticker: "W",
                     amount: 1u32,
                 },
             ],
@@ -1004,12 +1004,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SI",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 30u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SI",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1098,12 +1098,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(69120000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "AMM",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "REA",
                     amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "AMM",
+                    amount: 10u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1170,11 +1170,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 5u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BOR",
+                    ticker: "NA",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "NA",
+                    ticker: "BOR",
                     amount: 1u32,
                 },
             ],
@@ -1190,7 +1190,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "S",
+                    ticker: "CU",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -1198,7 +1198,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "CU",
+                    ticker: "S",
                     amount: 1u32,
                 },
             ],
@@ -1214,22 +1214,22 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(50112000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "H2O",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "HAL",
                     amount: 3u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "H2O",
+                    amount: 1u32,
                 },
             ],
             outputs: &[
                 StaticRecipeMaterial {
-                    ticker: "CL",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "NA",
                     amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "CL",
+                    amount: 1u32,
                 },
             ],
         },
@@ -1268,11 +1268,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(56160000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SI",
+                    ticker: "O",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "O",
+                    ticker: "SI",
                     amount: 1u32,
                 },
             ],
@@ -1288,12 +1288,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(86400000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "BRM",
-                    amount: 20u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CLI",
                     amount: 10u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "BRM",
+                    amount: 20u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1322,15 +1322,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(56160000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "MG",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CA",
                     amount: 2u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "TA",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "MG",
                     amount: 1u32,
                 },
             ],
@@ -1374,16 +1374,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 2u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PCB",
-                    amount: 10u32,
+                    ticker: "BLE",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "HD",
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BLE",
-                    amount: 1u32,
+                    ticker: "PCB",
+                    amount: 10u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1398,19 +1398,19 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(86400000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "BLE",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "NL",
-                    amount: 5u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "SEN",
                     amount: 5u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "PCB",
+                    amount: 5u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "BLE",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "NL",
                     amount: 5u32,
                 },
             ],
@@ -1426,16 +1426,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(60480000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "NL",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "IND",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "GC",
                     amount: 6u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "NL",
-                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1524,11 +1524,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(17280000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "CAP",
+                    ticker: "TRN",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "TRN",
+                    ticker: "CAP",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -1548,12 +1548,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "CF",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CBM",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "CF",
+                    amount: 4u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1588,11 +1588,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "FE",
+                    ticker: "SI",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SI",
+                    ticker: "FE",
                     amount: 1u32,
                 },
             ],
@@ -1608,11 +1608,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(30240000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "GAL",
+                    ticker: "SI",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SI",
+                    ticker: "GAL",
                     amount: 1u32,
                 },
             ],
@@ -1628,11 +1628,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "AL",
+                    ticker: "SI",
                     amount: 2u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SI",
+                    ticker: "AL",
                     amount: 2u32,
                 },
             ],
@@ -1698,11 +1698,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SEQ",
+                    ticker: "DCH",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "DCH",
+                    ticker: "SEQ",
                     amount: 1u32,
                 },
             ],
@@ -1738,16 +1738,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "UTS",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "DCH",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "SAR",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "UTS",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1782,12 +1782,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(17280000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "DCS",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "NFI",
                     amount: 50u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "DCS",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1802,7 +1802,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(24192000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "DRF",
+                    ticker: "MPC",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -1814,7 +1814,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MPC",
+                    ticker: "DRF",
                     amount: 1u32,
                 },
             ],
@@ -1834,16 +1834,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 150u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "LI",
-                    amount: 12u32,
+                    ticker: "HCC",
+                    amount: 60u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "BE",
                     amount: 12u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "HCC",
-                    amount: 60u32,
+                    ticker: "LI",
+                    amount: 12u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1862,10 +1862,6 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "CTF",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "WAL",
                     amount: 10u32,
                 },
@@ -1874,12 +1870,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "ACS",
-                    amount: 1u32,
+                    ticker: "CTF",
+                    amount: 10u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "AFR",
                     amount: 8u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "ACS",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1898,8 +1898,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 8u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "CF",
-                    amount: 6u32,
+                    ticker: "ETC",
+                    amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "BFR",
+                    amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "ACS",
@@ -1910,12 +1914,8 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "ETC",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "BFR",
-                    amount: 4u32,
+                    ticker: "CF",
+                    amount: 6u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1930,20 +1930,20 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "LI",
-                    amount: 6u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "BE",
                     amount: 6u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BCO",
-                    amount: 20u32,
+                    ticker: "LI",
+                    amount: 6u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 60u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "BCO",
+                    amount: 20u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -1962,16 +1962,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 2u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BCO",
-                    amount: 4u32,
+                    ticker: "SI",
+                    amount: 2u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "BRO",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SI",
-                    amount: 2u32,
+                    ticker: "BCO",
+                    amount: 4u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2006,20 +2006,20 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "LI",
-                    amount: 8u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "BE",
-                    amount: 8u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 120u32,
                 },
                 StaticRecipeMaterial {
+                    ticker: "LI",
+                    amount: 8u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "BGC",
                     amount: 40u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "BE",
+                    amount: 8u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2034,12 +2034,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "GL",
-                    amount: 8u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "SOL",
                     amount: 24u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "GL",
+                    amount: 8u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2058,11 +2058,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "HD",
+                    ticker: "NG",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "NG",
+                    ticker: "HD",
                     amount: 1u32,
                 },
             ],
@@ -2102,11 +2102,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(17280000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "TRA",
+                    ticker: "PCB",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PCB",
+                    ticker: "TRA",
                     amount: 1u32,
                 },
             ],
@@ -2166,12 +2166,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(103680000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "FLX",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "ES",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "FLX",
+                    amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "REA",
@@ -2204,16 +2204,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(56160000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "PE",
-                    amount: 10u32,
+                    ticker: "MAG",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "BAC",
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MAG",
-                    amount: 1u32,
+                    ticker: "PE",
+                    amount: 10u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2248,11 +2248,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(30240000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "CD",
+                    ticker: "DCS",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "DCS",
+                    ticker: "CD",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -2272,7 +2272,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(60480000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "MB",
+                    ticker: "DCL",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "FAN",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -2280,11 +2284,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "DCL",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "FAN",
+                    ticker: "MB",
                     amount: 1u32,
                 },
             ],
@@ -2300,15 +2300,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "HD",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "MB",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "DCM",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "HD",
                     amount: 1u32,
                 },
             ],
@@ -2324,20 +2324,20 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(57888000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "AU",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PCB",
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SWF",
-                    amount: 6u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "KV",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "AU",
+                    amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SWF",
+                    amount: 6u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2372,12 +2372,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(57888000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SEN",
-                    amount: 16u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PCB",
                     amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SEN",
+                    amount: 16u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2400,7 +2400,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(69120000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "DW",
+                    amount: 10u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "AMM",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "I",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -2408,15 +2416,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "DW",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CA",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "I",
                     amount: 1u32,
                 },
             ],
@@ -2436,16 +2436,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 15u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "AMM",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "GRA",
                     amount: 15u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "DW",
                     amount: 20u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "AMM",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2488,20 +2488,20 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(55296000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "DW",
-                    amount: 3u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "GRN",
-                    amount: 2u32,
+                    ticker: "HOP",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "AMM",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "HOP",
-                    amount: 1u32,
+                    ticker: "DW",
+                    amount: 3u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "GRN",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2516,16 +2516,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(30240000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "HER",
-                    amount: 1u32,
+                    ticker: "DW",
+                    amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "AMM",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "DW",
-                    amount: 4u32,
+                    ticker: "HER",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2540,12 +2540,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(17280000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "PG",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "H2O",
                     amount: 10u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "PG",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2622,11 +2622,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "GRN",
+                    ticker: "VEG",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "VEG",
+                    ticker: "GRN",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -2646,11 +2646,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "ALG",
+                    ticker: "MAI",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MAI",
+                    ticker: "ALG",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -2674,11 +2674,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MAI",
+                    ticker: "VEG",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "VEG",
+                    ticker: "MAI",
                     amount: 1u32,
                 },
             ],
@@ -2718,15 +2718,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "BEA",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "GRN",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "VEG",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "BEA",
                     amount: 1u32,
                 },
             ],
@@ -2742,11 +2742,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "BEA",
+                    ticker: "MAI",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MAI",
+                    ticker: "BEA",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -2766,7 +2766,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "VEG",
+                    ticker: "MAI",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -2774,7 +2774,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MAI",
+                    ticker: "VEG",
                     amount: 1u32,
                 },
             ],
@@ -2814,11 +2814,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "NUT",
+                    ticker: "MUS",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MUS",
+                    ticker: "NUT",
                     amount: 1u32,
                 },
             ],
@@ -2858,12 +2858,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "RAT",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "HER",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "RAT",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2878,15 +2878,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "NUT",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "MAI",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "MUS",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "NUT",
                     amount: 1u32,
                 },
             ],
@@ -2906,11 +2906,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MUS",
+                    ticker: "MAI",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MAI",
+                    ticker: "MUS",
                     amount: 1u32,
                 },
             ],
@@ -2926,12 +2926,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "ALG",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "H2O",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "ALG",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -2986,15 +2986,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "MAI",
-                    amount: 5u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "VEG",
                     amount: 5u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "NUT",
+                    amount: 5u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "MAI",
                     amount: 5u32,
                 },
             ],
@@ -3176,12 +3176,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(69120000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "STL",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AL",
                     amount: 10u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "STL",
+                    amount: 4u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3236,12 +3236,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "CU",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AL",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "CU",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3276,12 +3276,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "CU",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PE",
                     amount: 300u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "CU",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3310,15 +3310,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "TI",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "HOG",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "STL",
+                    amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "TI",
                     amount: 2u32,
                 },
             ],
@@ -3388,12 +3388,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "FE",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AU",
                     amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "FE",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3428,11 +3428,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(103680000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "GL",
+                    ticker: "NCS",
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "NCS",
+                    ticker: "GL",
                     amount: 10u32,
                 },
             ],
@@ -3448,16 +3448,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(99360000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SEN",
-                    amount: 1u32,
+                    ticker: "GL",
+                    amount: 10u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 15u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "GL",
-                    amount: 10u32,
+                    ticker: "SEN",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3472,12 +3472,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(112320000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "GL",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 15u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "GL",
+                    amount: 10u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3506,12 +3506,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(69120000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "RG",
-                    amount: 8u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "NE",
                     amount: 16u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "RG",
+                    amount: 8u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3554,11 +3554,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 20u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "GCH",
+                    ticker: "TI",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "TI",
+                    ticker: "GCH",
                     amount: 1u32,
                 },
             ],
@@ -3594,16 +3594,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SEN",
-                    amount: 1u32,
+                    ticker: "SIO",
+                    amount: 2u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "NA",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SIO",
-                    amount: 2u32,
+                    ticker: "SEN",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3642,16 +3642,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
+                    ticker: "NG",
+                    amount: 50u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "LFP",
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "GNZ",
                     amount: 4u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "NG",
-                    amount: 50u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "THF",
@@ -3670,16 +3670,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "AL",
-                    amount: 12u32,
+                    ticker: "HE",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "STL",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "HE",
-                    amount: 1u32,
+                    ticker: "AL",
+                    amount: 12u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3698,12 +3698,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "TI",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AL",
                     amount: 12u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "TI",
+                    amount: 4u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3718,12 +3718,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "HE",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AL",
                     amount: 12u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "HE",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3738,12 +3738,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "AST",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "HE",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "AST",
+                    amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "AL",
@@ -3762,10 +3762,6 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "BOS",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CTF",
                     amount: 2u32,
                 },
@@ -3773,10 +3769,42 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     ticker: "HE",
                     amount: 1u32,
                 },
+                StaticRecipeMaterial {
+                    ticker: "BOS",
+                    amount: 2u32,
+                },
             ],
             outputs: &[StaticRecipeMaterial {
                 ticker: "ATP",
                 amount: 2u32,
+            }],
+        },
+        StaticRecipeInfo {
+            building_ticker: "HWP",
+            recipe_name: "2xFAL 4xCF 1xKV 1xHE=>10xBWH",
+            standard_recipe_name: "HWP:4xCF-2xFAL-1xHE-1xKV=>10xBWH",
+            duration: std::time::Duration::from_millis(25920000u64),
+            inputs: &[
+                StaticRecipeMaterial {
+                    ticker: "CF",
+                    amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "KV",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "HE",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "FAL",
+                    amount: 2u32,
+                },
+            ],
+            outputs: &[StaticRecipeMaterial {
+                ticker: "BWH",
+                amount: 10u32,
             }],
         },
         StaticRecipeInfo {
@@ -3790,6 +3818,10 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
+                    ticker: "KV",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "CF",
                     amount: 4u32,
                 },
@@ -3797,14 +3829,38 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     ticker: "FAL",
                     amount: 2u32,
                 },
-                StaticRecipeMaterial {
-                    ticker: "KV",
-                    amount: 1u32,
-                },
             ],
             outputs: &[StaticRecipeMaterial {
                 ticker: "BWH",
                 amount: 8u32,
+            }],
+        },
+        StaticRecipeInfo {
+            building_ticker: "HWP",
+            recipe_name: "2xTI 4xCTF 2xTK 1xHE=>10xAWH",
+            standard_recipe_name: "HWP:4xCTF-1xHE-2xTI-2xTK=>10xAWH",
+            duration: std::time::Duration::from_millis(43200000u64),
+            inputs: &[
+                StaticRecipeMaterial {
+                    ticker: "HE",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "TK",
+                    amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "CTF",
+                    amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "TI",
+                    amount: 2u32,
+                },
+            ],
+            outputs: &[StaticRecipeMaterial {
+                ticker: "AWH",
+                amount: 10u32,
             }],
         },
         StaticRecipeInfo {
@@ -3822,12 +3878,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "TI",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "HE",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "TI",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3842,12 +3898,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(77760000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "HE",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "FET",
                     amount: 10u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "HE",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "AL",
@@ -3866,12 +3922,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(19008000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "H2O",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "NS",
                     amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "H2O",
+                    amount: 10u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -3980,12 +4036,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "H2O",
-                    amount: 22u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "NS",
                     amount: 3u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "H2O",
+                    amount: 22u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -4014,16 +4070,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(28512000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "HCP",
+                    amount: 4u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "GRN",
                     amount: 2u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "MAI",
                     amount: 2u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "HCP",
-                    amount: 4u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -4038,12 +4094,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(57024000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "GRN",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "HCP",
                     amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "GRN",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -4120,16 +4176,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(86400000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "NS",
-                    amount: 1u32,
+                    ticker: "H2O",
+                    amount: 16u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "HCP",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "H2O",
-                    amount: 16u32,
+                    ticker: "NS",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -4168,19 +4224,19 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(86400000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "BL",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "VIT",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "REA",
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "BAC",
+                    amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "BL",
+                    amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "VIT",
                     amount: 2u32,
                 },
             ],
@@ -4196,16 +4252,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(69120000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "NAB",
-                    amount: 10u32,
+                    ticker: "O",
+                    amount: 2u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "S",
                     amount: 3u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "O",
-                    amount: 2u32,
+                    ticker: "NAB",
+                    amount: 10u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -4220,15 +4276,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "THF",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "ALG",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "ES",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "THF",
                     amount: 1u32,
                 },
             ],
@@ -4244,11 +4300,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(64800000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "C",
+                    ticker: "CL",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "CL",
+                    ticker: "C",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -4268,15 +4324,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(51840000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "O",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CL",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "H",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "O",
                     amount: 1u32,
                 },
             ],
@@ -4292,15 +4348,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "NA",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CL",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "O",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "NA",
                     amount: 1u32,
                 },
             ],
@@ -4316,11 +4372,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(129600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "DW",
+                    ticker: "NS",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "NS",
+                    ticker: "DW",
                     amount: 1u32,
                 },
             ],
@@ -4336,11 +4392,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(86400000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "O",
+                    ticker: "F",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "F",
+                    ticker: "O",
                     amount: 1u32,
                 },
             ],
@@ -4360,11 +4416,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "HCP",
+                    ticker: "O",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "O",
+                    ticker: "HCP",
                     amount: 1u32,
                 },
             ],
@@ -4452,16 +4508,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(17280000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SFK",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AL",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "DCS",
                     amount: 8u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SFK",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -4476,12 +4532,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(57888000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "LCR",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "GL",
                     amount: 3u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "LCR",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -4496,11 +4552,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SFK",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "RAM",
+                    ticker: "PSM",
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
@@ -4508,7 +4560,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PSM",
+                    ticker: "RAM",
+                    amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SFK",
                     amount: 4u32,
                 },
             ],
@@ -4524,15 +4580,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(57888000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "DCS",
+                    amount: 5u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "RG",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "LDI",
-                    amount: 5u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "DCS",
                     amount: 5u32,
                 },
             ],
@@ -4548,12 +4604,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(60480000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SOI",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "H2O",
                     amount: 20u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SOI",
+                    amount: 2u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "DDT",
@@ -4572,12 +4628,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(69120000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SOI",
-                    amount: 3u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "H2O",
                     amount: 30u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SOI",
+                    amount: 3u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "DDT",
@@ -4596,12 +4652,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(69120000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "H2O",
-                    amount: 30u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "DDT",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "H2O",
+                    amount: 30u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -4636,12 +4692,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(151200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SOI",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "DDT",
                     amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SOI",
+                    amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "H2O",
@@ -4660,12 +4716,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(172800000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "H2O",
-                    amount: 60u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "DDT",
                     amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "H2O",
+                    amount: 60u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -4680,16 +4736,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(77760000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "MFK",
-                    amount: 4u32,
+                    ticker: "BSC",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "DCM",
                     amount: 2u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BSC",
-                    amount: 1u32,
+                    ticker: "MFK",
+                    amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "REA",
@@ -4712,11 +4768,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "DCM",
+                    ticker: "SAR",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SAR",
+                    ticker: "DCM",
                     amount: 1u32,
                 },
             ],
@@ -4732,11 +4788,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(17280000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "NL",
+                    ticker: "SIL",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SIL",
+                    ticker: "NL",
                     amount: 1u32,
                 },
             ],
@@ -4752,16 +4808,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(28512000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "REA",
+                    amount: 10u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "LI",
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "CA",
                     amount: 2u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "REA",
-                    amount: 10u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -4776,6 +4832,10 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(86400000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "H",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "C",
                     amount: 1u32,
                 },
@@ -4785,10 +4845,6 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                 },
                 StaticRecipeMaterial {
                     ticker: "CL",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "H",
                     amount: 1u32,
                 },
             ],
@@ -4922,11 +4978,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(12960000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "GL",
+                    ticker: "AL",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "AL",
+                    ticker: "GL",
                     amount: 1u32,
                 },
             ],
@@ -4962,12 +5018,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "GL",
-                    amount: 5u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AL",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "GL",
+                    amount: 5u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -4982,12 +5038,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "NE",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 50u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "NE",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5002,12 +5058,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "AL",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "LST",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "AL",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5022,12 +5078,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "AL",
-                    amount: 3u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 120u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "AL",
+                    amount: 3u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5096,16 +5152,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(60480000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "EPO",
-                    amount: 100u32,
+                    ticker: "KV",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "LDE",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "KV",
-                    amount: 1u32,
+                    ticker: "EPO",
+                    amount: 100u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5120,16 +5176,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(21600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "PE",
-                    amount: 100u32,
+                    ticker: "AR",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "THF",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "AR",
-                    amount: 1u32,
+                    ticker: "PE",
+                    amount: 100u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5144,15 +5200,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "STL",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "EPO",
                     amount: 50u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "BBH",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "STL",
                     amount: 1u32,
                 },
             ],
@@ -5232,12 +5288,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 225u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "STL",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "BSE",
                     amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "STL",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5292,11 +5348,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(77760000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "LST",
+                    ticker: "TA",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "TA",
+                    ticker: "LST",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -5316,11 +5372,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(47520000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "NG",
+                    ticker: "RTA",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "RTA",
+                    ticker: "NG",
                     amount: 1u32,
                 },
             ],
@@ -5376,16 +5432,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(51840000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "PE",
-                    amount: 150u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "LBH",
                     amount: 2u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "THP",
                     amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "PE",
+                    amount: 150u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5400,16 +5456,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "PSS",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "SFK",
                     amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "PSS",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5438,16 +5494,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "PSM",
+                    amount: 2u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "SFK",
                     amount: 8u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 20u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "PSM",
-                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5476,7 +5532,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(60480000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "PSL",
+                    ticker: "MFK",
                     amount: 2u32,
                 },
                 StaticRecipeMaterial {
@@ -5484,7 +5540,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 40u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MFK",
+                    ticker: "PSL",
                     amount: 2u32,
                 },
             ],
@@ -5514,12 +5570,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SFK",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 50u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SFK",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "THF",
@@ -5542,12 +5598,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 3u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "GAL",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AMM",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "GAL",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5648,11 +5704,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SI",
+                    ticker: "PSS",
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PSS",
+                    ticker: "SI",
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
@@ -5696,19 +5752,19 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(56160000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "CAP",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "MWF",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "TRN",
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "HCC",
+                    amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "CAP",
+                    amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "MWF",
                     amount: 4u32,
                 },
             ],
@@ -5724,20 +5780,20 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(24192000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "BGO",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PE",
                     amount: 60u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "BCO",
+                    amount: 5u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "SWF",
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BCO",
-                    amount: 5u32,
+                    ticker: "BGO",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5752,11 +5808,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(36288000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "CAP",
+                    ticker: "PSS",
                     amount: 6u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PSS",
+                    ticker: "CAP",
                     amount: 6u32,
                 },
                 StaticRecipeMaterial {
@@ -5873,11 +5929,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(172800000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "LD",
+                    ticker: "NF",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "NF",
+                    ticker: "LD",
                     amount: 1u32,
                 },
             ],
@@ -5893,11 +5949,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(129600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "LD",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "SA",
+                    ticker: "SAL",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -5905,7 +5957,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SAL",
+                    ticker: "SA",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "LD",
                     amount: 1u32,
                 },
             ],
@@ -5971,12 +6027,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 100u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "FET",
-                    amount: 100u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "MFK",
                     amount: 20u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "FET",
+                    amount: 100u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -5991,16 +6047,36 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(56160000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "MFK",
-                    amount: 16u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AST",
                     amount: 100u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "MFK",
+                    amount: 16u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
                 ticker: "MCB",
+                amount: 1u32,
+            }],
+        },
+        StaticRecipeInfo {
+            building_ticker: "SKF",
+            recipe_name: "600xWAL 100xMFK=>1xHCB",
+            standard_recipe_name: "SKF:100xMFK-600xWAL=>1xHCB",
+            duration: std::time::Duration::from_millis(172800000u64),
+            inputs: &[
+                StaticRecipeMaterial {
+                    ticker: "WAL",
+                    amount: 600u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "MFK",
+                    amount: 100u32,
+                },
+            ],
+            outputs: &[StaticRecipeMaterial {
+                ticker: "HCB",
                 amount: 1u32,
             }],
         },
@@ -6011,12 +6087,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(77760000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "FET",
-                    amount: 125u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "MFK",
                     amount: 8u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "FET",
+                    amount: 125u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6051,12 +6127,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(64800000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "MFK",
-                    amount: 20u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AST",
                     amount: 200u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "MFK",
+                    amount: 20u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6071,12 +6147,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(69120000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "FET",
-                    amount: 200u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "MFK",
                     amount: 20u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "FET",
+                    amount: 200u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6091,12 +6167,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "MFK",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "FE",
                     amount: 20u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "MFK",
+                    amount: 4u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6111,12 +6187,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "TI",
-                    amount: 20u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "MFK",
                     amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "TI",
+                    amount: 20u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6151,12 +6227,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "ZR",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "MFK",
                     amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "ZR",
+                    amount: 10u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6211,12 +6287,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(60480000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "MFK",
-                    amount: 8u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "ZR",
                     amount: 20u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "MFK",
+                    amount: 8u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6231,11 +6307,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(129600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "DD",
+                    ticker: "DA",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "DA",
+                    ticker: "DD",
                     amount: 1u32,
                 },
             ],
@@ -6251,11 +6327,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(172800000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "DV",
+                    ticker: "IMM",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "IMM",
+                    ticker: "DV",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -6275,11 +6351,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(172800000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "ROM",
+                    ticker: "NN",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "NN",
+                    ticker: "ROM",
                     amount: 1u32,
                 },
             ],
@@ -6350,16 +6426,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(10368000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "C",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "FLX",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "SIO",
                     amount: 3u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "C",
-                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "O",
@@ -6378,15 +6454,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(17280000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "C",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "SIO",
                     amount: 3u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "O",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "C",
                     amount: 1u32,
                 },
             ],
@@ -6402,12 +6478,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(64800000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "C",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "TIO",
                     amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "C",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "O",
@@ -6434,11 +6510,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 6u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "C",
+                    ticker: "FLX",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "FLX",
+                    ticker: "C",
                     amount: 1u32,
                 },
             ],
@@ -6454,16 +6530,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "C",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "O",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "FEO",
                     amount: 6u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "C",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6582,12 +6658,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "O",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CUO",
                     amount: 5u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "O",
+                    amount: 10u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "SIO",
@@ -6610,11 +6686,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 6u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "C",
+                    ticker: "O",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "O",
+                    ticker: "C",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -6634,15 +6710,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "O",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "ALO",
                     amount: 6u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "C",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "O",
                     amount: 1u32,
                 },
             ],
@@ -6658,12 +6734,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(224640000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "RAG",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AST",
                     amount: 10u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "RAG",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "CBS",
@@ -6682,16 +6758,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "SFK",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "ATP",
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 50u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SFK",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6706,20 +6782,20 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(69120000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "NOZ",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "AST",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "BFP",
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "MFK",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "AST",
+                    amount: 10u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "NOZ",
+                    amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "ACS",
@@ -6738,11 +6814,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(86400000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "LFP",
+                    ticker: "NOZ",
                     amount: 6u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "NOZ",
+                    ticker: "LFP",
                     amount: 6u32,
                 },
                 StaticRecipeMaterial {
@@ -6774,11 +6850,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 20u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "MFK",
+                    ticker: "ACS",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "ACS",
+                    ticker: "MFK",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -6802,16 +6878,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(345600000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "HNZ",
+                    amount: 4u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "ACS",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "MFK",
                     amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "HNZ",
-                    amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "WAL",
@@ -6834,16 +6910,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(604800000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "WAL",
+                    amount: 20u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "FIR",
                     amount: 2u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "CBL",
                     amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "WAL",
-                    amount: 20u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6858,12 +6934,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(432000000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "STL",
-                    amount: 20u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CBM",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "STL",
+                    amount: 20u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "FIR",
@@ -6882,12 +6958,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "MFK",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CHA",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "MFK",
+                    amount: 2u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "FAL",
@@ -6906,16 +6982,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(60480000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "MFK",
-                    amount: 4u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CHA",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "FET",
                     amount: 20u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "MFK",
+                    amount: 4u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6934,12 +7010,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "WAL",
-                    amount: 20u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "CHA",
                     amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "WAL",
+                    amount: 20u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -6954,15 +7030,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(259200000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "CBS",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "BGO",
                     amount: 20u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "RAG",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "CBS",
                     amount: 1u32,
                 },
             ],
@@ -6978,16 +7054,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "THP",
+                    amount: 5u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "SFK",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 50u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "THP",
-                    amount: 5u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7002,16 +7078,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(129600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "FAL",
-                    amount: 14u32,
+                    ticker: "KV",
+                    amount: 4u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "PG",
                     amount: 80u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "KV",
-                    amount: 4u32,
+                    ticker: "FAL",
+                    amount: 14u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7065,17 +7141,37 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
         },
         StaticRecipeInfo {
             building_ticker: "SPP",
+            recipe_name: "5xTHP 20xTHF=>12xBPT",
+            standard_recipe_name: "SPP:20xTHF-5xTHP=>12xBPT",
+            duration: std::time::Duration::from_millis(30240000u64),
+            inputs: &[
+                StaticRecipeMaterial {
+                    ticker: "THP",
+                    amount: 5u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "THF",
+                    amount: 20u32,
+                },
+            ],
+            outputs: &[StaticRecipeMaterial {
+                ticker: "BPT",
+                amount: 12u32,
+            }],
+        },
+        StaticRecipeInfo {
+            building_ticker: "SPP",
             recipe_name: "5xLST 2xKV=>10xBRP",
             standard_recipe_name: "SPP:2xKV-5xLST=>10xBRP",
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "KV",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "LST",
                     amount: 5u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "KV",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7085,17 +7181,37 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
         },
         StaticRecipeInfo {
             building_ticker: "SPP",
+            recipe_name: "5xLST 2xKV=>12xBRP",
+            standard_recipe_name: "SPP:2xKV-5xLST=>12xBRP",
+            duration: std::time::Duration::from_millis(34560000u64),
+            inputs: &[
+                StaticRecipeMaterial {
+                    ticker: "LST",
+                    amount: 5u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "KV",
+                    amount: 2u32,
+                },
+            ],
+            outputs: &[StaticRecipeMaterial {
+                ticker: "BRP",
+                amount: 12u32,
+            }],
+        },
+        StaticRecipeInfo {
+            building_ticker: "SPP",
             recipe_name: "5xATP 30xTHF=>10xAPT",
             standard_recipe_name: "SPP:5xATP-30xTHF=>10xAPT",
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "ATP",
-                    amount: 5u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "THF",
                     amount: 30u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "ATP",
+                    amount: 5u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7105,8 +7221,28 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
         },
         StaticRecipeInfo {
             building_ticker: "SPP",
-            recipe_name: "5xLST 2xTK=>8xARP",
-            standard_recipe_name: "SPP:5xLST-2xTK=>8xARP",
+            recipe_name: "5xATP 30xTHF=>12xAPT",
+            standard_recipe_name: "SPP:5xATP-30xTHF=>12xAPT",
+            duration: std::time::Duration::from_millis(43200000u64),
+            inputs: &[
+                StaticRecipeMaterial {
+                    ticker: "THF",
+                    amount: 30u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "ATP",
+                    amount: 5u32,
+                },
+            ],
+            outputs: &[StaticRecipeMaterial {
+                ticker: "APT",
+                amount: 12u32,
+            }],
+        },
+        StaticRecipeInfo {
+            building_ticker: "SPP",
+            recipe_name: "5xLST 2xTK=>10xARP",
+            standard_recipe_name: "SPP:5xLST-2xTK=>10xARP",
             duration: std::time::Duration::from_millis(43200000u64),
             inputs: &[
                 StaticRecipeMaterial {
@@ -7120,7 +7256,51 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             ],
             outputs: &[StaticRecipeMaterial {
                 ticker: "ARP",
+                amount: 10u32,
+            }],
+        },
+        StaticRecipeInfo {
+            building_ticker: "SPP",
+            recipe_name: "5xLST 2xTK=>8xARP",
+            standard_recipe_name: "SPP:5xLST-2xTK=>8xARP",
+            duration: std::time::Duration::from_millis(43200000u64),
+            inputs: &[
+                StaticRecipeMaterial {
+                    ticker: "TK",
+                    amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "LST",
+                    amount: 5u32,
+                },
+            ],
+            outputs: &[StaticRecipeMaterial {
+                ticker: "ARP",
                 amount: 8u32,
+            }],
+        },
+        StaticRecipeInfo {
+            building_ticker: "SPP",
+            recipe_name: "5xLST 5xW 5xTA=>10xSRP",
+            standard_recipe_name: "SPP:5xLST-5xTA-5xW=>10xSRP",
+            duration: std::time::Duration::from_millis(43200000u64),
+            inputs: &[
+                StaticRecipeMaterial {
+                    ticker: "W",
+                    amount: 5u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "TA",
+                    amount: 5u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "LST",
+                    amount: 5u32,
+                },
+            ],
+            outputs: &[StaticRecipeMaterial {
+                ticker: "SRP",
+                amount: 10u32,
             }],
         },
         StaticRecipeInfo {
@@ -7188,11 +7368,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(69120000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "FLX",
+                    ticker: "REA",
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "REA",
+                    ticker: "FLX",
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
@@ -7216,7 +7396,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PSL",
+                    ticker: "TCU",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "TI",
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
@@ -7224,15 +7408,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 20u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "TI",
+                    ticker: "PSL",
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "LIS",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "TCU",
                     amount: 1u32,
                 },
             ],
@@ -7252,20 +7432,20 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PSL",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "SAR",
-                    amount: 5u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "TI",
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "PSM",
                     amount: 20u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SAR",
+                    amount: 5u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "PSL",
+                    amount: 10u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7280,16 +7460,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(138240000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "ADR",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "PSL",
                     amount: 12u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "PSM",
                     amount: 8u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "ADR",
-                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7304,20 +7484,20 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(190080000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "BWS",
+                    ticker: "BID",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PSL",
-                    amount: 8u32,
+                    ticker: "BWS",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "PCB",
                     amount: 4u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BID",
-                    amount: 1u32,
+                    ticker: "PSL",
+                    amount: 8u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7340,20 +7520,20 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SAR",
-                    amount: 5u32,
+                    ticker: "FET",
+                    amount: 10u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "COM",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "FET",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PSM",
                     amount: 20u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "SAR",
+                    amount: 5u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7368,8 +7548,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(432000000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "COM",
-                    amount: 1u32,
+                    ticker: "SAR",
+                    amount: 10u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "PSL",
+                    amount: 10u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "FET",
@@ -7380,16 +7564,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "SAR",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PSM",
                     amount: 20u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PSL",
-                    amount: 10u32,
+                    ticker: "COM",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7404,16 +7584,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(155520000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "PSL",
+                    amount: 10u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "COM",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "SAR",
                     amount: 4u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "PSL",
-                    amount: 10u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7428,10 +7608,6 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(129600000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "WS",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "PSM",
                     amount: 6u32,
                 },
@@ -7441,6 +7617,10 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                 },
                 StaticRecipeMaterial {
                     ticker: "DA",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "WS",
                     amount: 1u32,
                 },
             ],
@@ -7456,6 +7636,10 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(259200000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "FET",
+                    amount: 20u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "PSM",
                     amount: 30u32,
                 },
@@ -7464,11 +7648,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 20u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "FET",
-                    amount: 20u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "LIS",
+                    ticker: "TCU",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -7476,7 +7656,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 20u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "TCU",
+                    ticker: "LIS",
                     amount: 1u32,
                 },
             ],
@@ -7520,12 +7700,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 20u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PSM",
-                    amount: 30u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "SRD",
                     amount: 4u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "PSM",
+                    amount: 30u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7540,8 +7720,8 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(172800000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "PSM",
-                    amount: 8u32,
+                    ticker: "PSL",
+                    amount: 12u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "SEQ",
@@ -7552,12 +7732,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BSC",
-                    amount: 2u32,
+                    ticker: "PSM",
+                    amount: 8u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PSL",
-                    amount: 12u32,
+                    ticker: "BSC",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7572,8 +7752,8 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(172800000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "PSL",
-                    amount: 5u32,
+                    ticker: "PSM",
+                    amount: 10u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "TCU",
@@ -7592,8 +7772,8 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 5u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "PSM",
-                    amount: 10u32,
+                    ticker: "PSL",
+                    amount: 5u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7632,15 +7812,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(146880000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "PSL",
-                    amount: 2u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "BMF",
-                    amount: 1u32,
+                    ticker: "AL",
+                    amount: 5u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "TCU",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "DEC",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -7648,12 +7828,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 5u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "AL",
-                    amount: 5u32,
+                    ticker: "BMF",
+                    amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "DEC",
-                    amount: 1u32,
+                    ticker: "PSL",
+                    amount: 2u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7672,16 +7852,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 10u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "BSE",
-                    amount: 10u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "SOI",
                     amount: 50u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "BBH",
                     amount: 6u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "BSE",
+                    amount: 10u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7700,12 +7880,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "GV",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "BOS",
                     amount: 10u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "GV",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7720,7 +7900,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(34560000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "AL",
+                    ticker: "HE",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -7728,7 +7908,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "HE",
+                    ticker: "AL",
                     amount: 1u32,
                 },
             ],
@@ -7744,7 +7924,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(25920000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "AL",
+                    ticker: "HE",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
@@ -7752,7 +7932,7 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "HE",
+                    ticker: "AL",
                     amount: 1u32,
                 },
             ],
@@ -7772,11 +7952,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "AL",
+                    ticker: "FE",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "FE",
+                    ticker: "AL",
                     amount: 1u32,
                 },
             ],
@@ -7812,15 +7992,15 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(60480000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "FE",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "I",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "HE",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "FE",
                     amount: 1u32,
                 },
             ],
@@ -7840,12 +8020,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "NFI",
-                    amount: 20u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AL",
                     amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "NFI",
+                    amount: 20u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7860,12 +8040,12 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(17280000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "HE",
-                    amount: 1u32,
-                },
-                StaticRecipeMaterial {
                     ticker: "AL",
                     amount: 2u32,
+                },
+                StaticRecipeMaterial {
+                    ticker: "HE",
+                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7880,16 +8060,16 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(15552000u64),
             inputs: &[
                 StaticRecipeMaterial {
+                    ticker: "HE",
+                    amount: 1u32,
+                },
+                StaticRecipeMaterial {
                     ticker: "BE",
                     amount: 2u32,
                 },
                 StaticRecipeMaterial {
                     ticker: "CF",
                     amount: 2u32,
-                },
-                StaticRecipeMaterial {
-                    ticker: "HE",
-                    amount: 1u32,
                 },
             ],
             outputs: &[StaticRecipeMaterial {
@@ -7924,11 +8104,11 @@ pub fn construct_recipe_db() -> Vec<StaticRecipeInfo> {
             duration: std::time::Duration::from_millis(77760000u64),
             inputs: &[
                 StaticRecipeMaterial {
-                    ticker: "KV",
+                    ticker: "TC",
                     amount: 1u32,
                 },
                 StaticRecipeMaterial {
-                    ticker: "TC",
+                    ticker: "KV",
                     amount: 1u32,
                 },
             ],

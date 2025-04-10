@@ -169,7 +169,7 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             category_id: "d23b9225010ad7978e5496e55359e19b",
             name: "advancedHullPlate",
             ticker: "AHP",
-            weight: 17f32,
+            weight: 10f32,
             volume: 10f32,
             category: MaterialCategory::ShipParts,
         },
@@ -585,7 +585,7 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             category_id: "d23b9225010ad7978e5496e55359e19b",
             name: "basicHullPlate",
             ticker: "BHP",
-            weight: 10f32,
+            weight: 9f32,
             volume: 10f32,
             category: MaterialCategory::ShipParts,
         },
@@ -939,6 +939,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 1.8f32,
             volume: 0.8f32,
             category: MaterialCategory::EnergySystems,
+        },
+    );
+    map.insert(
+        "CBU",
+        StaticMaterialInfo {
+            material_id: "1eaaffac98a9a50276e29cf675f43ec9",
+            category_name: "consumable bundles",
+            category_id: "1237e1d7ac57367e39b6a2406ca4dadc",
+            name: "scientistBundle",
+            ticker: "CBU",
+            weight: 54f32,
+            volume: 47f32,
+            category: MaterialCategory::ConsumableBundle,
         },
     );
     map.insert(
@@ -1368,6 +1381,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 0.1f32,
             volume: 0.1f32,
             category: MaterialCategory::ConsumablesBasic,
+        },
+    );
+    map.insert(
+        "EBU",
+        StaticMaterialInfo {
+            material_id: "6a04f7cdbb83b9f6253b01ebb08f2e0e",
+            category_name: "consumable bundles",
+            category_id: "1237e1d7ac57367e39b6a2406ca4dadc",
+            name: "engineerBundle",
+            ticker: "EBU",
+            weight: 51f32,
+            volume: 46f32,
+            category: MaterialCategory::ConsumableBundle,
         },
     );
     map.insert(
@@ -1865,6 +1891,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
         },
     );
     map.insert(
+        "HCB",
+        StaticMaterialInfo {
+            material_id: "0b6a3cf120eac87d6a4bb21ad41371a1",
+            category_name: "ship kits",
+            category_id: "b7102e43e58120a254cf161c226d4177",
+            name: "hugeCargoBay",
+            ticker: "HCB",
+            weight: 500f32,
+            volume: 500f32,
+            category: MaterialCategory::ShipKits,
+        },
+    );
+    map.insert(
         "HCC",
         StaticMaterialInfo {
             material_id: "eab56d3d6b0742ccbf19a7e955209b0e",
@@ -1963,7 +2002,7 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             category_id: "d23b9225010ad7978e5496e55359e19b",
             name: "hardenedHullPlate",
             ticker: "HHP",
-            weight: 14f32,
+            weight: 10f32,
             volume: 10f32,
             category: MaterialCategory::ShipParts,
         },
@@ -2353,7 +2392,7 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             category_id: "d23b9225010ad7978e5496e55359e19b",
             name: "lightweightHullPlate",
             ticker: "LHP",
-            weight: 5f32,
+            weight: 4f32,
             volume: 10f32,
             category: MaterialCategory::ShipParts,
         },
@@ -3061,6 +3100,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
         },
     );
     map.insert(
+        "PBU",
+        StaticMaterialInfo {
+            material_id: "0d47794b3f8331f4b945a0dcd56d7d41",
+            category_name: "consumable bundles",
+            category_id: "1237e1d7ac57367e39b6a2406ca4dadc",
+            name: "pioneerBundle",
+            ticker: "PBU",
+            weight: 13f32,
+            volume: 8f32,
+            category: MaterialCategory::ConsumableBundle,
+        },
+    );
+    map.insert(
         "PCB",
         StaticMaterialInfo {
             material_id: "9da5f471dfc7759a11858456e74fbc8f",
@@ -3484,7 +3536,7 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             category_id: "d23b9225010ad7978e5496e55359e19b",
             name: "reinforcedHullPlate",
             ticker: "RHP",
-            weight: 12f32,
+            weight: 10f32,
             volume: 10f32,
             category: MaterialCategory::ShipParts,
         },
@@ -3604,6 +3656,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 1.7f32,
             volume: 2f32,
             category: MaterialCategory::ElectronicDevices,
+        },
+    );
+    map.insert(
+        "SBU",
+        StaticMaterialInfo {
+            material_id: "d4068898d1dbd1eab014050453eb4cef",
+            category_name: "consumable bundles",
+            category_id: "1237e1d7ac57367e39b6a2406ca4dadc",
+            name: "settlerBundle",
+            ticker: "SBU",
+            weight: 20f32,
+            volume: 13f32,
+            category: MaterialCategory::ConsumableBundle,
         },
     );
     map.insert(
@@ -4033,6 +4098,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 7.94f32,
             volume: 1f32,
             category: MaterialCategory::Minerals,
+        },
+    );
+    map.insert(
+        "TBU",
+        StaticMaterialInfo {
+            material_id: "ea76195ce185b40e800502a66194d5a0",
+            category_name: "consumable bundles",
+            category_id: "1237e1d7ac57367e39b6a2406ca4dadc",
+            name: "technicianBundle",
+            ticker: "TBU",
+            weight: 24f32,
+            volume: 16f32,
+            category: MaterialCategory::ConsumableBundle,
         },
     );
     map.insert(
