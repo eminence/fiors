@@ -59,7 +59,7 @@ pub struct FIOClient {
     storage_cache: DashMap<(String, String), CachedData<Option<types::Storage>>>,
 
     /// Map from username to list of storage info.
-    /// 
+    ///
     /// The WarehouseInfo struct doesn't contain the actual storage data, but rather the storage ID and the type of storage
     warehouse_cache: DashMap<String, CachedData<Vec<types::WarehouseInfo>>>,
 
@@ -71,13 +71,59 @@ pub struct FIOClient {
     own_orders_cache: DashMap<String, CachedData<Vec<types::OwnMarketOrder>>>,
 }
 
+#[derive(Debug, Clone)]
+pub struct COGMSource {
+    /// How much we can make this thing for?
+    pub cost: f32,
+    /// Where we make it?  If none, then we buy it from the CX
+    pub location: Option<String>,
+}
+
+impl COGMSource {
+    pub fn market(cost: f32) -> Self {
+        Self {
+            cost,
+            location: None,
+        }
+    }
+    pub fn our(cost: f32, planet_name: impl ToString) -> Self {
+        Self {
+            cost,
+            location: Some(planet_name.to_string()),
+        }
+    }
+    pub fn get_cost(&self) -> f32 {
+        self.cost
+    }
+    pub fn update_if_better(&mut self, other: &COGMSource) {
+        if other.cost < self.cost {
+            self.cost = other.cost;
+            self.location = other.location.clone();
+        }
+    }
+    pub fn min<'a>(me: &'a Self, other: &'a Self) -> &'a Self {
+        if me.cost < other.cost {
+            me
+        } else {
+            other
+        }
+    }
+    pub fn max<'a>(this: &'a Self, that: &'a Self) -> &'a Self {
+        if this.cost > that.cost {
+            this
+        } else {
+            that
+        }
+    }
+}
+
 impl FIOClient {
     pub async fn new_with_password(username: String, password: String) -> anyhow::Result<Self> {
         // first post a login and extract the authtoken and expiry
 
         let post_data = serde_json::json!({"UserName": username, "Password": password});
         let client = reqwest::ClientBuilder::new()
-            .timeout(Duration::from_secs(60))
+            .timeout(Duration::from_secs(100))
             .build()?;
         let url_root = "https://rest.fnar.net";
 
@@ -132,7 +178,7 @@ impl FIOClient {
 
     pub fn new_with_key(auth_token: String) -> Self {
         let client = reqwest::ClientBuilder::new()
-            .timeout(Duration::from_secs(60))
+            .timeout(Duration::from_secs(100))
             .build()
             .unwrap();
         let url_root = "https://rest.fnar.net";
@@ -162,7 +208,8 @@ impl FIOClient {
     }
 
     fn should_retry(&self) -> bool {
-        self.retry_delay.load(std::sync::atomic::Ordering::Relaxed) < 15000
+        // self.retry_delay.load(std::sync::atomic::Ordering::Relaxed) < 15000
+        true
     }
 
     async fn retry_sleep(&self) {
@@ -172,7 +219,7 @@ impl FIOClient {
     fn increase_retry(&self) {
         let time_ms = self.retry_delay.load(std::sync::atomic::Ordering::Relaxed);
         self.retry_delay.store(
-            (time_ms as f32 * 1.75) as u64,
+            (time_ms as f32 * 1.75).min(15000.0) as u64,
             std::sync::atomic::Ordering::Relaxed,
         );
         // println!("Retry delay now {:?}", self.retry_delay);
@@ -239,11 +286,11 @@ impl FIOClient {
             let resp = resp?;
 
             let status = resp.status();
-            if status.as_u16() == 522 {
-                warn!("Got a 522, retrying");
+            if status.as_u16() == 522 || status.as_u16() == 525 {
+                warn!("Got a 522/525, retrying");
             }
 
-            if status.as_u16() == 429 || status.as_u16() == 522 {
+            if status.as_u16() == 429 || status.as_u16() == 522 || status.as_u16() == 525 {
                 self.retry_sleep().await;
                 self.increase_retry();
                 continue;
@@ -253,16 +300,18 @@ impl FIOClient {
             if status.as_u16() == 204 {
                 return Ok(None);
             } else if status.is_success() {
-                let data: T = resp.json().await?;
+                let data: T = resp
+                    .json()
+                    .await
+                    .with_context(|| format!("Failed JSON decoding {url}"))?;
                 if let Some(cache) = self
                     .local_cache_dir
                     .as_deref()
                     .map(get_cache)
-                    .map(|path| {
+                    .inspect(|path| {
                         if let Some(p) = path.parent() {
                             let _ = std::fs::create_dir_all(p);
                         }
-                        path
                     })
                     .and_then(|path| File::create(path).ok())
                 {
@@ -336,10 +385,14 @@ impl FIOClient {
         todo!();
     }
 
-    pub async fn get_planetsite_for_user(&self, user: &str, planet_id: &str) -> anyhow::Result<types::PlanetSite> {
+    pub async fn get_planetsite_for_user(
+        &self,
+        user: &str,
+        planet_id: &str,
+    ) -> anyhow::Result<types::PlanetSite> {
         let resp: Option<serde_json::Value> =
             self.request(&format!("/sites/{user}/{planet_id}")).await?;
-        
+
         if let Some(v) = resp {
             Ok(serde_json::from_value(v)?)
         } else {
@@ -347,7 +400,10 @@ impl FIOClient {
         }
     }
 
-    pub async fn get_warehouse_info_for_user(&self, user: &str) -> anyhow::Result<Vec<types::WarehouseInfo>> {
+    pub async fn get_warehouse_info_for_user(
+        &self,
+        user: &str,
+    ) -> anyhow::Result<Vec<types::WarehouseInfo>> {
         if let Some(cached) = self.warehouse_cache.get(user) {
             if cached.expiry > Utc::now() {
                 return Ok(cached.data.clone());
@@ -359,7 +415,7 @@ impl FIOClient {
         let mut v = Vec::new();
         if let Some(Value::Array(list)) = resp {
             for obj in list.into_iter() {
-                let sto:WarehouseInfo = serde_json::from_value(obj).unwrap();
+                let sto: WarehouseInfo = serde_json::from_value(obj).unwrap();
 
                 v.push(sto);
             }
@@ -371,7 +427,6 @@ impl FIOClient {
             CachedData::new(v.clone(), Duration::from_secs(3600)),
         );
         Ok(v)
-        
     }
 
     pub async fn get_all_storage_for_user(
@@ -526,7 +581,14 @@ impl FIOClient {
         }
 
         // it's more efficient to get the full exchange info (and cache it), than it is to request info on each ticker we need
-        let resp: Option<Vec<serde_json::Value>> = self.request("/exchange/full").await?;
+        // sometimes this fails because the JSON is truncated.  so if it fails, wait a new milliseconds and try again
+        let resp: Option<Vec<serde_json::Value>> =
+            if let Ok(x) = self.request("/exchange/full").await {
+                x
+            } else {
+                tokio::time::sleep(Duration::from_millis(25)).await;
+                self.request("/exchange/full").await?
+            };
 
         if let Some(data) = resp {
             // ticker data is cached for 15 minutes
@@ -690,11 +752,11 @@ impl FIOClient {
         planet: &str,
         building_ticker: &str,
         material_ticker: &str,
-        cogm: Option<&HashMap<String, f32>>,
+        cogm: Option<&HashMap<String, COGMSource>>,
     ) -> anyhow::Result<Option<f32>> {
         trace!(username);
 
-        let planet_obj = self.get_planet(&planet).await?;
+        let planet_obj = self.get_planet(planet).await?;
         let planet_cxid = planet_obj.get_cx_mid().unwrap_or("CI1");
 
         let prods = self.get_planet_production(username, planet).await?;
@@ -739,9 +801,9 @@ impl FIOClient {
                 .find(|order| {
                     order.duration.is_some()
                         && order
-                        .outputs
-                        .iter()
-                        .any(|o| o.material_ticker == material_ticker)
+                            .outputs
+                            .iter()
+                            .any(|o| o.material_ticker == material_ticker)
                     // && order.started.is_none()
                 })
                 .context("Failed to find order")?;
@@ -763,9 +825,9 @@ impl FIOClient {
                     if let Some(total) = cx_info.instant_buy(daily_buy_amt.ceil() as u32) {
                         total.total_value
                     } else if let Some(x) = cx_info.price {
-                        x * daily_buy_amt.ceil()
+                        x * daily_buy_amt
                     } else if let Some(x) = cx_info.get_any_price() {
-                        x * daily_buy_amt.ceil()
+                        x * daily_buy_amt
                     } else {
                         0.0
                     };
@@ -779,7 +841,7 @@ impl FIOClient {
 
                 match cogm
                     .and_then(|m| m.get(&input.material_ticker))
-                    .map(|cost| *cost * daily_buy_amt.ceil())
+                    .map(|cost| cost.get_cost() * daily_buy_amt)
                 {
                     Some(x) if x < market_costs => {
                         // println!(
@@ -1177,7 +1239,10 @@ mod live_tests {
 
             let building = get_building_db().get(prod.building_type.as_str()).unwrap();
             dbg!(building);
-            let building_cost = client.calc_building_cost(building.ticker, "TODO").await.unwrap();
+            let building_cost = client
+                .calc_building_cost(building.ticker, "TODO")
+                .await
+                .unwrap();
             println!("Building cost: {}", building_cost);
             // assume we repair our buildings after 90 days
             let repair_cost = building_cost - (building_cost * 0.5).floor();
@@ -1204,7 +1269,8 @@ mod live_tests {
                 let mut total_daily_costs = daily_repair_cost;
 
                 // production scale -- multiple by this to compute how much stuff is produced per day
-                let day_scale = 86400.0 / order.duration.as_secs() as f32;
+                // NOTE: I'm not sure the "unwrap_or_default" is correct here, i just added it to fix a compile error
+                let day_scale = 86400.0 / order.duration.unwrap_or_default().as_secs() as f32;
                 for input in &order.inputs {
                     let daily_buy_amt = input.material_amount as f32 * day_scale;
                     let cx_info = client
@@ -1274,17 +1340,29 @@ mod live_tests {
 
     #[tokio::test]
     async fn test_cogm2() {
+        tracing_subscriber::fmt::fmt()
+            .with_ansi(true)
+            .with_max_level(tracing::level_filters::LevelFilter::TRACE)
+            .init();
+
         let client = get_test_client();
         let mut map = HashMap::new();
 
+        //
+        map.insert("PSM".to_string(), COGMSource::market(856.0));
+        map.insert("PSL".to_string(), COGMSource::market(1515.));
+        map.insert("DA".to_string(), COGMSource::market(24000.));
+        map.insert("WS".to_string(), COGMSource::market(2800.));
+
+        // ################
+        let (what, wheree, how) = ("LU", "Gibson", "UPF");
         let cogm = client
-            .calc_cost_of_goods_manufactured("EMINENCE32", "Umbra", "CHP", "FLX", None)
+            .calc_cost_of_goods_manufactured("EMINENCE32", wheree, how, what, Some(&map))
             .await
             .unwrap();
 
-        println!("Making FLX at Umbra costs: {:?}", cogm);
-        map.insert("FLX".to_string(), cogm.unwrap());
-
+        println!("Making {what} at {wheree} costs: {:?}", cogm);
+        // map.insert(what.to_string(), cogm.unwrap());
         // let cogm = client
         //     .calc_cost_of_goods_manufactured("EMINENCE32", "Katoa", "BMP", "PE", None)
         //     .await
@@ -1306,4 +1384,13 @@ mod live_tests {
 
         // println!("Making BDE at Gibon/PP2 costs: {:?}", cogm);
     }
+}
+
+#[test]
+fn test_cogm_source() {
+    let market = COGMSource::market(123.0);
+    let our = COGMSource::our(9.9, "planet");
+
+    let best = COGMSource::min(&our, &market);
+    dbg!(best);
 }

@@ -2,6 +2,7 @@ mod lm_widget;
 use std::{collections::HashMap, time::Instant};
 
 use crossterm::event::{Event, KeyCode, KeyEvent, MouseEvent, MouseEventKind};
+use fiors::COGMSource;
 pub use lm_widget::LocalMarketWidget;
 
 mod production;
@@ -19,6 +20,9 @@ pub use market::MarketWidget;
 mod depth;
 pub use depth::DepthChartWidget;
 
+mod global;
+pub use global::GalacticInvWidget;
+
 use ratatui::text::Span;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
@@ -31,6 +35,7 @@ pub enum WidgetEnum {
     Buildings,
     Inventory,
     Market,
+    Global,
 }
 
 impl WidgetEnum {
@@ -44,6 +49,7 @@ impl WidgetEnum {
             Self::Buildings => Self::Buildings,
             Self::Inventory => Self::Inventory,
             Self::Market => Self::Market,
+            Self::Global => Self::Global,
         }
     }
     pub fn prev(self) -> Self {
@@ -56,6 +62,7 @@ impl WidgetEnum {
             Self::Buildings => Self::Buildings,
             Self::Inventory => Self::Inventory,
             Self::Market => Self::Market,
+            Self::Global => Self::Global,
         }
     }
 }
@@ -163,6 +170,12 @@ pub struct Overrides {
     /// How often we should resupply a planet
     pub planet_resupply_period: HashMap<String, i32>,
 
+    /// How much of each material we want to have across our galaxy-wide empire
+    pub galactic_needs: HashMap<String, u32>,
+
+    /// Override the price of a given material (for both market buys and own production)
+    pub price_overrides: HashMap<String, f32>,
+
     /// When we last loaded these overrides from disk
     pub last_updated: Instant,
 }
@@ -172,6 +185,8 @@ impl Default for Overrides {
         Self {
             planet_materials: Default::default(),
             planet_resupply_period: Default::default(),
+            galactic_needs: Default::default(),
+            price_overrides: Default::default(),
             last_updated: Instant::now(),
         }
     }
@@ -183,8 +198,12 @@ impl Overrides {
 
         let mut planet_materials: HashMap<String, HashMap<String, OverrideType>> = HashMap::new();
         let mut planet_resupply_period = HashMap::new();
+        let mut galactic_needs = HashMap::new();
+        let mut price_overrides = HashMap::new();
 
         for (planet, data) in x {
+            let span = tracing::span!(tracing::Level::DEBUG, "planet", planet);
+            let _span = span.enter();
             let toml::Value::Table(data) = data else {
                 continue;
             };
@@ -192,6 +211,9 @@ impl Overrides {
                 let m = planet_materials.entry(planet.clone()).or_default();
                 m.extend(materials.into_iter().filter_map(|(k, v)| {
                     if let toml::Value::Integer(v) = v {
+                        let entry = galactic_needs.entry(k.to_string()).or_default();
+                        *entry = u32::max(*entry, *v as u32);
+
                         Some((k.to_string(), OverrideType::Minimum(*v as u32)))
                     } else {
                         None
@@ -202,6 +224,9 @@ impl Overrides {
                 let m = planet_materials.entry(planet.clone()).or_default();
                 m.extend(materials.into_iter().filter_map(|(k, v)| {
                     if let toml::Value::Integer(v) = v {
+                        let entry = galactic_needs.entry(k.to_string()).or_default();
+                        *entry = u32::max(*entry, *v as u32);
+
                         Some((k.to_string(), OverrideType::Absolute(*v as u32)))
                     } else {
                         None
@@ -212,6 +237,9 @@ impl Overrides {
                 let m = planet_materials.entry(planet.clone()).or_default();
                 m.extend(materials.into_iter().filter_map(|(k, v)| {
                     if let toml::Value::Integer(v) = v {
+                        let entry = galactic_needs.entry(k.to_string()).or_default();
+                        *entry = u32::max(*entry, *v as u32);
+
                         Some((k.to_string(), OverrideType::Maxiumum(*v as u32)))
                     } else {
                         None
@@ -221,11 +249,31 @@ impl Overrides {
             if let Some(toml::Value::Integer(i)) = data.get("resupply") {
                 planet_resupply_period.insert(planet.clone(), *i as i32);
             }
+
+            if planet == "Global" {
+                for x in &data {
+                    if let (mat, toml::Value::Integer(v)) = x {
+                        // galactic_needs.insert(mat.to_string(), *v as u32);
+                        let entry = galactic_needs.entry(mat.to_string()).or_default();
+                        *entry = u32::max(*entry, *v as u32);
+                    }
+                }
+            }
+
+            if planet == "Overrides" {
+                for x in &data {
+                    if let (mat, toml::Value::Float(v)) = x {
+                        price_overrides.insert(mat.to_string(), *v as f32);
+                    }
+                }
+            }
         }
 
         Ok(Self {
             planet_materials,
             planet_resupply_period,
+            galactic_needs,
+            price_overrides,
             last_updated: Instant::now(),
         })
     }
@@ -244,7 +292,7 @@ pub struct SharedWidgetState {
     pub excess: HashMap<String, HashMap<String, f32>>,
 
     /// The best COGM for each material
-    pub cogm: HashMap<String, f32>,
+    pub cogm: HashMap<String, COGMSource>,
 
     // To be displayed in the debug window
     // pub debug_messages: Vec<String>,

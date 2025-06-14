@@ -1,12 +1,16 @@
+use std::{collections::HashMap, vec};
+
 use crossterm::event::{Event, KeyCode, KeyEvent};
-use fiors::{get_building_db, get_material_db, get_recipe_db, types::ResourceType, FIOClient};
+use fiors::{
+    get_building_db, get_material_db, get_recipe_db, types::ResourceType, COGMSource, FIOClient,
+};
 use ratatui::{
-    layout::{Constraint, Margin, Rect},
+    layout::{Constraint, Direction, Layout, Margin, Rect},
     style::{Color, Style, Stylize},
-    text::{Line, Span},
+    text::{Line, Span, Text},
     widgets::{
-        Block, Borders, Cell, Row, Scrollbar, ScrollbarOrientation, ScrollbarState, Table,
-        TableState,
+        Block, Borders, Cell, Paragraph, Row, Scrollbar, ScrollbarOrientation, ScrollbarState,
+        Table, TableState,
     },
     Frame,
 };
@@ -16,16 +20,45 @@ use crate::{format_amount, format_price, get_style_for_material, NeedRefresh};
 
 use super::{handle_scroll, SharedWidgetState, WidgetEnum};
 
+#[derive(Clone)]
+enum COGM {
+    Market {
+        material: String,
+        unit_cost: f32,
+        total_cost: f32,
+    },
+    Ours {
+        material: String,
+        unit_cost: f32,
+        total_cost: f32,
+        source_planet: String,
+    },
+    Consumables(f32),
+    Degredation(f32),
+}
+
+#[derive(Clone)]
+struct RowData {
+    /// the tui row to render
+    row: Row<'static>,
+    /// a list of input materials
+    input_mats: Vec<COGM>,
+}
+
 pub struct BuildingsWidget {
     client: &'static FIOClient,
     username: String,
     planet_id: String,
-    rows: Vec<Row<'static>>,
+    rows: Vec<RowData>,
     reciepe_columns: usize,
     scrollbar_state: ScrollbarState,
     table_state: TableState,
     use_lux1: bool,
     use_lux2: bool,
+    /// A copy from shared state
+    best_cogm_data: HashMap<String, COGMSource>,
+
+    mat_idx_to_add: Option<usize>,
 }
 
 impl BuildingsWidget {
@@ -40,6 +73,8 @@ impl BuildingsWidget {
             table_state: TableState::default(),
             use_lux1: true,
             use_lux2: true,
+            best_cogm_data: HashMap::new(),
+            mat_idx_to_add: None,
         }
     }
 
@@ -75,6 +110,15 @@ impl BuildingsWidget {
             return NeedRefresh::APIRefresh;
         }
 
+        if let Event::Key(KeyEvent {
+            code: KeyCode::Enter,
+            ..
+        }) = event
+        {
+            self.mat_idx_to_add = self.table_state.selected();
+            return NeedRefresh::APIRefresh;
+        }
+
         let i = self.table_state.selected();
         let new_i = handle_scroll(event, i, self.rows.len());
         self.table_state.select(new_i);
@@ -102,9 +146,15 @@ impl BuildingsWidget {
         let planet = self.client.get_planet(&self.planet_id).await?;
         let planet_cxid = planet.get_cx_mid().unwrap_or("CI1");
 
+        self.best_cogm_data = shared_state.cogm.clone();
+
+        // row data for the numberic columns
         let mut rows = Vec::new();
         // each recipe will put its inputs and outputs in this vec, which will get stitched together with "rows" once we know how many colums we need
         let mut input_output_rows = Vec::new();
+
+        // list of input costs for each row
+        let mut input_rows_for_cogm: Vec<Vec<COGM>> = Vec::new();
 
         let recipe_db = get_recipe_db();
         let material_db = get_material_db();
@@ -133,9 +183,9 @@ impl BuildingsWidget {
             input_output_rows.push(vec![Some(Cell::from(row.building_ticker()))]);
             rows.push(vec![
                 Cell::default(), // empty fill column
-                Cell::default(), // L1
-                Cell::default(), // L2
-                Cell::from(format!("{:.0}%", 100.0 * row.efficiency)),
+                // Cell::default(), // L1
+                // Cell::default(), // L2
+                Cell::from(format!("{:.0}%", 100.0 * row.condition)),
                 Cell::default(), // instant sell
                 Cell::default(), // average sell
                 Cell::default(), // our cogm
@@ -144,6 +194,7 @@ impl BuildingsWidget {
                 Cell::default(), // daily profit-
                 Cell::default(), // daily profit+
             ]);
+            input_rows_for_cogm.push(vec![]);
 
             // the current building efficiency already takes into account the supplies provided at this base.
             // so figure out what supplies we are currently providing
@@ -213,10 +264,10 @@ impl BuildingsWidget {
                         }));
 
                         rows.push(vec![
-                            Cell::default(),                                   // empty fill column
-                            Cell::from(if self.use_lux1 { "Y" } else { " " }), // L1
-                            Cell::from(if self.use_lux2 { "Y" } else { " " }), // L2
-                            Cell::default(),                                   // efficiency
+                            Cell::default(), // empty fill column
+                            // Cell::from(if self.use_lux1 { "Y" } else { " " }), // L1
+                            // Cell::from(if self.use_lux2 { "Y" } else { " " }), // L2
+                            Cell::default(), // condition
                             Cell::from(format_price(
                                 our_cogm / (daily_amount_base * row.efficiency),
                             )),
@@ -232,6 +283,7 @@ impl BuildingsWidget {
                                 .style(Style::default()),
                         ]);
                         input_output_rows.push(this_reciepe_row);
+                        input_rows_for_cogm.push(vec![]);
                     }
 
                     continue;
@@ -242,6 +294,12 @@ impl BuildingsWidget {
                     daily_output_amt,
                     building_efficency = row.efficiency
                 );
+
+                // we want the per-unit cost (not the per-day cost)
+                let mut cogm_rows: Vec<COGM> = vec![
+                    COGM::Consumables(workforce_costs / day_scale),
+                    COGM::Degredation(daily_repair_cost / day_scale),
+                ];
 
                 let mut this_reciepe_row = vec![None];
 
@@ -276,27 +334,53 @@ impl BuildingsWidget {
                         .await
                         .unwrap();
 
+                    tracing::debug!(cx_info = ?cx_info);
+
                     let market_costs =
                         if let Some(total) = cx_info.instant_buy(daily_buy_amt.ceil() as u32) {
                             total.total_value
                         } else if let Some(x) = cx_info.price {
-                            x * daily_buy_amt.ceil()
+                            x * daily_buy_amt
                         } else if let Some(x) = cx_info.get_any_price() {
-                            x * daily_buy_amt.ceil()
+                            x * daily_buy_amt
                         } else {
                             0.0
                         };
 
                     market_cogm += market_costs;
 
-                    let our_cogm_costs = shared_state
-                        .cogm
-                        .get(input.ticker)
-                        .map(|cost| *cost * daily_buy_amt.ceil());
+                    let our_cogm_costs = shared_state.cogm.get(input.ticker);
+                    // .map(|cost| cost.get_cost() * daily_buy_amt.ceil());
+
+                    match our_cogm_costs {
+                        Some(COGMSource {
+                            cost,
+                            location: Some(location),
+                        }) if *cost < market_costs => {
+                            cogm_rows.push(COGM::Ours {
+                                material: input.ticker.to_string(),
+                                unit_cost: *cost,
+                                total_cost: *cost * input.amount as f32,
+                                source_planet: location.to_string(),
+                            });
+                        }
+                        _ => {
+                            cogm_rows.push(COGM::Market {
+                                material: input.ticker.to_string(),
+                                unit_cost: market_costs / daily_buy_amt,
+                                total_cost: market_costs / daily_buy_amt,
+                            });
+                        }
+                    }
+
+                    let our_cogm_costs =
+                        our_cogm_costs.map(|cost| cost.get_cost() * daily_buy_amt);
+
                     our_cogm += our_cogm_costs.unwrap_or(market_costs);
 
-                    trace!(input.ticker, daily_buy_amt, market_costs, our_cogm_costs)
+                    trace!(input.ticker, daily_buy_amt, market_costs, our_cogm_costs);
                 }
+                input_rows_for_cogm.push(cogm_rows);
 
                 let cx_info = self
                     .client
@@ -325,7 +409,11 @@ impl BuildingsWidget {
                 let best_profit_style = best_profits
                     .map(|x| {
                         if x > 0.0 {
-                            Style::default().fg(Color::Green)
+                            if market_instant_sell.is_some() {
+                                Style::default().fg(Color::Green)
+                            } else {
+                                Style::default().fg(Color::Green).dim()
+                            }
                         } else {
                             Style::default().fg(Color::Red)
                         }
@@ -335,7 +423,11 @@ impl BuildingsWidget {
                 let worst_profit_style = worst_profits
                     .map(|x| {
                         if x > 0.0 {
-                            Style::default().fg(Color::Green)
+                            if market_instant_sell.is_some() {
+                                Style::default().fg(Color::Green)
+                            } else {
+                                Style::default().fg(Color::Green).dim()
+                            }
                         } else {
                             Style::default().fg(Color::Red)
                         }
@@ -344,10 +436,10 @@ impl BuildingsWidget {
 
                 input_output_rows.push(this_reciepe_row);
                 rows.push(vec![
-                    Cell::default(),                                   // empty fill column
-                    Cell::from(if self.use_lux1 { "Y" } else { " " }), // L1
-                    Cell::from(if self.use_lux2 { "Y" } else { " " }), // L2
-                    Cell::default(),                                   // efficiency
+                    Cell::default(), // empty fill column
+                    // Cell::from(if self.use_lux1 { "Y" } else { " " }), // L1
+                    // Cell::from(if self.use_lux2 { "Y" } else { " " }), // L2
+                    Cell::default(), // condition
                     Cell::from(format_price(our_cogm / daily_output_amt)),
                     Cell::from(format_price(market_cogm / daily_output_amt)),
                     Cell::from(market_instant_sell.map(format_price).unwrap_or_default()),
@@ -365,7 +457,10 @@ impl BuildingsWidget {
 
         // across all our recipes, what's the total number of columns we need for inputs and outputs?
         assert_eq!(input_output_rows.len(), rows.len());
-        let max = input_output_rows.iter().map(|v| v.len()).max().unwrap();
+        assert_eq!(rows.len(), input_rows_for_cogm.len());
+
+        //trace!("{}", input_output_rows.len());
+        let max = input_output_rows.iter().map(|v| v.len()).max().unwrap_or(0);
         trace!(max, "max columns");
 
         self.rows = input_output_rows
@@ -394,12 +489,19 @@ impl BuildingsWidget {
                     Row::new(v)
                 }
             })
+            .zip(input_rows_for_cogm.into_iter())
+            .map(|(x, y)| RowData {
+                row: x,
+                input_mats: y,
+            })
             .collect();
         self.reciepe_columns = max;
 
         shared_state.help_text.extend(vec![Span::raw(
             "This page shows all possible production receipes for each building at your base. ",
         )]);
+
+        if let Some(idx) = self.mat_idx_to_add.take() {}
 
         Ok(())
     }
@@ -410,9 +512,9 @@ impl BuildingsWidget {
         widths.push(Constraint::Fill(1)); // empty fill column
 
         widths.extend([
-            Constraint::Length(1), // L1
-            Constraint::Length(1), // L2
-            Constraint::Length(4), // efficiency
+            // Constraint::Length(1), // L1
+            // Constraint::Length(1), // L2
+            Constraint::Length(4), // condition
             Constraint::Length(6), // instant sell
             Constraint::Length(6), // average sell
             Constraint::Length(6), // our cogm
@@ -425,10 +527,10 @@ impl BuildingsWidget {
         let mut headers = vec![Cell::default()];
         headers.resize(self.reciepe_columns + 1, Cell::default());
         headers.extend([
-            Cell::default(),      // empty fill column
-            Cell::default(),      // L1
-            Cell::default(),      // L2
-            Cell::from("Eff%"),   // efficiency
+            Cell::default(), // empty fill column
+            // Cell::default(),      // L1
+            // Cell::default(),      // L2
+            Cell::from("Con%"),   // condition
             Cell::from("O-COGM"), // our cogm
             Cell::from("M-COGM"), // market cogm
             Cell::from("Inst"),   // instant sell price
@@ -439,7 +541,7 @@ impl BuildingsWidget {
         ]);
         assert_eq!(widths.len(), headers.len());
 
-        let table = Table::new(self.rows.clone(), widths)
+        let table = Table::new(self.rows.clone().into_iter().map(|x| x.row), widths)
             .header(Row::new(headers))
             .highlight_style(Style::default().bg(Color::DarkGray))
             .highlight_spacing(ratatui::widgets::HighlightSpacing::Always)
@@ -450,18 +552,54 @@ impl BuildingsWidget {
                     .borders(Borders::ALL),
             );
 
-        frame.render_stateful_widget(table, area, &mut self.table_state);
+        let chunks = Layout::default()
+            .direction(Direction::Vertical)
+            .margin(0)
+            .constraints([Constraint::Fill(1), Constraint::Length(6)].as_ref())
+            .split(area);
+
+        frame.render_stateful_widget(table, chunks[0], &mut self.table_state);
         let scrollbar = Scrollbar::default()
             .orientation(ScrollbarOrientation::VerticalRight)
             .begin_symbol(None)
             .end_symbol(None);
         frame.render_stateful_widget(
             scrollbar,
-            area.inner(&Margin {
+            chunks[0].inner(&Margin {
                 vertical: 1,
                 horizontal: 0,
             }),
             &mut self.scrollbar_state,
         );
+
+        // render a small
+        let scroll_idx = self.table_state.selected().unwrap_or(0);
+        if let Some(d) = self.rows.get(scroll_idx) {
+            let input_info = d
+                .input_mats
+                .iter()
+                .map(|mat| match mat {
+                    COGM::Market { material, unit_cost, total_cost } => Line::from(format!("{material}: {unit_cost}@market")),
+                    COGM::Ours {
+                        material,
+                        unit_cost,
+                        total_cost,
+                        source_planet,
+                    } => Line::from(format!(
+                        "{material}: {}@{source_planet} {}",
+                        format_price(*unit_cost),
+                        format_price(*total_cost),
+                    )),
+                    COGM::Consumables(cost) => {
+                        Line::from(format!("workers: {}", format_price(*cost)))
+                    }
+                    COGM::Degredation(cost) => {
+                        Line::from(format!("buildings: {}", format_price(*cost)))
+                    }
+                })
+                .collect::<Vec<_>>();
+
+            frame.render_widget(Paragraph::new(Text::from(input_info)), chunks[1]);
+        }
     }
 }

@@ -153,7 +153,7 @@ impl LocalMarketWidget {
                 .await?;
 
             let price_per_unit = ad.total_price / ad.material_amount as f32;
-            if price_per_unit < cx.ask.unwrap_or(cx.price.unwrap()) {
+            if price_per_unit < cx.ask.unwrap_or(cx.price.unwrap_or_default()) {
                 symbol = "+";
                 notes.push(Line::from(vec![
                     Span::raw("Good deal on "),

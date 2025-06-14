@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use anyhow::Context;
 use crossterm::event::Event;
-use fiors::{get_material_db, FIOClient};
+use fiors::{get_material_db, COGMSource, FIOClient};
 use ratatui::{
     layout::{Constraint, Direction, Layout, Margin, Rect},
     style::{self, Color, Modifier, Style},
@@ -26,6 +26,8 @@ pub struct ProductionWidget {
     production_rows: Vec<widgets::Row<'static>>,
     consumption_rows: Vec<widgets::Row<'static>>,
     needs_rows: Vec<widgets::Row<'static>>,
+    needs_volume: f32,
+    needs_weight: f32,
 
     table_state: [widgets::TableState; 3],
     scrollbar_state: [widgets::ScrollbarState; 3],
@@ -40,6 +42,8 @@ impl ProductionWidget {
             production_rows: Default::default(),
             consumption_rows: Default::default(),
             needs_rows: Default::default(),
+            needs_volume: 0.0,
+            needs_weight: 0.0,
             table_state: Default::default(),
             scrollbar_state: Default::default(),
         }
@@ -56,6 +60,8 @@ impl ProductionWidget {
         self.production_rows.clear();
         self.consumption_rows.clear();
         self.needs_rows.clear();
+        self.needs_volume = 0.0;
+        self.needs_weight = 0.0;
     }
     /// Return true if we scrolled and need to redraw the widget
     pub fn handle_input(&mut self, event: &Event, current_widget: WidgetEnum) -> NeedRefresh {
@@ -178,7 +184,10 @@ impl ProductionWidget {
                     None,
                 )
                 .await?
-                .unwrap();
+                .unwrap_or_default();
+            let market_cogm = COGMSource::market(market_cogm);
+            tracing::debug!("market cogm for {} on {} is {:?}", material, planet.name, market_cogm);
+
 
             // what is our COGM if accounted for our own production?
             let our_cogm = self
@@ -191,15 +200,20 @@ impl ProductionWidget {
                     Some(&shared_state.cogm),
                 )
                 .await?
-                .unwrap();
+                .unwrap_or_default();
+            let our_cogm = COGMSource::our(our_cogm, &planet.name);
+            tracing::debug!("our cogm for {} on {} is {:?}", material, planet.name, our_cogm);
 
-            let best_cogm = market_cogm.min(our_cogm);
+
+            let best_cogm = COGMSource::min(&market_cogm, &our_cogm);
+            tracing::debug!("best_cogm for {} on {} is {:?}", material, planet.name, best_cogm);
+            
 
             shared_state
                 .cogm
                 .entry(material.clone())
-                .and_modify(|x| *x = x.min(best_cogm))
-                .or_insert(best_cogm);
+                .and_modify(|x| x.update_if_better(best_cogm))
+                .or_insert(best_cogm.clone());
 
             // what's the CX price range
             let cx = self
@@ -226,8 +240,8 @@ impl ProductionWidget {
                 } else {
                     format!(" {}", format_amount(net_amount))
                 }),
-                Span::raw(format!("${}", format_price(our_cogm))),
-                Span::raw(format!("${}", format_price(market_cogm))),
+                Span::raw(format!("${}", format_price(our_cogm.get_cost()))),
+                Span::raw(format!("${}", format_price(market_cogm.get_cost()))),
                 Span::raw(format!(
                     "${} - ${}",
                     format_price(cx_min),
@@ -259,7 +273,8 @@ impl ProductionWidget {
                             None,
                         )
                         .await?
-                        .unwrap();
+                        .unwrap_or_default();
+                    let market_cogm = COGMSource::market(market_cogm);
 
                     let our_cogm = self
                         .client
@@ -271,16 +286,17 @@ impl ProductionWidget {
                             Some(&shared_state.cogm),
                         )
                         .await?
-                        .unwrap();
+                        .unwrap_or_default();
+                    let our_cogm = COGMSource::our(our_cogm, &planet.name);
 
-                    let best_cogm = market_cogm.min(our_cogm);
-                    let worst_cogm = market_cogm.max(our_cogm);
+                    let best_cogm = COGMSource::min(&market_cogm, &our_cogm);
+                    let worst_cogm = fiors::COGMSource::max(&market_cogm, &our_cogm);
 
                     shared_state
                         .cogm
                         .entry(output.material_ticker.clone())
-                        .and_modify(|x| *x = x.min(best_cogm))
-                        .or_insert(best_cogm);
+                        .and_modify(|x| x.update_if_better(best_cogm))
+                        .or_insert(best_cogm.clone());
 
                     // what's the CX price range
                     let cx = self
@@ -304,8 +320,8 @@ impl ProductionWidget {
                         Span::raw(output.material_ticker.to_string())
                             .style(get_style_for_material(&output.material_ticker)),
                         Span::raw(" ---"),
-                        Span::raw(format!("${}", format_price(best_cogm))),
-                        Span::raw(format!("${}", format_price(worst_cogm))),
+                        Span::raw(format!("${}", format_price(best_cogm.get_cost()))),
+                        Span::raw(format!("${}", format_price(worst_cogm.get_cost()))),
                         Span::raw(format!(
                             "${} - ${}",
                             format_price(cx_min),
@@ -451,6 +467,10 @@ impl ProductionWidget {
             };
 
             if amount_to_buy > 0.0 {
+                self.needs_volume += amount_to_buy * get_material_db().get(material.as_str()).unwrap().volume;
+                self.needs_weight += amount_to_buy * get_material_db().get(material.as_str()).unwrap().weight;
+                
+                
                 // are any other bases producing a surplus of this material?
 
                 let mut e = Span::raw("");
@@ -513,6 +533,10 @@ impl ProductionWidget {
                         e = Span::raw(planets.to_string());
                     }
                 } else {
+                    // we need to buy from the market
+                    // but also check to see if we can make this material on-planet
+                    // TODO
+                    
                     let cx_info = self
                         .client
                         .get_exchange_info(&format!("{}.{planet_cxid}", material))
@@ -666,7 +690,7 @@ impl ProductionWidget {
         }))
         .block(
             Block::default()
-                .title("Needs to acquire")
+                .title(format!("Need to acquire ({:.1}t / {:.1}m³)", self.needs_weight, self.needs_volume))
                 .border_style(
                     style::Style::default().fg(if current_widget == WidgetEnum::Needs {
                         Color::Cyan

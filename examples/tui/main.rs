@@ -1,4 +1,5 @@
 use std::{
+    collections::VecDeque,
     fs::File,
     io::{self, stdout},
     time::{Duration, Instant},
@@ -16,8 +17,8 @@ use once_cell::sync::OnceCell;
 use ratatui::{prelude::*, widgets::*};
 use ratatui_macros::{horizontal, vertical};
 use tracing::{info, level_filters::LevelFilter, trace};
-use widgets::{SharedWidgetState, WidgetEnum};
 use widgets::{Overrides, SharedWidgetState, WidgetEnum};
+
 static CLIENT: OnceCell<FIOClient> = OnceCell::new();
 
 mod widgets;
@@ -31,7 +32,9 @@ fn get_client() -> &'static FIOClient {
         .or(std::env::var("FIO_AUTH_TOKEN").ok())
         .unwrap();
     CLIENT.get_or_init(|| {
-        FIOClient::new_with_key(api_key)
+        let client = FIOClient::new_with_key(api_key);
+        // client.local_cache_dir = Some(".fio_cache".into());
+        client
     })
 }
 
@@ -47,6 +50,7 @@ async fn main() -> anyhow::Result<()> {
 
     println!("Logging in...");
     let app = App::new().await?;
+    println!("Logged in");
 
     enable_raw_mode()?;
     stdout().execute(EnterAlternateScreen)?;
@@ -60,7 +64,7 @@ async fn main() -> anyhow::Result<()> {
     stdout().execute(DisableMouseCapture)?;
 
     if let Err(err) = ret {
-        eprintln!("Error: {:?}", err);
+        eprintln!("\n\nError: {:?}", err);
     }
 
     Ok(())
@@ -88,6 +92,7 @@ enum SidebarMode {
     Buildings,
     Inventory,
     Market,
+    Galactic,
 }
 
 struct App {
@@ -101,6 +106,7 @@ struct App {
     building_widget: widgets::BuildingsWidget,
     inventory_widget: widgets::InventoryWidget,
     market_widget: widgets::MarketWidget,
+    galatic_widget: widgets::GalacticInvWidget,
     mode: SidebarMode,
     sidebar_state: TableState,
 }
@@ -205,6 +211,7 @@ impl App {
             building_widget: widgets::BuildingsWidget::new(client, &username, &planets[0].id),
             inventory_widget: widgets::InventoryWidget::new(client, &username, &planets[0].id),
             market_widget: widgets::MarketWidget::new(client, &username),
+            galatic_widget: widgets::GalacticInvWidget::new(client, &username),
             // client,
             // username,
             current_tab: 0,
@@ -216,9 +223,42 @@ impl App {
     }
 
     fn render_tabs(&self, frame: &mut Frame, area: Rect) {
-        let tab_names = self.planets.iter().map(|p| p.name.clone());
-        let selected = self.current_tab;
-        let tabs = Tabs::<'static>::new(tab_names)
+        let mut tab_names: VecDeque<_> = self
+            .planets
+            .iter()
+            .enumerate()
+            .map(|(idx, p)| (idx, p.name.clone()))
+            .collect();
+        loop {
+            // calculate the total width of all tab names.  There is a " | " character between each name
+            let total_width: usize = tab_names.iter().map(|(_, name)| name.len()).sum::<usize>()
+                + (tab_names.len() - 1) * 3;
+            if total_width <= area.width as usize {
+                break;
+            }
+
+            let selected = tab_names
+                .iter()
+                .position(|(idx, _)| *idx == self.current_tab)
+                .unwrap_or(0);
+
+            // remove the tab that are the furthest from the current tab
+            let left = tab_names.iter().take(selected).count();
+            let right = tab_names.iter().skip(selected + 1).count();
+            if left <= right {
+                tab_names.pop_back();
+            } else {
+                tab_names.pop_front();
+            }
+        }
+
+        // recalculate the selected index based on the tab names
+        let selected = tab_names
+            .iter()
+            .position(|(idx, _)| *idx == self.current_tab)
+            .unwrap_or(0);
+
+        let tabs = Tabs::<'static>::new(tab_names.into_iter().map(|(_, name)| name))
             .block(Block::default().title("Bases").borders(Borders::ALL))
             .select(selected);
 
@@ -231,6 +271,7 @@ impl App {
                 Row::new(vec!["\nBLD\n"]).height(3),
                 Row::new(vec!["\nINV\n"]).height(3),
                 Row::new(vec!["\nMKT\n"]).height(3),
+                Row::new(vec!["\nGAL\n"]).height(3),
             ],
             [Constraint::Length(3)],
         )
@@ -240,6 +281,7 @@ impl App {
             SidebarMode::Buildings => self.sidebar_state.select(Some(1)),
             SidebarMode::Inventory => self.sidebar_state.select(Some(2)),
             SidebarMode::Market => self.sidebar_state.select(Some(3)),
+            SidebarMode::Galactic => self.sidebar_state.select(Some(4)),
         };
 
         frame.render_stateful_widget(table, area, &mut self.sidebar_state);
@@ -308,6 +350,10 @@ impl App {
                 self.market_widget
                     .render(frame, main_body, self.current_widget);
             }
+            SidebarMode::Galactic => {
+                self.galatic_widget
+                    .render(frame, main_body, self.current_widget);
+            }
         }
 
         match self.mode {
@@ -361,6 +407,12 @@ impl App {
             SidebarMode::Market => {
                 refresh =
                     refresh.update(self.market_widget.handle_input(&event, self.current_widget));
+            }
+            SidebarMode::Galactic => {
+                refresh = refresh.update(
+                    self.galatic_widget
+                        .handle_input(&event, self.current_widget),
+                );
             }
         }
 
@@ -427,9 +479,12 @@ impl App {
                         self.current_widget = WidgetEnum::Market;
                     }
                     SidebarMode::Market => {
+                        self.mode = SidebarMode::Galactic;
+                        self.current_widget = WidgetEnum::Global;
+                    }
+                    SidebarMode::Galactic => {
                         self.mode = SidebarMode::Production;
                         self.current_widget = WidgetEnum::Production;
-                    
                     }
                 }
                 (NeedRefresh::APIRefresh, true)
@@ -437,8 +492,8 @@ impl App {
             KeyCode::Up if modifiers.contains(KeyModifiers::ALT) => {
                 match self.mode {
                     SidebarMode::Production => {
-                        self.mode = SidebarMode::Market;
-                        self.current_widget = WidgetEnum::Market;
+                        self.mode = SidebarMode::Galactic;
+                        self.current_widget = WidgetEnum::Global;
                     }
                     SidebarMode::Buildings => {
                         self.mode = SidebarMode::Production;
@@ -451,6 +506,10 @@ impl App {
                     SidebarMode::Market => {
                         self.mode = SidebarMode::Inventory;
                         self.current_widget = WidgetEnum::Inventory;
+                    }
+                    SidebarMode::Galactic => {
+                        self.mode = SidebarMode::Market;
+                        self.current_widget = WidgetEnum::Market;
                     }
                 }
                 (NeedRefresh::APIRefresh, true)
@@ -588,6 +647,9 @@ async fn run_mainloop(mut terminal: Terminal<impl Backend>, mut app: App) -> any
                     }
                     SidebarMode::Market => {
                         app.market_widget.update(&mut shared_state).await?;
+                    }
+                    SidebarMode::Galactic => {
+                        app.galatic_widget.update(&mut shared_state).await?;
                     }
                 }
             }
