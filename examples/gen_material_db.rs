@@ -26,7 +26,11 @@ async fn main() -> anyhow::Result<()> {
 
         let category = format_ident!(
             "{}",
-            format!("{:?}", MaterialCategory::from_name(category_name).unwrap())
+            format!(
+                "{:?}",
+                MaterialCategory::from_name(category_name)
+                    .unwrap_or_else(|| panic!("Unknown category name '{category_name}'"))
+            )
         );
         pre.extend(quote! {
             map.insert(#ticker, StaticMaterialInfo {
