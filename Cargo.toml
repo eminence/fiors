@@ -13,22 +13,22 @@ reqwest = { version = "0.12.2", features = ["json"] }
 serde = { version = "1.0.197", features = ["derive"] }
 serde_json = "1.0.115"
 tokio = { version = "1.37.0", features = ["full"] }
-colored = "2.1.0"
-dashmap = "5.5.3"
+colored = "3.0.0"
+dashmap = "6.1.0"
 
 # Stuff used to generate DB files
 proc-macro2 = { version = "1.0.81", optional = true }
 quote = { version = "1.0.35", optional = true }
 tracing = "0.1.40"
 tracing-subscriber = "0.3.18"
-ratatui-macros = "0.2.4"
+ratatui-macros = "0.6.0"
 
 [dev-dependencies]
-crossterm = "0.27.0"
+crossterm = "0.29.0"
 prettyplease = "0.2.17"
 proc-macro2 = "1.0.81"
 quote = "1.0.35"
-ratatui = "0.26.1"
+ratatui = "0.29.0"
 syn = { version = "2.0.58", features = ["full"] }
 toml = "0.8.19"
 

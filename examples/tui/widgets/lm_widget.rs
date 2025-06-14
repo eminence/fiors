@@ -394,7 +394,7 @@ impl LocalMarketWidget {
         if chunks[0].height - 3 < self.table_rows.len() as u16 {
             frame.render_stateful_widget(
                 scrollbar,
-                chunks[0].inner(&Margin {
+                chunks[0].inner(Margin {
                     vertical: 1,
                     horizontal: 0,
                 }),

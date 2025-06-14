@@ -720,7 +720,7 @@ impl ProductionWidget {
             frame.render_stateful_widget(table, chunks[idx], &mut self.table_state[idx]);
 
             if chunks[idx].height - margin < row_count as u16 {
-                let area = chunks[idx].inner(&Margin {
+                let area = chunks[idx].inner(Margin {
                     vertical: 1,
                     horizontal: 0,
                 });

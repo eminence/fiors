@@ -565,7 +565,7 @@ impl BuildingsWidget {
             .end_symbol(None);
         frame.render_stateful_widget(
             scrollbar,
-            chunks[0].inner(&Margin {
+            chunks[0].inner(Margin {
                 vertical: 1,
                 horizontal: 0,
             }),
