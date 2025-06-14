@@ -4,7 +4,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Deserializer};
 use tracing::trace;
 
-use crate::get_building_db;
+use crate::{building_db::StaticBuildingInfo, get_building_db};
 
 #[derive(Debug, Clone)]
 pub struct Storage {
@@ -44,7 +44,6 @@ pub struct WarehouseInfo {
     pub volume_capacity: f32,
     pub location_name: String,
     pub location_natural_id: String,
-
 }
 
 #[derive(Debug, Clone)]
@@ -436,6 +435,19 @@ impl Ticker {
     }
 }
 
+#[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all = "PascalCase")]
+pub struct SiteBuilding {
+    pub condition: f32,
+    pub building_ticker: String,
+    #[serde(deserialize_with = "optional_ms_to_date")]
+    pub building_last_repair: Option<DateTime<Utc>>,
+    #[serde(deserialize_with = "ms_to_date")]
+    pub building_created: DateTime<Utc>,
+
+    pub repair_materials: Vec<MaterialNameAndAmount>,
+}
+
 /// Like a planet, but has a site_id field
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "PascalCase")]
@@ -450,6 +462,8 @@ pub struct PlanetSite {
     pub planet_identifier: String,
     pub invested_permits: u8,
     pub maximum_permits: u8,
+
+    pub buildings: Vec<SiteBuilding>,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -665,8 +679,8 @@ pub struct ProductionLine {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "PascalCase")]
 pub struct ProductionOrderDetails {
-    pub inputs: Vec<ProductionOrderMaterial>,
-    pub outputs: Vec<ProductionOrderMaterial>,
+    pub inputs: Vec<MaterialNameAndAmount>,
+    pub outputs: Vec<MaterialNameAndAmount>,
     #[serde(rename = "CreatedEpochMs", deserialize_with = "ms_to_date")]
     pub created: DateTime<Utc>,
     #[serde(rename = "StartedEpochMs", deserialize_with = "optional_ms_to_date")]
@@ -677,18 +691,20 @@ pub struct ProductionOrderDetails {
     #[serde(rename = "CompletionEpochMs", deserialize_with = "optional_ms_to_date")]
     pub completion: Option<DateTime<Utc>>,
     pub recurring: bool,
+    // Normally this is just a string, but at the moment FIO isn't returning this data
     pub standard_recipe_name: String,
 }
 
 impl ProductionOrderDetails {
     pub fn get_building_ticker(&self) -> &str {
-        self.standard_recipe_name.split(':').next().unwrap()
+        "TODO"
+        // self.standard_recipe_name.split(':').next().unwrap()
     }
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "PascalCase")]
-pub struct ProductionOrderMaterial {
+pub struct MaterialNameAndAmount {
     pub material_name: String,
     pub material_ticker: String,
     pub material_amount: u32,
@@ -711,6 +727,12 @@ impl ProductionLine {
         db.get(self.building_type.as_str())
             .expect("Unknown building type")
             .ticker
+    }
+
+    pub fn building(&self) -> &'static StaticBuildingInfo {
+        let db = get_building_db();
+        db.get(self.building_type.as_str())
+            .expect("Unknown building type")
     }
 
     /// For each building, calculate the daily production of inputs and outputs, across all queued orders
