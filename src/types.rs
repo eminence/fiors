@@ -32,6 +32,7 @@ pub enum StorageType {
     ShipStore,
     StlFuelStore,
     FtlFuelStore,
+    ConstructionStore,
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -64,6 +65,7 @@ impl FromStr for StorageType {
             "SHIP_STORE" => Self::ShipStore,
             "STL_FUEL_STORE" => Self::StlFuelStore,
             "FTL_FUEL_STORE" => Self::FtlFuelStore,
+            "CONSTRUCTION_STORE" => Self::ConstructionStore,
             _ => return Err("Unknown storage type"),
         })
     }
