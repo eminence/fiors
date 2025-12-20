@@ -240,6 +240,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
         },
     );
     map.insert(
+        "ALR",
+        StaticMaterialInfo {
+            material_id: "5ddd503694fc9c42013e2cf2ca3b85af",
+            category_name: "alloys",
+            category_id: "37e95782d80aa1c1ded89f2c4b834dd0",
+            name: "alurhenium",
+            ticker: "ALR",
+            weight: 3.6f32,
+            volume: 1f32,
+            category: MaterialCategory::Alloys,
+        },
+    );
+    map.insert(
         "AMM",
         StaticMaterialInfo {
             material_id: "bcf4a2029e461cf76d29de8c66ec2ff9",
@@ -799,6 +812,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
         },
     );
     map.insert(
+        "BSU",
+        StaticMaterialInfo {
+            material_id: "fdb85e688cf7f229f20c8e819c4cab9f",
+            category_name: "unit prefabs",
+            category_id: "2c6ca18d24e03fc9250d8ca7d577568b",
+            name: "biosphereUnit",
+            ticker: "BSU",
+            weight: 50f32,
+            volume: 50f32,
+            category: MaterialCategory::UnitPrefabs,
+        },
+    );
+    map.insert(
         "BTA",
         StaticMaterialInfo {
             material_id: "334f3510e3265410da15174160fbf8f5",
@@ -1095,6 +1121,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 0.77f32,
             volume: 1f32,
             category: MaterialCategory::Textiles,
+        },
+    );
+    map.insert(
+        "CPU",
+        StaticMaterialInfo {
+            material_id: "7bcbe9bbdebb94ec145d614baf8e65f5",
+            category_name: "unit prefabs",
+            category_id: "2c6ca18d24e03fc9250d8ca7d577568b",
+            name: "cryopreservationUnit",
+            ticker: "CPU",
+            weight: 20f32,
+            volume: 20f32,
+            category: MaterialCategory::UnitPrefabs,
         },
     );
     map.insert(
@@ -1839,6 +1878,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
         },
     );
     map.insert(
+        "GWS",
+        StaticMaterialInfo {
+            material_id: "2595868f51acc0889a1b15c2e757176b",
+            category_name: "infrastructure",
+            category_id: "5aac3f26a7e93c5999cfa593dcddd4e1",
+            name: "gatewaySegment",
+            ticker: "GWS",
+            weight: 5000f32,
+            volume: 5000f32,
+            category: MaterialCategory::Infrastructure,
+        },
+    );
+    map.insert(
         "H",
         StaticMaterialInfo {
             material_id: "c04de28c3e717f236d6ed177b89d9523",
@@ -1888,6 +1940,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 2.17f32,
             volume: 1f32,
             category: MaterialCategory::Minerals,
+        },
+    );
+    map.insert(
+        "HAM",
+        StaticMaterialInfo {
+            material_id: "7e3db35fdccce745cede7b1b636f3cb1",
+            category_name: "ship parts",
+            category_id: "d23b9225010ad7978e5496e55359e19b",
+            name: "habitationModule",
+            ticker: "HAM",
+            weight: 1200f32,
+            volume: 1200f32,
+            category: MaterialCategory::ShipParts,
         },
     );
     map.insert(
@@ -2226,6 +2291,32 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 0.1f32,
             volume: 0.1f32,
             category: MaterialCategory::ConsumablesLuxury,
+        },
+    );
+    map.insert(
+        "KR",
+        StaticMaterialInfo {
+            material_id: "82cd82533fdfb68b315bd8697a241b55",
+            category_name: "gases",
+            category_id: "54dec1e42eba44dda423dd774393326a",
+            name: "krypton",
+            ticker: "KR",
+            weight: 2.8f32,
+            volume: 1f32,
+            category: MaterialCategory::Gases,
+        },
+    );
+    map.insert(
+        "KRE",
+        StaticMaterialInfo {
+            material_id: "8d05c8c4bac264bc9c6310d656a8a9a2",
+            category_name: "chemicals",
+            category_id: "9b32ea2333917ee2632ba7ae7675643f",
+            name: "kryptonium",
+            ticker: "KRE",
+            weight: 8.25f32,
+            volume: 1f32,
+            category: MaterialCategory::Chemicals,
         },
     );
     map.insert(
@@ -3165,6 +3256,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
         },
     );
     map.insert(
+        "PFG",
+        StaticMaterialInfo {
+            material_id: "a3df77b3455fc17fa676d0131550152c",
+            category_name: "infrastructure",
+            category_id: "5aac3f26a7e93c5999cfa593dcddd4e1",
+            name: "polarityFieldGenerator",
+            ticker: "PFG",
+            weight: 80f32,
+            volume: 65f32,
+            category: MaterialCategory::Infrastructure,
+        },
+    );
+    map.insert(
         "PG",
         StaticMaterialInfo {
             material_id: "64666b2eb0faaba594a62818e48229b8",
@@ -3464,6 +3568,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
         },
     );
     map.insert(
+        "RE",
+        StaticMaterialInfo {
+            material_id: "3643069b469e68db439510dd551ad025",
+            category_name: "metals",
+            category_id: "cae48680d4c4e6f98d593a8c3778cb56",
+            name: "rhenium",
+            ticker: "RE",
+            weight: 3.2f32,
+            volume: 1f32,
+            category: MaterialCategory::Metals,
+        },
+    );
+    map.insert(
         "REA",
         StaticMaterialInfo {
             material_id: "dd806abbca77956b09bc043c1633f51e",
@@ -3487,6 +3604,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 0.3f32,
             volume: 0.05f32,
             category: MaterialCategory::Drones,
+        },
+    );
+    map.insert(
+        "REO",
+        StaticMaterialInfo {
+            material_id: "21dd9e8e792b601949b9024991244f9e",
+            category_name: "ores",
+            category_id: "4c0430b40fbf7fa175ed4a5a13682c6f",
+            name: "rheniumOre",
+            ticker: "REO",
+            weight: 12.8f32,
+            volume: 1f32,
+            category: MaterialCategory::Ores,
         },
     );
     map.insert(
@@ -3724,6 +3854,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
         },
     );
     map.insert(
+        "SDM",
+        StaticMaterialInfo {
+            material_id: "60323fea22b8182e1a5fd8191ba542ef",
+            category_name: "infrastructure",
+            category_id: "5aac3f26a7e93c5999cfa593dcddd4e1",
+            name: "shockwaveDampeningModule",
+            ticker: "SDM",
+            weight: 500f32,
+            volume: 500f32,
+            category: MaterialCategory::Infrastructure,
+        },
+    );
+    map.insert(
         "SDR",
         StaticMaterialInfo {
             material_id: "663f2e01b48535883100f1e16fc75f45",
@@ -3919,6 +4062,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
         },
     );
     map.insert(
+        "SPT",
+        StaticMaterialInfo {
+            material_id: "0bff5df7021b879dcdb098358d150473",
+            category_name: "infrastructure",
+            category_id: "5aac3f26a7e93c5999cfa593dcddd4e1",
+            name: "spaceTether",
+            ticker: "SPT",
+            weight: 1.8f32,
+            volume: 5f32,
+            category: MaterialCategory::Infrastructure,
+        },
+    );
+    map.insert(
         "SRD",
         StaticMaterialInfo {
             material_id: "9c418f805a867af115600ac3657cce0d",
@@ -3968,6 +4124,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 20f32,
             volume: 20f32,
             category: MaterialCategory::ShipKits,
+        },
+    );
+    map.insert(
+        "SST",
+        StaticMaterialInfo {
+            material_id: "cbf2cde8669ec88def5eff94f58b60bb",
+            category_name: "infrastructure",
+            category_id: "5aac3f26a7e93c5999cfa593dcddd4e1",
+            name: "singularityStabilizer",
+            ticker: "SST",
+            weight: 1500f32,
+            volume: 500f32,
+            category: MaterialCategory::Infrastructure,
         },
     );
     map.insert(
@@ -4257,6 +4426,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
         },
     );
     map.insert(
+        "TOR",
+        StaticMaterialInfo {
+            material_id: "1ca3caf43fd0fea8a67522ae6ebf1af0",
+            category_name: "infrastructure",
+            category_id: "5aac3f26a7e93c5999cfa593dcddd4e1",
+            name: "torusSegment",
+            ticker: "TOR",
+            weight: 700f32,
+            volume: 200f32,
+            category: MaterialCategory::Infrastructure,
+        },
+    );
+    map.insert(
         "TPU",
         StaticMaterialInfo {
             material_id: "7cc9acecdf3e9565c9b4cbe9c96f0ab5",
@@ -4293,6 +4475,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 0.001f32,
             volume: 0.001f32,
             category: MaterialCategory::ElectronicPieces,
+        },
+    );
+    map.insert(
+        "TRS",
+        StaticMaterialInfo {
+            material_id: "3a65b32e1c0af942aa911ef541008b1e",
+            category_name: "infrastructure",
+            category_id: "5aac3f26a7e93c5999cfa593dcddd4e1",
+            name: "tensionReliefStructure",
+            ticker: "TRS",
+            weight: 50f32,
+            volume: 50f32,
+            category: MaterialCategory::Infrastructure,
         },
     );
     map.insert(
@@ -4387,6 +4582,32 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
         },
     );
     map.insert(
+        "VF",
+        StaticMaterialInfo {
+            material_id: "76afd4e7e388072fbb01051c4ad8afde",
+            category_name: "fuels",
+            category_id: "ba98fa0cf77040a96cd8a608ad0d08e9",
+            name: "vortexStimulationFuel",
+            ticker: "VF",
+            weight: 0.1f32,
+            volume: 0.1f32,
+            category: MaterialCategory::Fuels,
+        },
+    );
+    map.insert(
+        "VFT",
+        StaticMaterialInfo {
+            material_id: "aaa4b2b80deb387726d8845630874446",
+            category_name: "ship kits",
+            category_id: "b7102e43e58120a254cf161c226d4177",
+            name: "vortexFuelTank",
+            ticker: "VFT",
+            weight: 1000f32,
+            volume: 1000f32,
+            category: MaterialCategory::ShipKits,
+        },
+    );
+    map.insert(
         "VG",
         StaticMaterialInfo {
             material_id: "9c80515790fcd5fefc84d56c80f4bb2a",
@@ -4410,6 +4631,32 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 0.9f32,
             volume: 1f32,
             category: MaterialCategory::AgriculturalProducts,
+        },
+    );
+    map.insert(
+        "VOE",
+        StaticMaterialInfo {
+            material_id: "f61588ec7828cc953e8199bd8a0c2edb",
+            category_name: "ship engines",
+            category_id: "16b943147bb16fe84c0d62de8a4316a7",
+            name: "vortexEngine",
+            ticker: "VOE",
+            weight: 40f32,
+            volume: 35f32,
+            category: MaterialCategory::ShipEngines,
+        },
+    );
+    map.insert(
+        "VOR",
+        StaticMaterialInfo {
+            material_id: "c81dbc5e1758121fe9acb067d89b6a05",
+            category_name: "ship engines",
+            category_id: "16b943147bb16fe84c0d62de8a4316a7",
+            name: "vortexReactor",
+            ticker: "VOR",
+            weight: 35f32,
+            volume: 30f32,
+            category: MaterialCategory::ShipEngines,
         },
     );
     map.insert(
@@ -4527,6 +4774,19 @@ pub fn construct_material_db() -> HashMap<&'static str, StaticMaterialInfo> {
             weight: 6.4f32,
             volume: 5f32,
             category: MaterialCategory::ElectronicSystems,
+        },
+    );
+    map.insert(
+        "WRH",
+        StaticMaterialInfo {
+            material_id: "0253e010aee37786b8e0b7220db60527",
+            category_name: "alloys",
+            category_id: "37e95782d80aa1c1ded89f2c4b834dd0",
+            name: "wolfrhenium",
+            ticker: "WRH",
+            weight: 6.92f32,
+            volume: 1f32,
+            category: MaterialCategory::Alloys,
         },
     );
     map.insert(

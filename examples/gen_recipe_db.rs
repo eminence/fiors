@@ -1,8 +1,8 @@
 #[cfg(feature = "gendb")]
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    use quote::quote;
     use anyhow::Context;
+    use quote::quote;
     let client = fiors::FIOClient::new_from_env()?;
 
     let mut all_recipes: Vec<_> = client
@@ -57,9 +57,9 @@ async fn main() -> anyhow::Result<()> {
         }
     }
 
-    let file = syn::parse_file(&f.to_string())?;
-    let formatted = prettyplease::unparse(&file);
-    println!("{formatted}");
+    // let file = syn::parse_file(&f.to_string())?;
+    // let formatted = prettyplease::unparse(&file);
+    // println!("{formatted}");
 
     Ok(())
 }

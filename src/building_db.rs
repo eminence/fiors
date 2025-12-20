@@ -942,6 +942,26 @@ pub fn construct_building_db() -> HashMap<&'static str, StaticBuildingInfo> {
     map.insert("ORC", x);
     map.insert("orchard", x);
     let x = StaticBuildingInfo {
+        name: "packagingCenter",
+        ticker: "PAC",
+        expertise: Some("MANUFACTURING"),
+        pioneers: 20u32,
+        settlers: 40u32,
+        technicians: 0u32,
+        engineers: 0u32,
+        scientists: 0u32,
+        area_cost: 35u32,
+        building_cost: &[
+            ("BSE", 6u32),
+            ("LBH", 10u32),
+            ("LDE", 6u32),
+            ("MCG", 100u32),
+            ("TRU", 4u32),
+        ],
+    };
+    map.insert("PAC", x);
+    map.insert("packagingCenter", x);
+    let x = StaticBuildingInfo {
         name: "planetaryProjectComfortSmall",
         ticker: "PAR",
         expertise: None,

@@ -101,6 +101,9 @@ pub enum MaterialCategory {
     // background: linear-gradient(135deg, rgb(0, 105, 107), rgb(25, 130, 132)); color: rgb(127, 232, 234);
     Gases,
 
+    // background: linear-gradient(135deg, rgb(12, 12, 56), rgb(37, 37, 81)); color: rgb(139, 139, 183); font-size: 9.24px;
+    Infrastructure,
+
     // background: linear-gradient(135deg, rgb(114, 164, 202), rgb(139, 189, 227)); color: rgb(241, 255, 255);
     Liquids,
 
@@ -170,6 +173,7 @@ impl MaterialCategory {
             "energy systems" => Some(MaterialCategory::EnergySystems),
             "fuels" => Some(MaterialCategory::Fuels),
             "gases" => Some(MaterialCategory::Gases),
+            "infrastructure" => Some(MaterialCategory::Infrastructure),
             "liquids" => Some(MaterialCategory::Liquids),
             "medical equipment" => Some(MaterialCategory::MedicalEquipment),
             "metals" => Some(MaterialCategory::Metals),
@@ -226,6 +230,7 @@ impl MaterialCategory {
             MaterialCategory::SoftwareSystems => average_rgb((60, 53, 5), (85, 78, 30)),
             MaterialCategory::SoftwareTools => average_rgb((129, 98, 19), (154, 123, 44)),
             MaterialCategory::UnitPrefabs => average_rgb((29, 27, 28), (54, 52, 53)),
+            MaterialCategory::Infrastructure => average_rgb((12, 12, 56), (37, 37, 81)),
         }
     }
 
@@ -265,6 +270,7 @@ impl MaterialCategory {
             MaterialCategory::Textiles => (209, 217, 160),
             MaterialCategory::UnitPrefabs => (156, 154, 155),
             MaterialCategory::Utility => (255, 255, 255),
+            MaterialCategory::Infrastructure => (139, 139, 183),
         }
     }
 }
