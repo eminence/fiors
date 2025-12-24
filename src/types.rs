@@ -293,6 +293,9 @@ pub struct Ticker {
     pub demand: u32,
     /// Units traded in the last 24 hours
     pub traded: u32,
+
+    pub mm_sell: Option<f32>,
+    pub mm_buy: Option<f32>,
 }
 
 impl Ticker {
@@ -426,6 +429,10 @@ impl Ticker {
             supply: u32,
             demand: u32,
             traded: u32,
+            #[serde(rename = "MMBuy")]
+            mm_buy: Option<f32>,
+            #[serde(rename = "MMSell")]
+            mm_sell: Option<f32>,
 
             buying_orders: Vec<MarketOrder>,
             selling_orders: Vec<MarketOrder>,
@@ -446,6 +453,8 @@ impl Ticker {
             supply: inner.supply,
             demand: inner.demand,
             traded: inner.traded,
+            mm_buy: inner.mm_buy,
+            mm_sell: inner.mm_sell,
         })
     }
 }
