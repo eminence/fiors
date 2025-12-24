@@ -286,6 +286,13 @@ pub struct Ticker {
 
     pub buying_orders: Vec<MarketOrder>,
     pub selling_orders: Vec<MarketOrder>,
+
+    /// Total supply units
+    pub supply: u32,
+    /// Total demand units
+    pub demand: u32,
+    /// Units traded in the last 24 hours
+    pub traded: u32,
 }
 
 impl Ticker {
@@ -416,6 +423,9 @@ impl Ticker {
             high: Option<f32>,
             low: Option<f32>,
             price: Option<f32>,
+            supply: u32,
+            demand: u32,
+            traded: u32,
 
             buying_orders: Vec<MarketOrder>,
             selling_orders: Vec<MarketOrder>,
@@ -433,6 +443,9 @@ impl Ticker {
             high: inner.high,
             low: inner.low,
             price: inner.price,
+            supply: inner.supply,
+            demand: inner.demand,
+            traded: inner.traded,
         })
     }
 }
